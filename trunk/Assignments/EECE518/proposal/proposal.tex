@@ -1,0 +1,140 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{assign}
+
+\usepackage{lmodern}
+
+\newcommand{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
+
+\newcommand{\objectives}{\subsubsection{Objective}}
+\newcommand{\inputs}{\subsubsection{Inputs}}
+\newcommand{\outputs}{\subsubsection{Outputs}}
+\newcommand{\details}{\subsubsection{Details}}
+
+\title{{\normalsize \textsc{Proposal}\\}DarkVR: The Virtual Blind Reality}
+\author{Tom Brosch (17362104)}
+
+\begin{document}
+
+\maketitle
+
+%\begin{abstract}
+%Creating a virtual Dialogue in the Dark experience.
+%\end{abstract}
+
+\section{Introduction}
+
+The project aims to create a virtual reality environment without visual cues and
+without substituting visual cues by auditory cues (e.g. playing the sound of a
+creaking door when you stand right in front of a door). The aim of the project
+is, therefore, to create and experience a virtual world as close as possible to
+how a blind would experience the real world.
+
+This work is most closely related to the \textsc{Dialogue in the Dark}
+project\cite{dialog}. \textsc{Dialogue in the Dark} is an exhibition which lets
+non-blind people experience the world of the blinds and, thereby, raises
+awareness for the problems blind people are faced everyday while navigate
+through the world. Since the created environments are replicas build in an
+indoor space, the number of scenarios that are rebuild is very limited. A
+virtual reality can help bringing the blindness-experience to scenarios that are
+too expensive to rebuild (e.g. navigating through an entire city) or too
+dangerous (e.g. due to traffic).
+
+The work is also related to video games for blinds. Video games for blinds can
+be roughly classified into two categories: (1) games, which were initially
+designed for blinds, and (2) games which have been made accessible to blinds.
+Games of the first category often either use a combination of a
+narrator, which introduces and describes a new scene, and auditory feedback,
+which helps the user to navigate through the virtual environment (e.g. ``Der Tag
+wird zur Nacht''\cite{dertag}); or use sound as the primary gaming concept (e.g.
+``AudiOdyssey''\cite{audiodyssey}).
+
+There has also been a great amount of research in how to make games accessible
+for disabled people (e.g. \cite{chile, terraformers, secondlife,
+tankcommander}). See \cite{survey} for a survey of accessible games. A common
+method is to replace visuals with audio. This can be done on different levels of
+abstraction. Audio cues are the least abstract way of replacing visuals with
+audio. Audio cues are sounds that an object would make in the real world (e.g.
+footsteps of a walking person). Auditory Icons or ear cons are sounds which are
+associated with an object, even though the object would not make this sound in
+the current situation (e.g. playing the sound of a creaking door when you stand
+in front of it, even if the door is not moving). Sonification is used to
+translate physical properties of an object into sound. These sounds are usually
+artificial. Properties like pitch or frequency are used to represent other
+properties like distance.
+
+In contrast to the many attempts to making a virtual world accessible for the
+blinds, this project aims to create an experience which is as closed as
+possible to the real experience of blindness. Therefore, accessibility methods
+like auditory icons/ear cons and sonifications are not used on purpose. Instead,
+the user navigates through the world relying on 3D binaural audio and devices
+like a virtual long cane or a virtual GPS localizer. \textsc{Dark VR}, therefore,
+does not only give the possibility to experience blindness, it also gives the
+possibility to try out imaginary devices that might help blinds in the
+future to navigate and orientate in the real world.
+
+\section{Hardware Requirements}
+
+\begin{itemize}
+  \item Computer
+  \item Webcam (for head-tracking)
+  \item Headphones
+  \item Wiimote (virtual cane)
+\end{itemize}
+
+\section{Specification and Initial Design}
+
+\subsection{Virtual Environment Creation}
+
+\objectives To describe the geometry of the environment and the sound
+sources in 3D.
+
+\outputs 3D model of the environment including 3D sound sources with according
+sound files
+
+\subsection{Head-tracking}
+
+\objectives To track the 3D position and rotation of the head
+
+\inputs Camera image of the head with coloured balls on each side. Parameters of
+the setting.
+
+\outputs 5D coordinates of the head (3D position + 2D rotations)
+
+\subsection{Orientation Devices}
+
+\objectives To supply the user with a variety of devices that will help the user
+to navigate the virtual world.
+
+\inputs Sensor inputs (e.g. of the the Wiimote)
+
+\outputs 3D models and current positions of virtual devices.
+
+\details The following devices were reported to be helpful for
+navigating in the real world\cite{secondlife} and are, therefore, potential
+candidates:
+\begin{description}
+  \item[Long Cane] Simulate haptic feedback with a Wiimote. Use Wiimote to scan
+  objects in front of the user. Will vibrate when hitting a target and generate
+  an according sound. This device provides a basic way of orientation in a
+  virtual 3D environment.
+  \item[UltraCane] The UltraCane\cite{ultracane} can measure the distance to
+  objects via ultra sound. The distance is then mapped to vibrations. Thereby,
+  the user can feel the distance to objects. It will also be simulated using the
+  Wiimote.
+  \item[GPS Localizer] On request, a voice interface can inform the user about
+  his current position.
+\end{description}
+
+\subsection{Interactive Virtual Environment}
+
+\objectives To display the virtual environment to the user.
+
+\inputs 5D head position, 3D environment model, input from virtual devices
+
+\outputs Audio.
+
+\bibliographystyle{plain}
+\bibliography{proposal}
+
+\end{document}
