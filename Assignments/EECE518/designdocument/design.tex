@@ -1,0 +1,96 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{assign}
+
+\usepackage{lmodern}
+
+\newcommand{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
+
+\title{
+  {\normalsize \textsc{Design Document}\\[0.5em]}
+  DarkVR: The Virtual Blind Reality
+}
+
+\author{Tom Brosch (17362104)}
+\date{\email{brosch.tom@gmail.com}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\subsection{Purpose}
+The purpose of this document is to describe the implementation of the
+\verb\DarkVR\ system. The \verb\DarkVR\ software is designed to emulated a
+virtual reality relying on non-visual cues.
+
+\subsection{Scope}
+
+This document covers all implementational details of the \verb\DarkVR\
+system. In particular, it covers \ldots
+
+%\subsection{Acronyms}
+
+\section{Design Overview}
+
+\subsection{Description of Problem}
+
+
+
+\subsection{Technologies Used}
+
+We will use the following technologies:
+\begin{itemize}
+  \item Head-tracking using webcams
+  \item 
+  \item Sound cards that allow true 3D audio playback
+  \item Headphones
+\end{itemize}
+
+\subsection{System Architecture}
+
+\paragraph{Conference Room}
+Description of a conference room. All participants are placed on a round table.
+Remote participants are replaced by 3D displays. All participants wear
+headphones. Microphones located on different locations in the room record the
+sounds.
+
+\paragraph{Head Tracking System}
+
+Use head tracking data from the visualization system. (described in the
+imaginary visualization document)
+
+\paragraph{Audio System}
+
+Software modules are organized in a pipeline as follows:
+\begin{enumerate}
+  \item Separate different sound streams $s_i$ using the multiple records $r_j$
+  of the same mixed signal.
+  \item For each stream $s_i$, calculate the spacial location based on the time
+  difference in each recording.
+  \item Transmit the separated and localized signals.
+  \item Apply location-dependant filters to each audio signal and blend them
+  together.
+\end{enumerate}
+
+\subsection{System Operation}
+
+The system processes a constant stream of audio input. No event-based user input
+is processed.
+
+\section{User Study}
+
+Comparison of standard teleconferencing system (speaker) with 3D audio
+conferencing system. Subjects will have two meetings using both technologies.
+Subjects will be interviewed after both sessions. The following questions will
+be addressed:
+\begin{itemize}
+  \item Overall sound quality.
+  \item Which system makes it easier to understand what someone is saying?
+  \item Which system makes it easier to understand who is talking?
+  \item Which system makes it easier to concentrate on one participant, when
+  more than one participant is talking.
+\end{itemize}
+
+\end{document}
