@@ -1,0 +1,13 @@
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo1}{}Image which is composed of simple shaped.}{7}{section*.3}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo2}{}2 layer DGM for the previous case. 4 Shapes, lots of pixels.}{7}{section*.4}
+\contentsline {todo}{\color@box {}{orange!40}{\leavevmode {\color {orange!40}o}}\ \hypertarget {todo3}{}What do the images actually show? The weights of the edges. The image that is created when a given hidden unit is active. The receptive field of a hidden neuron. Basis functions of the image. Even though the image is not a linear combination in the binary case.}{8}{section*.5}
+\contentsline {todo}{\color@box {}{red!40}{\leavevmode {\color {red!40}o}}\ \hypertarget {todo4}{}Bad language.}{9}{section*.6}
+\contentsline {todo}{\color@box {}{orange!40}{\leavevmode {\color {orange!40}o}}\ \hypertarget {todo5}{}Binary case.}{9}{section*.7}
+\contentsline {todo}{\color@box {}{orange!40}{\leavevmode {\color {orange!40}o}}\ \hypertarget {todo6}{}Need a notation for column and row vector and component.}{10}{section*.8}
+\contentsline {todo}{\color@box {}{orange!40}{\leavevmode {\color {orange!40}o}}\ \hypertarget {todo7}{}$p(h_j \mid \mathbf {v})$ is Bernoulli distributed.}{10}{section*.9}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo8}{}Learning rules. Learning tricks: Weight decay, momentum, mini-batches, GPU implementation.}{11}{section*.10}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo9}{}Gaussian-Bernoulli RBMs}{12}{section*.11}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo10}{}Rectangular Units}{12}{section*.12}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo11}{}Use an RBM to generate natural images (Hinton), Semi-RBM (cite paper), Images of the CC (own work), Segmentations of the CC (own work)}{12}{section*.13}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo12}{}Claim: Need only a few labels to get good classification results! (Full testset for feature learning. Only a few labelled cases to learn the highest level.)}{12}{section*.14}
+\contentsline {todo}{\color@box {}{green!40}{\leavevmode {\color {green!40}o}}\ \hypertarget {todo13}{}Claim: Unlabelled data improves the results. (Train features only with data, for which I have labels. Compare to when I use all data to learn features.)}{12}{section*.15}
