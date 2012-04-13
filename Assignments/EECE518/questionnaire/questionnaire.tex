@@ -121,12 +121,13 @@
 %% might be error prone as I hard-coded some lengths (-5.25pt and
 %% -3pt)! I do not yet understand why I need them.
 
-\ihead{\upshape\sffamily Subject \#: \Qline{1cm}}
-\ohead{\upshape\sffamily Page: \thepage{} of \pageref{LastPage}}
-\chead{}
-\cfoot{\upshape\sffamily Tom Brosch}
-\ifoot{\upshape\sffamily EECE 518}
-\ofoot{\upshape\sffamily ver1.01 \today}
+\ihead[\upshape\sffamily Subject \#: \Qline{1cm}]{\upshape\sffamily Subject \#:
+\Qline{1cm}} \ohead[\upshape\sffamily Page: \thepage{} of
+\pageref{LastPage}]{\upshape\sffamily Page: \thepage{} of \pageref{LastPage}}
+\chead[]{}
+\cfoot[\upshape\sffamily Tom Brosch]{\upshape\sffamily Tom Brosch}
+\ifoot[\upshape\sffamily EECE 518]{\upshape\sffamily EECE 518}
+\ofoot[\upshape\sffamily ver1.01 \today]{\upshape\sffamily ver1.01 \today}
 
 \title{Questionnaire}
 \author{EECE 518}
@@ -138,6 +139,7 @@
 \Huge\sffamily\textbf{Questionnaire}
 \end{center}
 \vspace{1em}
+%\maketitle
 
 \section{Personal information}
 
