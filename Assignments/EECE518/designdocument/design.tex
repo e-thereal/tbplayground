@@ -3,7 +3,7 @@
 \documentclass{article}
 
 \usepackage{lmodern}
-\usepackage{xspace}
+\usepackage{xspace,pdfpages}
 
 \usepackage{tikz}
 \usetikzlibrary{fit}
@@ -273,48 +273,70 @@ will be used to give simple haptic feedback.
 
 \subsection{Research Questions}
 
-The research questions can be divided into different categories. The first one
-are technical questions.
+The central question of the user study is if the use of the program can help to
+raise awareness of the problems visually impaired is faced everyday. Therefore,
+the user is asked to answer question that test his or her awareness for the
+problems of visually impaired before and after solving a few tasks using the
+\verb\DarkVR\ program. In addition, technical questions will be posed. They
+should help to distinguish, if problems encountered during the solving of tasks
+are primary due to the lack of visual cues or due to the implementational issues
+of the virtual environment.
 
-\subsubsection{3D Audio}
+\subsubsection{Technical Questions}
 
-\begin{enumerate}
+\begin{itemize}
   \item How convincing is the audio experience? (on a scale between 1 and 5)
   \item Which control setup works better: WASD + mouse or rather discrete
   movement using the arrow keys? (categorical)
-  \item How precise can audio sources be spotted using 3D audio? (Here are
-  different test scenarios possible: (1) relate different sources according to
-  closer vs. farther to the user, more left vs. more right, higher vs. lower;
-  (2) simple guessing game where the distance to an object has to be guessed
-  when other sounds are given as reference points.)
-\end{enumerate}
+  \item Is it clear where the sounds are in 3D?
+  \item Is it clear what caused the sound?
+  \item Sound feedback direct enough? 
+\end{itemize}
 
-\subsubsection{Devices}
+\subsubsection{Awareness Questions}
 
-Subjective rating of different devices with regard to \ldots
+These questions are asked before and after the experiments. The primary goal is
+to asses, if the subject can get a better understanding of the problems of
+visually impaired.
+
+\subsection{Protocol}
+
+The execution of the study will follow the following protocol:
+
 \begin{enumerate}
-  \item \ldots ease of use. Is the handling to complicated?
-  \item \ldots usefulness. How good can you navigate using this device?
+  \item Explain the purpose of the study.
+  \item Questionnaire before the experiments
+  \item Let the subject make familiar with the controls using visuals
+  \item Let the subject solve three given tasks in two environments
+  \begin{itemize}
+  \item Zoo---The subject is asked to stay on the path and to find 3 named
+  animals.
+  \item Apartment---The subject gets a short introduction to the apartment. The
+  tester navigates him using speech through the apartment. The bathrooms is
+  left out. The subject is asked to find the living room (as an example for a
+  previously visited room) and the bath room (as an example for an unknown
+  room).
+  \end{itemize}
+  \item Let the subject answer the remaining questions.
 \end{enumerate}
-
-Objective measurement of the performance in a way-finding game using different
-devices. Measurable quantities are
-\begin{enumerate}
-  \item Time to complete the course.
-  \item Number of body collision with objects that have to be avoided (e.g.
-  other people, stepping into flowers, \ldots)
-\end{enumerate} 
-
-\subsection{Questionnaire}
-
-\emph{Incomplete. Will be completed soon.}
-
-\subsection{Ethics certificate}
-
-\emph{Incomplete. Will be completed soon.}
 
 \bibliographystyle{plain}
 \bibliography{design}
 
+\clearpage
+\appendix
+\section{Attachments}
+The attachments sections contains the following attachments:
+\begin{itemize}
+  \item Consent form for the experiment
+  \item Consent form for the questionnaire
+  \item Sample questionnaire
+  \item Ethics certificate
+\end{itemize}
+
+\includepdf[pages=-]{consent}
+\includepdf[pages=-]{consentquest}
+\includepdf[pages=-]{questionnaire}
+\includepdf[pages=-]{ethics}
 
 \end{document}
