@@ -44,8 +44,13 @@
 % ===============================================================
 %
 % For tracking purposes - this is V1.9 - April 2009
-
 \documentclass{sig-alternate}
+
+\usepackage{tabularx}
+\usepackage{xspace}
+\usepackage{hyperref}
+
+\newcommand{\darkvr}{\textsc{DarkVR}\xspace}
 
 \begin{document}
 %
@@ -57,7 +62,7 @@
 % (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{BlindVR: The Virtual Blind Reality}
+\title{DarkVR: The Virtual Blind Reality}
 %\subtitle{[Extended Abstract]
 %
 % You need the command \numberofauthors to handle the 'placement
@@ -103,8 +108,8 @@
 \alignauthor
 Tom Brosch\\
        \affaddr{MS/MRI Research Group}\\
-       \affaddr{1932 Wallamaloo Lane}\\
-       \affaddr{Wallamaloo, New Zealand}\\
+       %\affaddr{1932 Wallamaloo Lane}\\
+       \affaddr{Vancouver, BC, Canada}\\
        \email{tombr@msmri.medicine.ubc.ca}
 }
 % There's nothing stopping you putting the seventh, eighth, etc.
@@ -118,7 +123,11 @@ Tom Brosch\\
 
 \maketitle
 \begin{abstract}
-My abstract here.
+I present a virtual environment designed to give the blind experience to sighted
+people. The aim is the raise awareness for the problems for the problems of
+visually impaired in an engaging way. In \darkvr, the user can experience
+different virtual worlds relying mostly on hearing. A preliminary user-study
+with 6 subjects showed that the approach is promising. 
 \end{abstract}
 
 % A category with the (minimum) three required fields
@@ -132,17 +141,132 @@ My abstract here.
 
 \section{Introduction}
 
+The project aims to create a virtual reality environment without visual cues and
+without substituting visual cues by auditory cues (e.g. playing the sound of a
+creaking door when you stand right in front of a door). The aim of the project
+is, therefore, to create and experience a virtual world as close as possible to
+how a blind would experience the real world.
 
-\section{Body}
-My body here.
 
-\section{Conclusions}
-My conclusions here.
-%\end{document}  % This is where a 'short' article might terminate
+\section{Related Work}
+This work is most closely related to the \textsc{Dialogue in the Dark}
+project\cite{dialog}. \textsc{Dialogue in the Dark} is an exhibition which lets
+non-blind people experience the world of the blinds and, thereby, raises
+awareness for the problems blind people are faced everyday while navigate
+through the world. Since the created environments are replicas build in an
+indoor space, the number of scenarios that are rebuild is very limited. A
+virtual reality can help bringing the blindness-experience to scenarios that are
+too expensive to rebuild (e.g. navigating through an entire city) or too
+dangerous (e.g. due to traffic).
 
-%ACKNOWLEDGMENTS are optional
+The work is also related to video games for blinds. Video games for blinds can
+be roughly classified into two categories: (1) games, which were initially
+designed for blinds, and (2) games which have been made accessible to blinds.
+Games of the first category often either use a combination of a
+narrator, which introduces and describes a new scene, and auditory feedback,
+which helps the user to navigate through the virtual environment (e.g. ``Der Tag
+wird zur Nacht''\cite{dertag}); or use sound as the primary gaming concept (e.g.
+``AudiOdyssey''\cite{audiodyssey}).
+
+There has also been a great amount of research in how to make games accessible
+for disabled people (e.g. \cite{chile, terraformers, secondlife,
+tankcommander}). See \cite{survey} for a survey of accessible games. A common
+method is to replace visuals with audio. This can be done on different levels of
+abstraction. Audio cues are the least abstract way of replacing visuals with
+audio. Audio cues are sounds that an object would make in the real world (e.g.
+footsteps of a walking person). Auditory Icons or ear cons are sounds which are
+associated with an object, even though the object would not make this sound in
+the current situation (e.g. playing the sound of a creaking door when you stand
+in front of it, even if the door is not moving). Sonification is used to
+translate physical properties of an object into sound. These sounds are usually
+artificial. Properties like pitch or frequency are used to represent other
+properties like distance.
+
+In contrast to the many attempts to making a virtual world accessible for the
+blinds, this project aims to create an experience which is as closed as
+possible to the real experience of blindness. Therefore, accessibility methods
+like auditory icons/ear cons and sonifications are not used on purpose. Instead,
+the user navigates through the world relying on 3D binaural audio and devices
+like a virtual long cane or a virtual GPS localizer. \darkvr, therefore,
+does not only give the possibility to experience blindness, it also gives the
+possibility to try out imaginary devices that might help blinds in the
+future to navigate and orientate in the real world.
+
+\section{Method}
+
+\subsection{Architectural Overview}
+
+Game loop. Some components make changes to the scene graph. Afterwards, the
+scenegraph is traversed in order to create the outputs. Show how the scene graph
+looks like. Use open scene graph for 3D rendering. Content is provided using
+collada 3D models. Sound and material properties are encoded.
+
+\subsection{Game basics}
+
+Controlled with the keyboard. Different settings of the rotation: continuous,
+discrete. Movement with the keyboard controls body transformation matrix.
+
+Full body Cylinder. Avoid collision while rotating the body. World is static and
+is translated to the bulletin collision shapes right at the beginning of the
+program.
+
+Using a magnetic tracker. Calibration step gets initial transformation. Apply
+the inverse transformations and then the current transformation and the the
+initial transformation again. Tracking independent of the position of the
+tracker on the head.
+
+Tracker is attached to something else. No calibration necessary. Reference
+point is the head position.
+
+\subsection{Sound System}
+
+Used FMOD for 3D spacial sounds. 3D model is converted to FMODs geometry model
+in order to provide realistic sound occlusion characteristics.
+
+Sounds are played randomly or in a loop. Placed in 3D. Characteristics: volume,
+minimum distance. (add equation of the decay).
+
+Ground has material properties that determine the sound of the foot steps and
+the sound of a hitting cane.
+
+\section{Study Design}
+
+Objective of study was to evaluate if the use of the program can raise awareness
+for the problems of visually impaired. A questionnaire was used to asses the
+awareness before and after the experiment. In the experiment, the subjects had
+to solve several tasks in the environment. Guided by the experimenter.
+
+Give some details about the questions asked. Describe the tasks.
+\begin{enumerate}
+  \item Make familiar with the controls using vision
+  \item Follow a trail in the zoo. Free movement.
+  \item Find and identify animals in the zoo. Requires to move around. Not
+  necessary to stay on the trail
+  \item Apartment scene: Discrete rotations. Guided by spoken instructions like
+  move forward, stop, turn to the left. Introduced to the apartment. Afterwards,
+  recognize the room.
+\end{enumerate}
+Performance during these tasks not measured. Purpose of the tasks was to let the
+subjects experience the VR.
+
+\section{Results}
+
+Technical questions. Program needs improvement. Difficult to navigate without
+force feedback.
+
+Most subjects rated the difficulty after the experiment higher than before. They
+found new things. Conclude that the program helped to encourage to think about
+the problems in an engaging way. Success.
+
+\section{Discussion and Future Work}
+
+First step towards the goal. Need more realistic scenarios that show-case
+problems of visually impaired. Need haptics to facilitate these tasks. The
+devices could allow to make the apartment quests more free. Really explore the
+apartment. Less guidance means better understand the problems.
+
 \section{Acknowledgments}
-I might have some.
+Dr. Sidney Fels for guidance and the MAGIC lab for providing magnetic trackers.
 
 %
 % The following two commands are all you need in the
