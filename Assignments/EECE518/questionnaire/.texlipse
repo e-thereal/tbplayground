@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Tue Apr 10 14:20:15 PDT 2012
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=
+mainTexFile=questionnaire.tex
+outputFile=questionnaire.pdf
+langSpell=en
+markDer=true
+srcDir=
