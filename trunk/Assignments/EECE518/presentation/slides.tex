@@ -1,0 +1,263 @@
+%% LaTeX Beamer presentation template (requires beamer package)
+%% see http://bitbucket.org/rivanvx/beamer/wiki/Home
+%% idea contributed by H. Turgut Uyar
+%% template based on a template by Till Tantau
+%% this template is still evolving - it might differ in future releases!
+
+\documentclass{beamer}
+
+\usepackage{calc,verbatim}
+
+% Setup appearance:
+
+\usetheme{Frankfurt}
+
+\usefonttheme[onlylarge]{structurebold}
+%\usefonttheme{structurebold}
+\setbeamerfont*{frametitle}{size=\normalsize,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+
+\definecolor{ubcblue}{RGB}{0,40,89}
+\definecolor{ubcgray}{RGB}{116,145,163}
+
+\setbeamercolor{section in toc}{fg=ubcblue,bg=white}
+\setbeamercolor{alerted text}{fg=ubcblue}
+\setbeamercolor*{palette primary}{fg=white,bg=ubcblue}
+\setbeamercolor*{palette secondary}{fg=ubcblue,bg=ubcblue}
+\setbeamercolor*{palette tertiary}{fg=white,bg=ubcblue}
+\setbeamercolor*{palette quaternary}{fg=ubcgray!50!white,bg=ubcblue}
+
+\setbeamercolor{blocks}{bg=violet}
+
+%\setbeamercolor*{sidebar}{fg=ubcblue,bg=gray!15!white}
+
+%\setbeamercolor*{palette sidebar primary}{fg=ubcblue!10!black}
+%\setbeamercolor*{palette sidebar secondary}{fg=white}
+%\setbeamercolor*{palette sidebar tertiary}{fg=ubcblue!50!black}
+%\setbeamercolor*{palette sidebar quaternary}{fg=ubcgray!10!white}
+
+%\setbeamercolor*{titlelike}{parent=palette primary}
+%\setbeamercolor{titlelike}{parent=palette primary}
+%\setbeamercolor{frametitle}{fg=white,bg=ubcgray}
+%\setbeamercolor{frametitle right}{bg=ubcgray!60!white}
+
+%\setbeamercolor*{separation line}{green}
+%\setbeamercolor*{fine separation line}{red}
+
+
+\setbeamercolor{item projected}{bg=ubcblue}
+\setbeamercolor{block title}{bg=ubcgray}
+\setbeamercolor{block body}{bg=ubcgray!20!white}
+\setbeamercolor{description item}{fg=ubcblue}
+\setbeamercolor{caption name}{fg=ubcblue}
+
+\setbeamerfont*{frametitle}{size=\Large}
+\setbeamerfont*{title}{size=\Large}
+\setbeamerfont*{section in toc}{size=\large}
+\setbeamerfont*{block title}{}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+
+% font definitions, try \usepackage{ae} instead of the following
+% three lines if you don't like this look
+%\usepackage{mathptmx}
+%\usepackage[scaled=.90]{helvet}
+%\usepackage{courier}
+\usepackage{times}
+
+
+\usepackage[T1]{fontenc}
+
+% Setup TikZ
+
+\usepackage{tikz,pgfplots,siunitx}
+\usetikzlibrary{arrows,fadings,spy,fit,positioning}
+%\pgfplotsset{every extra y tick/.append style={grid style=black}}
+\usetikzlibrary{positioning,decorations,fit,backgrounds,scopes,calc,decorations.pathreplacing}
+\usetikzlibrary{shapes.geometric}
+
+\setbeamertemplate{footline}{
+\normalfont 
+\leavevmode
+\hbox{
+\begin{beamercolorbox}[wd=.98\paperwidth,ht=2.5ex,dp=2.125ex,leftskip=.3cm,rightskip=.3cm]{title in head/foot_}
+\insertauthor
+\hfill 
+\insertshorttitle
+\hfill
+\insertframenumber
+   \end{beamercolorbox}
+}
+}
+
+
+
+%\newcommand{\watermarklogo}{\includegraphics[width=5.5cm,trim=1.5cm 1.5cm 1.5cm
+%1.5cm]{images/ovgu_logo.pdf}}
+\newcommand{\watermarklogo}{\includegraphics[width=4.5cm]{images/ubcblue.png}}
+
+\usebackgroundtemplate{
+\parbox[b][\paperheight+1.75cm]{\paperwidth+1cm}{
+	\hfill\tikz 
+	\node {\watermarklogo}
+	node[fill=white,path fading=south,fading angle=45] {\phantom{\watermarklogo}}%
+	node[fill=white,opacity=0.76] {\phantom{\watermarklogo}};
+}
+}
+
+%\endofdump
+
+\title{DarkVR: The Virtual Blind Reality}
+
+%\subtitle{}
+
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+%\author{F.~Author\inst{1} \and S.~Another\inst{2}}
+\author{Tom Brosch}
+
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+\institute[Universities of British Columbia]
+{
+Electrical and Computer Engineering\\
+University of British Columbia
+}
+
+\date{EECE 518 Conference}
+
+
+% This is only inserted into the PDF information catalog. Can be left
+% out.
+\subject{Talks}
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+%\AtBeginSubsection[]
+%{
+%\begin{frame}<beamer>
+%\frametitle{Outline}
+%\tableofcontents[currentsection,currentsubsection]
+%\end{frame}
+%}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+\tableofcontents
+% You might wish to add the option [pausesections]
+\end{frame}
+
+
+\section{Introduction}
+
+\subsection{Motivation}
+
+\begin{frame}{Motivation}
+
+\begin{itemize}
+  \item Inspired by Dialogue in the Dark
+  \item Create a unique experience
+  \item Raise awareness for the problems of visually impaired
+\end{itemize}
+
+\end{frame}
+
+
+\subsection{Overview}
+
+\begin{frame}{Overview}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{images/details2}
+\end{center}
+
+\end{frame}
+
+\section{Method}
+
+\subsection{The DarkVR System}
+
+\begin{frame}{System Overview}
+
+\begin{block}{Hardware Components}
+\begin{itemize}
+  \item Tracker system
+  \item Laptop
+  \item Cane
+\end{itemize}
+\end{block}
+
+\begin{block}{Software Components}
+\begin{itemize}
+  \item World Model (SceneGraph)
+  \item Sound Engine
+  \item Collision Engine
+  \item Input Controllers
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\subsection{World Design}
+
+\begin{frame}{The Zoo}
+
+\begin{itemize}
+  \item Remodelling of the Zoo Leipzig
+  \item Many animals
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{The Apartment}
+
+\begin{itemize}
+  \item Some rooms
+\end{itemize}
+
+\end{frame}
+
+\section{User Study}
+
+\subsection{Study Design}
+
+\begin{frame}{Study Design}
+\end{frame}
+
+\subsection{Results}
+
+\begin{frame}{Results}
+\end{frame}
+
+\section{Conclusions}
+
+\begin{frame}{Conclusions}
+\end{frame}
+
+\begin{frame}
+Thank you.
+\end{frame}
+
+\end{document}
