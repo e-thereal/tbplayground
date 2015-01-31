@@ -72,68 +72,67 @@ Geremia et. al & 39.85 & 40.35 & {---}  \\
 Our method & 41.49 & 36.90 & 34.20 \\ 
 \bottomrule
 \end{tabular}
-
 \end{table}
 
-\begin{table}
-\caption{Segmentation results measured using the Dice Similarity Coefficient.
-Two layer auto-encoder, stride size of \num{2x2x1}, 32 filters, sensitivity
-ratio 0.05. Threshold finding methods: a) using a global threshold that
-optimizes the average DSC of the entire data set, b) using the optimal
-thresholds for each sample, and c) using predicted thresholds for each sample.}
-\label{tab:segmentation}
-\centering
-\def\tabspace{12pt}
-% \small
-\begin{tabular}{@{}l%
-@{\hspace{\tabspace}}S[table-format=1.3]%
-@{\hspace{\tabspace}}S[table-format=1.3]
-@{\hspace{\tabspace}}S[table-format=1.3]
-@{\hspace{\tabspace}}S[table-format=1.3]
-@{\hspace{\tabspace}}S[table-format=1.3]
-@{\hspace{\tabspace}}S[table-format=1.3]
-@{}}
-\toprule
-Method & \multicolumn{6}{c}{DSC per Lesion Load Category} \\
-\addlinespace
- & {0.0--4.0} & {4.0--7.8} & {7.8--14.7} & {14.7--28.5} & {$>28.5$} &
-{Average} \\
-\midrule
-Global threshold & 0.297805 & 0.545574 & 0.60051 & 0.650483 & 0.679614 &
- 0.543181 \\ 
-Optimal thresholds & 0.351185 & 0.568412 & 0.618115 & 0.667473 & 0.727397 &
-0.572716 \\
-Predicted thresholds & 0.337834 & 0.550028 & 0.587458 & 0.653475 &
-0.716976 & 0.555662 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}
-\caption{Correlations with biomarkers is comparable to the expert
-segmentations. Threshold methods are: global threshold (LLG), optimal threshold
-(LLO), and predicted threshold (LLP).}
-\label{tab:cross}
-\centering
-\def\tabspace{14pt}
-\begin{tabular}{c%
-@{\hspace{\tabspace}}S[table-format=1.4]%
-@{\hspace{\tabspace}}S[table-format=2.6]%
-@{\hspace{\tabspace}}S[table-format=2.6]%
-@{\hspace{\tabspace}}S[table-format=2.6]%
-@{\hspace{\tabspace}}S[table-format=1.5]%
-@{\hspace{\tabspace}}S[table-format=1.6]%
-}
-\toprule
-     & {T25W} & {9-HPT} & {PASAT} & {MSFC} & {EDSS} & {T2LL} \\
-\midrule
-LLG & 0.0889204058874592 & -0.299046682079096*** & -0.35652944988915*** & -0.414587036427664*** & 0.111910491023784* & 0.867904019287295*** \\
-LLO & 0.0955077933828887* & -0.29002627967845*** & -0.36828512897955*** & -0.41898534832637*** & 0.116889743878327* & 0.988979555746338*** \\
-LLP & 0.0896915607291051 & -0.300773510817976*** & -0.342386015914701*** & -0.411524441008343*** & 0.134054634214833** & 0.869216107742852*** \\
-\addlinespace
-T2LL & 0.0830609699877066 & -0.288809520550953*** & -0.370891003440786*** &
--0.415459123322053*** & 0.121219714387235* & {---} \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}
+% \caption{Segmentation results measured using the Dice Similarity Coefficient.
+% Two layer auto-encoder, stride size of \num{2x2x1}, 32 filters, sensitivity
+% ratio 0.05. Threshold finding methods: a) using a global threshold that
+% optimizes the average DSC of the entire data set, b) using the optimal
+% thresholds for each sample, and c) using predicted thresholds for each sample.}
+% \label{tab:segmentation}
+% \centering
+% \def\tabspace{12pt}
+% % \small
+% \begin{tabular}{@{}l%
+% @{\hspace{\tabspace}}S[table-format=1.3]%
+% @{\hspace{\tabspace}}S[table-format=1.3]
+% @{\hspace{\tabspace}}S[table-format=1.3]
+% @{\hspace{\tabspace}}S[table-format=1.3]
+% @{\hspace{\tabspace}}S[table-format=1.3]
+% @{\hspace{\tabspace}}S[table-format=1.3]
+% @{}}
+% \toprule
+% Method & \multicolumn{6}{c}{DSC per Lesion Load Category} \\
+% \addlinespace
+%  & {0.0--4.0} & {4.0--7.8} & {7.8--14.7} & {14.7--28.5} & {$>28.5$} &
+% {Average} \\
+% \midrule
+% Global threshold & 0.297805 & 0.545574 & 0.60051 & 0.650483 & 0.679614 &
+%  0.543181 \\ 
+% Optimal thresholds & 0.351185 & 0.568412 & 0.618115 & 0.667473 & 0.727397 &
+% 0.572716 \\
+% Predicted thresholds & 0.337834 & 0.550028 & 0.587458 & 0.653475 &
+% 0.716976 & 0.555662 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% 
+% \begin{table}
+% \caption{Correlations with biomarkers is comparable to the expert
+% segmentations. Threshold methods are: global threshold (LLG), optimal threshold
+% (LLO), and predicted threshold (LLP).}
+% \label{tab:cross}
+% \centering
+% \def\tabspace{14pt}
+% \begin{tabular}{c%
+% @{\hspace{\tabspace}}S[table-format=1.4]%
+% @{\hspace{\tabspace}}S[table-format=2.6]%
+% @{\hspace{\tabspace}}S[table-format=2.6]%
+% @{\hspace{\tabspace}}S[table-format=2.6]%
+% @{\hspace{\tabspace}}S[table-format=1.5]%
+% @{\hspace{\tabspace}}S[table-format=1.6]%
+% }
+% \toprule
+%      & {T25W} & {9-HPT} & {PASAT} & {MSFC} & {EDSS} & {T2LL} \\
+% \midrule
+% LLG & 0.0889204058874592 & -0.299046682079096*** & -0.35652944988915*** & -0.414587036427664*** & 0.111910491023784* & 0.867904019287295*** \\
+% LLO & 0.0955077933828887* & -0.29002627967845*** & -0.36828512897955*** & -0.41898534832637*** & 0.116889743878327* & 0.988979555746338*** \\
+% LLP & 0.0896915607291051 & -0.300773510817976*** & -0.342386015914701*** & -0.411524441008343*** & 0.134054634214833** & 0.869216107742852*** \\
+% \addlinespace
+% T2LL & 0.0830609699877066 & -0.288809520550953*** & -0.370891003440786*** &
+% -0.415459123322053*** & 0.121219714387235* & {---} \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
