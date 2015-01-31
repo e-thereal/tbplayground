@@ -1,0 +1,75 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{llncs}
+
+\usepackage{tikz}
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,positioning,shapes.geometric,matrix}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\usepackage[range-phrase = --]{siunitx}
+\usepackage{booktabs,amsmath,dsfont,etoolbox,multirow,calc}
+\usepackage{hyperref}
+\usepackage{subfigure}
+
+\robustify\bfseries % requires etoolbox
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\title{Segmentation of Multiple Sclerosis T2 Lesions using Convolutional Neural
+Networks}
+
+\author{%
+Tom Brosch\inst{1,3} \and
+Youngjin Yoo\inst{1,3} \and
+%David K.B. Li\inst{2,4} \and
+%Anthony Traboulsee\inst{3,4} \and
+Roger Tam\inst{2,3}}
+% \index{Brosch, Tom}
+% \index{Yoo, Youngjin}
+% \index{Li, David K.B.}
+% \index{Traboulsee, Anthony}
+% \index{Tam, Roger}
+
+\institute{%
+Department of Electrical and Computer Engineering, UBC
+\and Department of Radiology, UBC
+%\and Division of Neurology, UBC
+\and MS/MRI Research Group, University of British Columbia, Vancouver, Canada
+}
+
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\thetas}{\vec{\theta}}
+\newcommand{\mus}{\vec{\mu}}
+\newcommand{\data}{\mathcal{D}}
+\newcommand{\given}{\mid}
+\DeclareMathOperator{\sigm}{sigm}
+\DeclareMathOperator{\conj}{conj}
+\DeclareMathOperator{\fft}{fft}
+\DeclareMathOperator{\ifft}{ifft}
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\Q}{\ensuremath{\mathds{Q}}}
+\newcommand{\N}{\ensuremath{\mathds{N}}}
+\newcommand{\E}{\ensuremath{\mathds{E}}}
+\newcommand{\F}{\ensuremath{\mathcal{F}}}
+\newcommand{\Norm}{\ensuremath{\mathcal{N}}}
+
+\hyphenation{conv-RBM}
+\hyphenation{conv-RBMs}
+\hyphenation{sconv-RBM}
+\hyphenation{sconv-RBMs}
+
+\begin{document}
+
+\input{chapters/title}
+\setcounter{footnote}{0}
+\input{chapters/abstract}
+\input{chapters/introduction}
+\input{chapters/method}
+\input{chapters/results}
+\input{chapters/conclusions}
+\input{chapters/acknowledgements}
+
+\bibliographystyle{splncs}
+\bibliography{bib}
+
+\end{document}

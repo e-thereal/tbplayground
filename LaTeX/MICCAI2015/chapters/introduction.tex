@@ -1,0 +1,62 @@
+\section{Introduction}
+
+\paragraph{Motivation}
+\begin{itemize}
+  \item MS is a neuro-degenerative disease of the central nervous system
+  characterized by the formation of lesions
+  \item Accurate, reproducible and automatic segmentation of
+  lesions is important to assess disease progression, treatment affect, lesion
+  LL an important end-point of clinical trials
+\end{itemize}
+
+\paragraph{Related Work}
+
+\begin{itemize}
+  
+\item As a voxel-classification problem: early approaches. Using neural
+networks, unsupervised clustering and MS lesion as an outlier models.
+Sensitive to different contrasts.
+
+\item Patch-based with designed features, classify the center of a patch. Use
+more contextual information. More robust to changes in illumination than
+voxel-based approaches. Two phase approach: 1) extract features, 2) classify
+based on extracted features from a patch. E.g., design features and use a random
+forest.
+
+\item Patch-based with learned features. Membrane segmentation: perform
+classification in a single model. Combines feature learning phase and
+classification phase. Advantage, allows the fine-tuning of features to drive the
+classification during the training stage of the classifier.
+
+\item Common disadvantages of patch-based approaches: Too slow to use every
+possible patch during training. Requires careful selection of patches. Indirect
+optimization of final metric depends on selected patches. Result on the entire
+image can be much different from the results during training depending on the
+selected patches. Use only a small fraction of the available data.
+
+\end{itemize}
+
+\paragraph{Proposed Method}
+
+\begin{itemize}
+\item In this paper, we propose to use a neural network architectural that directly
+segments the entire image at once, without requiring the selection of patches. 
+
+\item Uses all available image data during training. 
+
+\item Allows to evaluate the segmentation performance at training time. Allows
+direct optimization of the similarity metric.
+
+\item Traditionally, NNs are trained using sum of squared differences. This
+metric is not suitable for the segmentation of MS lesions, because MS lesion
+segmentation is a highly unbalanced classification problem and a neural network
+trained with SSD would greatly favour one class.
+
+\item We propose to use a weighted sum of sensitivity and specificity error to
+better balance. We will show how convolutional neural networks can be trained
+using the modified objective function.
+
+\item We evaluated our method on a publicly available data set from the MS
+lesion segmentation challenge. We will show that our method can achieve state of
+the art segmentation performance on this data set.
+\end{itemize}

@@ -1,0 +1,80 @@
+\section{Methods}
+\label{sec:method}
+
+Given an image $I$ and a lesion mask $L$, segmentation of T2 lesions can be seen
+as finding a suitable function $s$ that maps image $I$ to segmentation $L$, $L =
+s(I)$. In this paper, we will treat finding a suitable segmentation algorithm as
+finding a function, that best performas the previous task for a given set of
+image--segmentation-pairs. That finding a suitable segmentation function is cast
+as an optimization problem. Given a set of images $I_i$ with ground truth
+segmentations $L_i$, the task of finding a suitable segmentation function can be
+formalized as
+\begin{equation} 
+\hat{s} = \arg \max_{s \in S} \sum_i \text{sim}(L_i, s(I_i)).
+\label{eq:segprob}
+\end{equation}
+where $\text{sim}$ denotes a function that calculates the similarity between
+ground truth segmentations and predicted segmentations, and $S$ is the set of
+possible functions. To solve optimations problems of this kind, we first need to
+define the set of allowed functions and the similarity measure.
+
+\subsection{Defining the Class of Segmentation Functions}
+
+In this paper, we propose to use artificial neural networks to model the class
+of allowed segmentation functions. Neural networks have shown to be a universal
+function approximator able to approximate the most complex functions. Designing
+the right network is key to finding a good segmentation. Regularization of the
+segmentation function is key, and can be build into the layout of the neural
+network. In particular, we propose to use a convolutional auto encoder like
+layout for the segmentation network, composed of two convolutional layers. The
+first layer takes an image as input and extracts image features that will then
+be used by the second layer to segment the image.
+
+\begin{align}
+\vect{h}^j &=
+\max\Big(0, \sum_{i}(\tilde{\vect{W}}^{ij}*_\text{v}\vect{x}^i) +
+b_j\Big)
+\\
+\vect{y} &= \sigm\Big(\sum_{j}(\vect{W}^{j}*_\text{f}\vect{h}^j) +
+b\Big)
+\end{align}
+
+With the typical objective function SSD defined as
+\begin{equation} 
+\text{SSD} = \sum_j (d_j - y_j)^2 
+\end{equation}
+you get the typical gradients as such. And in the convolutional case you get
+these gradients.
+
+\emph{Add equations of convolutional neural networks. Formalize the
+reconstruction layer.}
+
+\subsection{Similarity Measure}
+
+SSD is problematic for unbalanced classification tasks as the learning will
+greatly favor one class. A way around that would be to calculate the SSD for
+each class individually and then combine the two scores similar to the
+calculation of the balanced accuracy.
+\begin{equation} 
+\text{SSD}_\text{balanced} = \frac{\textstyle\sum_j (d_j - y_j)^2 d_j}{%
+\textstyle\sum_j d_j} + \frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
+\textstyle\sum_j (1 - d_j)}
+\end{equation}
+The first time measures the sensitivity and the second term measures the
+specificity. Due to the large number of negative samples in the case of lesion
+classification, the sensitivity and specificity and not equally important for a
+good classification result. It is therefore advantageous to weight the
+specificity higher than the sensitivity. To allow that, we introduce the
+sensitivity ratio $r_\text{sen}$, which yields the following objective function:
+\begin{equation} 
+\text{SSD}_\text{balanced} = r_\text{sen}\frac{\textstyle\sum_j (d_j - y_j)^2
+d_j}{\textstyle\sum_j d_j} 
++ (1-r_\text{sen})\frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
+\textstyle\sum_j (1 - d_j)}
+\end{equation}
+
+\subsection{Optimization Algorithm}
+
+Finally, the optimization problem can be solved by SGD. Given our new similarity
+measure, the gradient of the parameters of the neural network can be derived as
+follows: \emph{derive the gradients}
