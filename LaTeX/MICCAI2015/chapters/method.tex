@@ -1,35 +1,43 @@
 \section{Methods}
 \label{sec:method}
 
-Given an image $I$ and a lesion mask $L$, segmentation of T2 lesions can be seen
-as finding a suitable function $s$ that maps image $I$ to segmentation $L$, $L =
-s(I)$. In this paper, we will treat finding a suitable segmentation algorithm as
-finding a function, that best performas the previous task for a given set of
-image--segmentation-pairs. That finding a suitable segmentation function is cast
-as an optimization problem. Given a set of images $I_i$ with ground truth
-segmentations $L_i$, the task of finding a suitable segmentation function can be
-formalized as
-\begin{equation} 
-\hat{s} = \arg \max_{s \in S} \sum_i \text{sim}(L_i, s(I_i)).
+\paragraph{Problem definition}
+\begin{itemize}
+
+\item Segmentation is a function $s$ that maps an image $I$ to its segmentation
+$S$. That is $S = s(I)$.
+
+\item Given a set of training images $I_i$ and corresponding segmentations
+$S_i$, we treat finding an appropriate function for segmenting T2 lesions as an
+optimization problem of the following form:
+ \begin{equation} 
+\hat{s} = \arg \max_{s \in \mathcal{S}} \sum_i \text{sim}(S_i, s(I_i)).
 \label{eq:segprob}
 \end{equation}
 where $\text{sim}$ denotes a function that calculates the similarity between
-ground truth segmentations and predicted segmentations, and $S$ is the set of
-possible functions. To solve optimations problems of this kind, we first need to
-define the set of allowed functions and the similarity measure.
+ground truth segmentations and predicted segmentations, and $\mathcal{S}$ is the
+set of possible functions.
+\end{itemize}
 
-\subsection{Defining the Class of Segmentation Functions}
-
-In this paper, we propose to use artificial neural networks to model the class
-of allowed segmentation functions. Neural networks have shown to be a universal
-function approximator able to approximate the most complex functions. Designing
-the right network is key to finding a good segmentation. Regularization of the
-segmentation function is key, and can be build into the layout of the neural
-network. In particular, we propose to use a convolutional auto encoder like
-layout for the segmentation network, composed of two convolutional layers. The
-first layer takes an image as input and extracts image features that will then
-be used by the second layer to segment the image.
-
+\paragraph{Class of Segmentation Functions}
+\begin{itemize}
+\item We propose to use neural networks to model the class of allowed
+segmentation functions.
+\item Neural networks are very flexible and able to learn highly non-linear
+functions, which makes them suitable for image segmentation.
+\item Can be efficiently learned from training data using gradient descent.
+\item Architecture of the neural network can be used to regularize the functions
+that can be learned
+\item We propose a combined convolutional-deconvolutional neural network with
+one convolutional and one deconvolutional layer.
+\item Convolutional neural network because it scales better to high-resolution
+images and is better regularized than dense networks
+\item Filter size can regular local support.
+\item Future work: use more layers to achieve a hierarchical segmentation
+method, but this paper, focus on the simplest possible network to evaluate the
+potential of such an approach.
+\item Better to understand a simple model first.
+\item Inference in the convolutional and deconvolutional layer
 \begin{align}
 \vect{h}^j &=
 \max\Big(0, \sum_{i}(\tilde{\vect{W}}^{ij}*_\text{v}\vect{x}^i) +
@@ -38,21 +46,24 @@ b_j\Big)
 \vect{y} &= \sigm\Big(\sum_{j}(\vect{W}^{j}*_\text{f}\vect{h}^j) +
 b\Big)
 \end{align}
+\item Figure of pre-training and fine-tuning or just fine-tuning.
+\item Relationship to general segmentation problem
+\begin{align}
+\vect{x} &= I \\
+\vect{y} &= S 
+\end{align}
+\end{itemize}
 
-With the typical objective function SSD defined as
+\paragraph{Similarity Measure}
+\begin{itemize}
+\item Neural networks are traditionally trained with SSD
 \begin{equation} 
 \text{SSD} = \sum_j (d_j - y_j)^2 
 \end{equation}
-you get the typical gradients as such. And in the convolutional case you get
-these gradients.
-
-\emph{Add equations of convolutional neural networks. Formalize the
-reconstruction layer.}
-
-\subsection{Similarity Measure}
-
-SSD is problematic for unbalanced classification tasks as the learning will
-greatly favor one class. A way around that would be to calculate the SSD for
+\item SSD is problematic for unbalanced classification tasks as the learning will
+greatly favor one class.
+\item
+A way around that would be to calculate the SSD for
 each class individually and then combine the two scores similar to the
 calculation of the balanced accuracy.
 \begin{equation} 
@@ -60,21 +71,70 @@ calculation of the balanced accuracy.
 \textstyle\sum_j d_j} + \frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
 \textstyle\sum_j (1 - d_j)}
 \end{equation}
-The first time measures the sensitivity and the second term measures the
-specificity. Due to the large number of negative samples in the case of lesion
+The first term measures the sensitivity and the second term measures the
+specificity.
+\item Due to the large number of negative samples in the case of lesion
 classification, the sensitivity and specificity and not equally important for a
-good classification result. It is therefore advantageous to weight the
+good classification result. 
+\item It is therefore advantageous to weight the
 specificity higher than the sensitivity. To allow that, we introduce the
-sensitivity ratio $r_\text{sen}$, which yields the following objective function:
+sensitivity ratio $r_\text{sen}$, which yields to the following objective
+function:
 \begin{equation} 
 \text{SSD}_\text{balanced} = r_\text{sen}\frac{\textstyle\sum_j (d_j - y_j)^2
 d_j}{\textstyle\sum_j d_j} 
 + (1-r_\text{sen})\frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
 \textstyle\sum_j (1 - d_j)}
 \end{equation}
+\item Derive gradients
+\end{itemize}
 
-\subsection{Optimization Algorithm}
+\paragraph{Prevent Overfitting}
+\begin{itemize}
+\item Two main sources: 1) bias terms highly tuned to lesion locations observed
+in the training data, and 2) filters tuned to the intensity range observed in
+the training data
+\item Use shared bias terms and add lesion prior calculated from a large data
+set plus smoothing
+\item Use data augmentation, i.e. during training, randomly change the
+brightness contrast and gamma correction of the training images to artificially
+increase the intensity variability in the training set
+\end{itemize}
 
-Finally, the optimization problem can be solved by SGD. Given our new similarity
-measure, the gradient of the parameters of the neural network can be derived as
-follows: \emph{derive the gradients}
+\paragraph{Training Pipeline}
+\begin{itemize}
+\item Downsample training images and training segmentations from
+\SI{0.5x0.5x0.5}{\milli\meter} to \SI{1x1x1}{\milli\meter} voxel resolution.
+\item Perform brain extraction
+\item Crop to smallest ROI
+\item Pad all images to standard size
+\item[$\Rightarrow$] Calculate combined cropping parameters
+\item Perform training of the NN on the downsampled training set
+\item Calculate probability maps for the entire downsampled training set
+\item Upsample the probability maps to the native resolution
+\item Crop lesion masks in native resolution to fit the same ROI as the
+upsampled probability masks
+\item Choose the threshold that maximizes the DSC in the training set 
+\end{itemize}
+
+\paragraph{Testing Pipeline}
+\begin{itemize}
+\item Downsample test image
+\item Perform brain extraction
+\item Apply combined cropping parameters
+\item Infer probability using the downsampled images
+\item Upsample the probability map to the native resolution
+\item Apply threshold
+\item Crop lesion masks to combined cropping parameters in native resolution
+space
+\item Compare segmentation
+\end{itemize}
+
+
+
+
+
+
+
+
+
