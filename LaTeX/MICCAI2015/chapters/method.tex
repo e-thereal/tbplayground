@@ -52,6 +52,13 @@ b\Big)
 \vect{x} &= I \\
 \vect{y} &= S 
 \end{align}
+\item Gradients:
+\begin{align}
+\delta^{(n_l)}&=-(y-a^{(n_l)})f'(z^{(n_l)}) \\
+\delta^{(l)}&=((W^{(l)})^T\delta^{(l+1)})f'(z^{(l)})\\
+\nabla_{W^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}(a^{(l)})^T\\
+\nabla_{b^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}
+\end{align}
 \end{itemize}
 
 \paragraph{Similarity Measure}
