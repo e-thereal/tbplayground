@@ -12,51 +12,104 @@
 \paragraph{Related Work}
 
 \begin{itemize}
+
+\item Lesion segmentation is treated as a voxel classification problem, where
+algorithms mostly differ in the choice of features and the type of
+classification algorithm.
+
+\item The classification problem itself can then be solved either in a
+supervised way using, e.g., artificial neural networks \cite{zijdenbos1994} or
+random forests \cite{geremia2010}, or unsupervised using clustering methods with
+one outlier class \cite{souplet2008} or by treating lesions as an outlier of a
+generative model \cite{weiss2013}.
+
+\item Trend from simple intensity based features to more complex features
+extracted or learned from image patches.
   
-\item As a voxel-classification problem: early approaches. Using neural
-networks, unsupervised clustering and MS lesion as an outlier models.
-Sensitive to different contrasts.
+\item Early approaches use the intensity values of different modalities at a
+particular voxel as the input features \cite{zijdenbos1994}.
 
-\item Patch-based with designed features, classify the center of a patch. Use
-more contextual information. More robust to changes in illumination than
-voxel-based approaches. Two phase approach: 1) extract features, 2) classify
-based on extracted features from a patch. E.g., design features and use a random
-forest.
+\item However, simple intensity features can be sensitive to intensity
+variations between images. Carefully chosen context-rich features are more
+robust \cite{geremia2010} to intensity variations.
 
-\item Patch-based with learned features. Membrane segmentation: perform
-classification in a single model. Combines feature learning phase and
-classification phase. Advantage, allows the fine-tuning of features to drive the
-classification during the training stage of the classifier.
+\item Youngjin et. al proposed to learn domain specific features
+from image patches from an unlabelled data set using unsupervised feature
+learning \cite{yoo2014}.
 
-\item Common disadvantages of patch-based approaches: Too slow to use every
-possible patch during training. Requires careful selection of patches. Indirect
-optimization of final metric depends on selected patches. Result on the entire
-image can be much different from the results during training depending on the
-selected patches. Use only a small fraction of the available data.
+\item In the context of the segmentation of cell membranes, Ciresan et. al
+proposed to perform classification of image patches directly using a
+convolutional neural network without a dedicated feature extraction step
+\cite{Ciresan2012}. Features are learned indirectly within the lower layers of
+the neural network during training, while the higher layers can be regarded as
+performing the classification.
+
+\item Advantage, allows the fine-tuning of features that are useful for the
+classification task.
+
+\item The time required to train complex patch-based feature extraction methods
+can make the approach infeasible when the size and the number of patches is
+large. \cite{Ciresan2012} reported a training time of more than a week to train
+their patch-based segmentation model using 4 GPUs using 2D images with a
+resolution of \num{512x512} pixels. To scale patch-based classification to 3D
+images with a resolution of \num{256x256x50}, Youngjin et.
+al used only a small fraction (\SI{0.1}{\percent}) of the possible patches for
+training, which might lead to suboptimal learning due to introducing a bias of
+the learned model towards the selected patches.
 
 \end{itemize}
 
 \paragraph{Proposed Method}
 
 \begin{itemize}
-\item In this paper, we propose to use a neural network architectural that directly
-segments the entire image at once, without requiring the selection of patches. 
 
-\item Uses all available image data during training. 
+% Main contribution first
+\item In this paper, we propose a novel method for segmenting MS lesions that
+outperforms the state-of-the-art on the MICCAI 2008 lesion segmentation
+challenge data set, the most widely used publicly available clinical data set
+for comparing lesion segmentation methods. (Both is to the best of our
+knowledge). Might rephrase to comparable to the state of the art on this data
+set depending on how my latest cross-validation experiment goes.
 
-\item Allows to evaluate the segmentation performance at training time. Allows
-direct optimization of the similarity metric.
+% What it is
+\item Our network is a combination of a convolutional and a deconvolutional
+neural network. The first layer is a convolutional layer \cite{LeCun1998} that
+extracts features from multi-modal MRIs at each voxel location. The second layer
+is a deconvolutional layer \cite{zeiler2011} that uses the features extracted by
+the first layer to classify each voxel of the image in a single operation. Given
+a training set consisting of MRIs and lesion masks, the parameters of the model
+can be learned using stochastic gradient descent.
 
+\item Our network is similar in architecture to convolutional auto-encoder
+networks but instead of predicting the input itself, our network will be trained
+on images to predict lesions. Due to the similarity to auto-encoder networks, we
+will call our network architecture a convolutional encoder network (CEN).
+
+% Why it is great
+\item A major advantage compared to patch-based approaches is that our approach
+does not require the selection of patches because it uses all voxels of an
+image.
+
+\item Our model is fast because we can segment an entire image in a single
+feed-forward pass through the network. Allows to evaluate the segmentation
+performance at training time. Allows direct maximization of the similarity
+between predicted and ground truth segmentation during the training stage.
+
+\item Combined feature learning and classification like the membrane paper.
+Learns features that are tuned for the classification task, instead of using a
+set of general features. But scales much better to high-resolution 3D volumes.
+
+% Challenge
 \item Traditionally, NNs are trained using sum of squared differences. This
 metric is not suitable for the segmentation of MS lesions, because MS lesion
 segmentation is a highly unbalanced classification problem and a neural network
 trained with SSD would greatly favour one class.
 
-\item We propose to use a weighted sum of sensitivity and specificity error to
-better balance. We will show how convolutional neural networks can be trained
-using the modified objective function.
+% How we overcome the challenge
+\item The second contribution is our new proposed objective function that allows
+NN to be applied to the voxel-wise classification in the case of very unbalanced
+classification problems. We propose to use a weighted sum of sensitivity and
+specificity error to better balance. We will show how convolutional neural
+networks can be trained using the modified objective function.
 
-\item We evaluated our method on a publicly available data set from the MS
-lesion segmentation challenge. We will show that our method can achieve state of
-the art segmentation performance on this data set.
 \end{itemize}
