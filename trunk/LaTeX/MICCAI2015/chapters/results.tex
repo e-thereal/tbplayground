@@ -20,10 +20,11 @@ check if I can get Tianming Zhan and  BRICQ St\'ephanie papers. Can't compare to
 Xavier Tomas-Fernandez, because he didn't compute TPR, PPV, or DSC.
 
 \item Sensitivity analysis. Will be performed with best parameters as baseline.
-Parameters to be varied are: a) sensitivity ratio, b) number of epochs for
-training, c) filter size, d) number of filters, and e) number of training cases.
-In all cases, I will compare the influence on the training and testing DSC and
-the best threshold.
+Parameters to be varied are: a) sensitivity ratio (0.05, 0.02, 0.01), b) number
+of epochs for training, c) filter size (13, 11, 9, 7, 5), d) number of filters
+(64, 32, 16), and e) number of training cases (2-fold, 3-fold, 4-fold, and
+5-fold CV). In all cases, I will compare the influence on the training and
+testing DSC and the best threshold.
 
 \item Does the train performance correlate with the lesion load? Visualize good,
 average and bad example. If it correlates with lesion load, visualize examples
@@ -38,21 +39,24 @@ and I don't need to worry about explaining strided convolutions.
 
 \item \emph{Optional}\quad Visualization of filters.
 
-\item \emph{Optional}\quad ROC-like curve for TPR and PPV for our method. Put
-competing methods as dots into the chart.
+\item \emph{Optional}\quad Evaluation on BioMS using stride-1 convolutions and
+new pre-processing pipeline with and without lesion prior, with individual and
+shared bias terms. Metrics: TPR, PPV, DSC, correlations with lesion load and
+clinical scores.
 
 \end{itemize}
 
-The algorithm will be evaluated on the BioMS data set, some other internal data
-sets, the MICCAI 2008 MS Lesion Segmentation Challenge data set, and the ISBI
-2015 MS Lesion Segmentation Challenge data set. We can't do much with BioMS,
-because it doesn't have FLAIR, which is required by other freely available
-methods. If we can get ground truth for data sets that have FLAIR, we can
-compare it against Lesion Toad and WMLS from UPenn. In any case, we can compare
-our method with other methods using the data provided by the segmentation
-challenges. We will use the following metrics: DSC, Sensitivity, Specificity,
-and PPV.
-\begin{table}[ht]
+% The algorithm will be evaluated on the BioMS data set, some other internal data
+% sets, the MICCAI 2008 MS Lesion Segmentation Challenge data set, and the ISBI
+% 2015 MS Lesion Segmentation Challenge data set. We can't do much with BioMS,
+% because it doesn't have FLAIR, which is required by other freely available
+% methods. If we can get ground truth for data sets that have FLAIR, we can
+% compare it against Lesion Toad and WMLS from UPenn. In any case, we can compare
+% our method with other methods using the data provided by the segmentation
+% challenges. We will use the following metrics: DSC, Sensitivity, Specificity,
+% and PPV.
+
+\begin{table}[htb]
 \def\tabspace{12pt}
 \sisetup{
   round-precision = 2,

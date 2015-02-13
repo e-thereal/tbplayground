@@ -32,68 +32,121 @@ that can be learned
 one convolutional and one deconvolutional layer.
 \item Convolutional neural network because it scales better to high-resolution
 images and is better regularized than dense networks
-\item Filter size can regular local support.
-\item Future work: use more layers to achieve a hierarchical segmentation
-method, but this paper, focus on the simplest possible network to evaluate the
-potential of such an approach.
-\item Better to understand a simple model first.
-\item Inference in the convolutional and deconvolutional layer
+\item Filter size can regularize local support.
+\item Inference in the convolutional and deconvolutional layer. The first
+layer input units are set to the voxel intensities of the input image
+$x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$,
+$x^{(1)}_3 = I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
+\begin{equation}
+y^{(1)}_j = \max \left(0, \sum_{i=1}^{4}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
+b^{(1)}_j\right)
+\end{equation}
+the input units of the deconvolutional layer are set to the outputs
+of the convolutional layer $x^{(2)}_j = y^{(1)}_j$, and $S = y^{(2)}$.
+\begin{equation}
+y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
+b^{(2)}\right)
+\end{equation}
+\item The parameters can be trained by back-propagation using the delta rule
 \begin{align}
-\vect{h}^j &=
-\max\Big(0, \sum_{i}(\tilde{\vect{W}}^{ij}*_\text{v}\vect{x}^i) +
-b_j\Big)
+% Error function
+E &= \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
 \\
-\vect{y} &= \sigm\Big(\sum_{j}(\vect{W}^{j}*_\text{f}\vect{h}^j) +
-b\Big)
+% Delta update
+\delta^{(2)} &= \big(y^{(2)} -S\big)y^{(2)}\big(1-y^{(2)}\big)
+\end{align}
+\begin{align}
+% Weight update
+\frac{\partial E}{\partial w^{(2)}_j} &= \delta^{(2)} * \tilde{x}^{(2)}_j \\
+% Bias update
+\frac{\partial E}{\partial b^{(2)}} &= \frac{1}{N^3}\sum_{\vect{p}}
+\delta^{(2)}(\vect{p})
+% Convolutional model
+\end{align}
+And for the convolutional layer
+\begin{equation}
+% Delta update
+\delta^{(1)}_j = \big(w^{(2)}_{j}\circledast\delta^{(2)}\big)\I\big(y^{(1)}_j >
+0\big)
+\end{equation}
+\begin{align}
+% Weight update
+\frac{\partial E}{\partial w^{(1)}_{ij}} &= x^{(1)}_i * \tilde{\delta}^{(1)}_j\\
+% Bias update
+\frac{\partial E}{\partial b^{(1)}_j} &= \frac{1}{M^3}\sum_{\vect{q}}
+\delta^{(1)}_j(\vect{q})
 \end{align}
 \item Figure of pre-training and fine-tuning or just fine-tuning.
-\item Relationship to general segmentation problem
-\begin{align}
-\vect{x} &= I \\
-\vect{y} &= S 
-\end{align}
-\item Gradients:
-\begin{align}
-\delta^{(n_l)}&=-(y-a^{(n_l)})f'(z^{(n_l)}) \\
-\delta^{(l)}&=((W^{(l)})^T\delta^{(l+1)})f'(z^{(l)})\\
-\nabla_{W^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}(a^{(l)})^T\\
-\nabla_{b^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}
-\end{align}
+% \item Relationship to general segmentation problem
+% \begin{align}
+% \vect{x} &= I \\
+% \vect{y} &= S 
+% \end{align}
+% \item Gradients:
+% \begin{align}
+% \delta^{(n_l)}&=-(y-a^{(n_l)})f'(z^{(n_l)}) \\
+% \delta^{(l)}&=((W^{(l)})^T\delta^{(l+1)})f'(z^{(l)})\\
+% \nabla_{W^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}(a^{(l)})^T\\
+% \nabla_{b^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}
+% \end{align}
 \end{itemize}
 
 \paragraph{Similarity Measure}
 \begin{itemize}
-\item Neural networks are traditionally trained with SSD
-\begin{equation} 
-\text{SSD} = \sum_j (d_j - y_j)^2 
-\end{equation}
 \item SSD is problematic for unbalanced classification tasks as the learning will
 greatly favor one class.
-\item
-A way around that would be to calculate the SSD for
-each class individually and then combine the two scores similar to the
-calculation of the balanced accuracy.
+\item To overcome this problem, we calculate the mean squared difference for
+lesion and non-lesion voxels separately and then calculate the weighted sum of
+the two terms form the final error measure
+\begin{multline} 
+E = r_\text{sen}\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
+ \\  +
+(1-r_\text{sen})\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
+\textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
+\end{multline}
+In the binary case, the first term is equal to 1 minus the sensitivity and
+the second term is equivalent to 1 minus the specificity. We will therefore call
+these to terms sensitivity and specificity error.
+
+\item The sensitivity ratio $r_\text{sen}$ can be used to assign different
+weights to the two terms. Due to the large number of non-lesion voxels,
+weighting the specificity higher than the sensitivity gives better segmentation
+results in practice. We've found that a sensitivity ratio between 0.1 and 0.01
+gives works best in practice. While the actual choice of the sensitivity ratio
+has a big impact on the optimal threshold, the segmentation result is not
+sensitive to the sensitivity ratio.
+
+% \begin{align} 
+% \alpha &= \frac{2r_\text{sen}}{\textstyle\sum_{\vect{p}}S(\vect{p})}
+% &\text{and}& & \beta &= \frac{2(1 - r_\text{sen})}{\textstyle\sum_{\vect{p}}(1 - S(\vect{p}))}
+% \end{align}
+
+\item Equations (6) to (10) are a consequence of the chain rule of derivatives
+and independent of the chosen similarity measure, so we only need to derive the
+new update rule for $\delta^{(2)}$. With $\alpha = 2r_\text{sen}
+(\sum_{\vect{p}}S(\vect{p}))^{-1}$ and $\beta = 2(1 -
+r_\text{sen})(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$ we can rewrite $E$ as
+\begin{align} 
+E &= \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+\alpha S(\vect{p}) +
+\frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+\beta\big(1 - S(\vect{p})\big) \\
+ &= \frac{1}{2}\sum_{\vect{p}} \big(\alpha S(\vect{p}) +
+ \beta(1 - S(\vect{p}))\big)
+ \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+\end{align}
+The first term does not depend on $y$ and is therefore constant with respect to
+the model parameters. The second term is identical to the sum of squared
+difference objective function. The derivatives and therefore delta 2 is
+also identical to the SSD, whereby the constant term is carried over to the
+delta update as follows
 \begin{equation} 
-\text{SSD}_\text{balanced} = \frac{\textstyle\sum_j (d_j - y_j)^2 d_j}{%
-\textstyle\sum_j d_j} + \frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
-\textstyle\sum_j (1 - d_j)}
+\delta^{(2)} = \big(\alpha S + \beta (1 - S)\big)\big(y^{(2)} - S\big) y^{(2)}
+\big(1 - y^{(2)}\big)
 \end{equation}
-The first term measures the sensitivity and the second term measures the
-specificity.
-\item Due to the large number of negative samples in the case of lesion
-classification, the sensitivity and specificity and not equally important for a
-good classification result. 
-\item It is therefore advantageous to weight the
-specificity higher than the sensitivity. To allow that, we introduce the
-sensitivity ratio $r_\text{sen}$, which yields to the following objective
-function:
-\begin{equation} 
-\text{SSD}_\text{balanced} = r_\text{sen}\frac{\textstyle\sum_j (d_j - y_j)^2
-d_j}{\textstyle\sum_j d_j} 
-+ (1-r_\text{sen})\frac{\textstyle\sum_j (d_j - y_j)^2 (1 - d_j)}{%
-\textstyle\sum_j (1 - d_j)}
-\end{equation}
-\item Derive gradients
+
 \end{itemize}
 
 \paragraph{Prevent Overfitting}
