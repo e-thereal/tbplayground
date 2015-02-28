@@ -10,9 +10,62 @@
 
 \section{Experiments and Results}
 
+To allow for a direct comparison to other state of the art lesion segmentation
+methods, we have evaluated our method on the 20 labeled images from the MICCAI
+lesion segmentation challenge. Our preprocessing pipeline includes downsampling
+to \SI{1x1x1}{\milli\metre} resolution, global contrast normalization, brain
+extraction. We have then cropped the images to a \num{159x203x153} region of
+interest. To evaluate the performance, we have divided the data set into 5
+splits with each split containing 16 images for training and 4 images for
+testing such that each image will be used exactly once for testing. For all
+experiments, we have used a filter size of \num{9x9x9}, 32 filters and trained
+the model for 4000 epochs. Training took approximately 36 hours on a single
+Geforce GTX 760 graphics card. Once the model is trained, segmentation of a
+single image can be performed in approximately one second.\todo{Statistics
+about lesion load (range, mean) for both data sets.}
+
+To evaluate the impact of the training set size on the segmentation result, we
+have evaluated our model on different subsets of a data set from an MS clinical
+trail. With data set contained T2w and PDw images from 500 subjects at a single
+time point. We have divided the data set into a training and test set containing
+250 images each. We have then trained our model on a varying number of image
+from the training set and evaluated to segmentation performance on both the
+selected training samples and all images of the test set. The result of this
+test is illustrated in Figure~\ref{fig:bioms}. If the training set size is too
+small, features learned by our model are only representative for a subset of
+lesions resulting on a relatively poor performance on the test set. As the
+number of training samples is increased, the amount of overfitting is reduced
+resulting in increasingly better performance on the test set.
+
+% \paragraph{Training Pipeline}
+% \begin{itemize}
+% \item Downsample training images and training segmentations from
+% \SI{0.5x0.5x0.5}{\milli\meter} to \SI{1x1x1}{\milli\meter} voxel resolution.
+% \item Perform brain extraction
+% \item Crop to smallest ROI
+% \item Pad all images to standard size
+% \item[$\Rightarrow$] Calculate combined cropping parameters
+% \item Perform training of the NN on the downsampled training set
+% \item Calculate probability maps for the entire downsampled training set
+% \item Upsample the probability maps to the native resolution
+% \item Crop lesion masks in native resolution to fit the same ROI as the
+% upsampled probability masks
+% \item Choose the threshold that maximizes the DSC in the training set 
+% \end{itemize}
+
 \paragraph{Experiments to come}
 
 \begin{itemize}
+
+\begin{figure}[tb]
+\centering
+\missingfigure{Good and bad examples including FLAIR, T2w, combined ground
+truth and predicted segmentation with green TP, red FP, blue FN, black TN.}
+\caption{Example segmentation using our method. Comment while the method
+performed poorly. Maybe it just was a very difficult case.}
+\end{figure}
+
+\item Visualize segmentation performance. Show a good and a bad example.
   
 \item Comparison with state-of-the-art methods. I will compare our method to
 Geremia, dictionary learning and Souplet in terms of TPR, PPV, and DSC. Need to
@@ -71,50 +124,51 @@ clinical scores.
 \toprule
 Method & {TPR} & {PPV} & {DSC} \\ 
 \midrule
-Souplet et. al & 20.65 & 30.00 & {---} \\ 
-Weiss et. al & 33.00 & 36.85 & 29.05 \\ 
-Geremia et. al & 39.85 & 40.35 & {---}  \\ 
-Our method & 41.49 & 36.90 & 34.20 \\
-Interleave & 41.81 & 35.48 & 34.79 \\
-Augmented  & 44.69 & 35.67 & 35.69 \\
-SenRatio   & 41.94 & 38.13 & 35.04 \\
+Souplet et. al (2008) & 20.65 & 30.00 & {---} \\ 
+Weiss et. al (2013) & 33.00 & 36.85 & 29.05 \\ 
+Geremia et. al (2010) & 39.85 & 40.35 & {---}  \\
+Our method & 39.71210 & 41.38274 & 35.52401 \\
+%Our method & 41.49 & 36.90 & 34.20 \\
+%Interleave & 41.81 & 35.48 & 34.79 \\
+%Augmented  & 44.69 & 35.67 & 35.69 \\
+%SenRatio   & 41.94 & 38.13 & 35.04 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% \begin{table}
-% \caption{Segmentation results measured using the Dice Similarity Coefficient.
-% Two layer auto-encoder, stride size of \num{2x2x1}, 32 filters, sensitivity
-% ratio 0.05. Threshold finding methods: a) using a global threshold that
-% optimizes the average DSC of the entire data set, b) using the optimal
-% thresholds for each sample, and c) using predicted thresholds for each sample.}
-% \label{tab:segmentation}
-% \centering
-% \def\tabspace{12pt}
-% % \small
-% \begin{tabular}{@{}l%
-% @{\hspace{\tabspace}}S[table-format=1.3]%
-% @{\hspace{\tabspace}}S[table-format=1.3]
-% @{\hspace{\tabspace}}S[table-format=1.3]
-% @{\hspace{\tabspace}}S[table-format=1.3]
-% @{\hspace{\tabspace}}S[table-format=1.3]
-% @{\hspace{\tabspace}}S[table-format=1.3]
-% @{}}
-% \toprule
-% Method & \multicolumn{6}{c}{DSC per Lesion Load Category} \\
-% \addlinespace
-%  & {0.0--4.0} & {4.0--7.8} & {7.8--14.7} & {14.7--28.5} & {$>28.5$} &
-% {Average} \\
-% \midrule
-% Global threshold & 0.297805 & 0.545574 & 0.60051 & 0.650483 & 0.679614 &
-%  0.543181 \\ 
-% Optimal thresholds & 0.351185 & 0.568412 & 0.618115 & 0.667473 & 0.727397 &
-% 0.572716 \\
-% Predicted thresholds & 0.337834 & 0.550028 & 0.587458 & 0.653475 &
-% 0.716976 & 0.555662 \\
-% \bottomrule
-% \end{tabular}
-% \end{table}
+\begin{table}
+\caption{Segmentation results measured using the Dice Similarity Coefficient.
+Two layer auto-encoder, stride size of \num{2x2x1}, 32 filters, sensitivity
+ratio 0.05. Threshold finding methods: a) using a global threshold that
+optimizes the average DSC of the entire data set, b) using the optimal
+thresholds for each sample, and c) using predicted thresholds for each sample.}
+\label{tab:segmentation}
+\centering
+\def\tabspace{10pt}
+% \small
+\begin{tabular}{@{}l%
+@{\hspace{\tabspace}}S[table-format=1.3]%
+@{\hspace{\tabspace}}S[table-format=1.3]
+@{\hspace{\tabspace}}S[table-format=1.3]
+@{\hspace{\tabspace}}S[table-format=1.3]
+@{\hspace{\tabspace}}S[table-format=1.3]
+@{\hspace{\tabspace}}S[table-format=1.3]
+@{}}
+\toprule
+Method & \multicolumn{6}{c}{DSC per Lesion Load Category} \\
+\addlinespace
+ & {0.0--4.0} & {4.0--7.8} & {7.8--14.7} & {14.7--28.5} & {$>28.5$} &
+{Average} \\
+\midrule
+Global threshold &  0.297805 & 0.545574 & 0.60051 & 0.650483 & 0.679614 &
+ 0.543181 \\
+Optimal thresholds & 0.351185 & 0.568412 & 0.618115 & 0.667473 & 0.727397 &
+0.572716 \\
+Predicted thresholds & 0.337834 & 0.550028 & 0.587458 & 0.653475 &
+0.716976 & 0.555662 \\
+\bottomrule
+\end{tabular}
+\end{table}
 % 
 % \begin{table}
 % \caption{Correlations with biomarkers is comparable to the expert
