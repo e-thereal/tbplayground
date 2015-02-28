@@ -1,0 +1,26 @@
+Dr. Marleen de Bruijne: Transfer learning, segmentation, MS lesion segmentation, recent TMI paper on lesion segmentation
+
+Hayit Greenspan: segmentation, CT lesions, MS, met her at MICCAI. Was a bit awkward
+
+Koen Van Leemput: A lot of brain segmentation. Also tumor segmentation. Hosted the BraTS challenge last year, did lesion segmentation 10 years ago.
+
+Guido Gerig: lesion segmentation, but does a lot
+
+Heinz Handels: Does a lot. Also has a paper on lesion segmenation (not MS) using RFs
+
+-------------------------------------------------------------------------------
+
+Hervé Delingette: from inria, but mostly segmentation using deformable models
+
+Alexandre Falcão: segmentation but mostly live-wire stuff
+
+Ivana Isgum: Segmentation of neonatal brain MRIs, but not lesions
+
+Marc Niethammer: lots of segmentation work, but not brain or lesions
+
+Sebastien Ourselin: brain segmentation mostly atlas based
+
+Kilian Pohl: segmentation, registration, atlas-based, deformation-based, shape-based
+
+
+Jing Yuan: a lot of segmentation papers in good conferences (recent work), mostly optimization person

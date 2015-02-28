@@ -1,5 +1,5 @@
 #TeXlipse project settings
-#Wed Jan 28 13:24:28 PST 2015
+#Tue Feb 24 14:37:13 PST 2015
 markTmpDer=true
 builderNum=2
 outputDir=
@@ -7,8 +7,8 @@ makeIndSty=
 bibrefDir=
 outputFormat=pdf
 tempDir=tmp
-mainTexFile=paper.tex
-outputFile=paper.pdf
+mainTexFile=paper110.tex
+outputFile=paper110.pdf
 langSpell=en
 markDer=true
 srcDir=

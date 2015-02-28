@@ -14,4 +14,11 @@
 	<natures>
 		<nature>net.sourceforge.texlipse.builder.TexlipseNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>tikz.tex</name>
+			<type>1</type>
+			<location>/res1/software/texlive/current/texmf-dist/tex/plain/pgf/frontendlayer/tikz.tex</location>
+		</link>
+	</linkedResources>
 </projectDescription>

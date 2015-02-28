@@ -1,52 +1,112 @@
 \section{Methods}
 \label{sec:method}
 
-\paragraph{Problem definition}
-\begin{itemize}
-
-\item Segmentation is a function $s$ that maps an image $I$ to its segmentation
-$S$. That is $S = s(I)$.
-
-\item Given a set of training images $I_i$ and corresponding segmentations
-$S_i$, we treat finding an appropriate function for segmenting T2 lesions as an
-optimization problem of the following form:
- \begin{equation} 
-\hat{s} = \arg \max_{s \in \mathcal{S}} \sum_i \text{sim}(S_i, s(I_i)).
+In this paper, the task of segmenting MS lesions is defined as finding a
+function $s$ that maps multi-modal images $I$, e.g., $I = (I_\text{flair},
+I_\text{t1}, I_\text{t2})$, to corresponding lesion masks $S$.
+Given a set of training images $I_n$, $n \in \N$, and corresponding
+segmentations $S_n$, we model finding an appropriate function for segmenting
+MS lesions as an optimization problem of the following form
+\begin{equation}
+\hat{s} = \arg \max_{s \in \mathcal{S}} \sum_n \text{sim}(S_n, s(I_n)).
 \label{eq:segprob}
 \end{equation}
 where $\text{sim}$ denotes a function that calculates the similarity between
 ground truth segmentations and predicted segmentations, and $\mathcal{S}$ is the
-set of possible functions.
-\end{itemize}
+set of possible segmentation functions.
 
-\paragraph{Class of Segmentation Functions}
-\begin{itemize}
-\item We propose to use neural networks to model the class of allowed
-segmentation functions.
-\item Neural networks are very flexible and able to learn highly non-linear
-functions, which makes them suitable for image segmentation.
-\item Can be efficiently learned from training data using gradient descent.
-\item Architecture of the neural network can be used to regularize the functions
-that can be learned
-\item We propose a combined convolutional-deconvolutional neural network with
-one convolutional and one deconvolutional layer.
-\item Convolutional neural network because it scales better to high-resolution
-images and is better regularized than dense networks
-\item Filter size can regularize local support.
-\item Inference in the convolutional and deconvolutional layer. The first
-layer input units are set to the voxel intensities of the input image
-$x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$,
-$x^{(1)}_3 = I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
+% where $x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$, $x^{(1)}_3 =
+%  I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
+
+% \paragraph{Problem definition}
+% \begin{itemize}
+% 
+% \item Given a set of multi-modal images $I_n = (I_{n, \text{flair}})$ and
+% corresponding segmentations $S_n$, we define the task of finding an appropriate
+% segmentation algorithm, as the task of finding a function $s$ that maps images
+% to their segmentations, i.e. $S_n = s(I_n)$.
+% 
+% \item Segmentation is a function $s$ that maps an image $I$ to its segmentation
+% $S$. That is $S = s(I)$.
+% 
+% \item Given a set of training images $I_i$ and corresponding segmentations
+% $S_i$, we treat finding an appropriate function for segmenting T2 lesions as an
+% optimization problem of the following form:
+%  \begin{equation} 
+% \hat{s} = \arg \max_{s \in \mathcal{S}} \sum_n \text{sim}(S_n, s(I_n)).
+% \label{eq:segprob}
+% \end{equation}
+% where $\text{sim}$ denotes a function that calculates the similarity between
+% ground truth segmentations and predicted segmentations, and $\mathcal{S}$ is the
+% set of possible functions.
+% \end{itemize}
+
+\begin{figure}[tb]
+\centering
+\input{tikzfigures/encoder2}
+\caption{Convolutional encoder network used to segment MS lesion of images from
+the MICCAI 2008 lesion segmentation challenge. The first two layers form a
+convolutional neural network, and the last two layers form a deconvolutional
+neural network.}
+\label{fig:network}
+\end{figure}
+
+The set of possible segmentation functions is modeled by the convolutional
+encoder network illustrated in Figure~\ref{fig:network}. Our network consists of
+two layers, a convolutional layer that extracts automatically learned features
+from multi-modal images, and a deconvolutional layer that uses the extracted
+features to segment MS lesions. The convolutional layer is a deterministic
+function of the following form
 \begin{equation}
-y^{(1)}_j = \max \left(0, \sum_{i=1}^{4}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
+y^{(1)}_j = \max \left(0, \sum_{i=1}^{C}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
 b^{(1)}_j\right)
 \end{equation}
-the input units of the deconvolutional layer are set to the outputs
-of the convolutional layer $x^{(2)}_j = y^{(1)}_j$, and $S = y^{(2)}$.
+where $x^{(1)}_i$ denotes an image representing the $i$th modality, 
+$y^{(1)}_j$ denotes the feature map corresponding to the $j$th feature, $w_{ij}$
+and $b_j \in \R$ are trainable parameters of the model, $*$ denotes
+valid convolution, and $\tilde{w}_{ij}$ denotes a flipped version of $w_{ij}$.
+The convolutional and deconvolutional layer are connected by setting the inputs
+of the deconvolutional layer to the outputs of the convolutional layer, i.e.
+$x^{(2)}_j = y^{(1)}_j$. The output of the deconvolutional layer can be
+calculated with
 \begin{equation}
 y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
 b^{(2)}\right)
 \end{equation}
+where $w^{(2)}_j$ and $b^{(2)}$ are trainable parameters, and $\circledast$
+denotes full convolution.\todo{$F$ is the number of features. Also add $C$ as
+the number of input channels or modalities to the convolutional layer.}
+
+\paragraph{Class of Segmentation Functions}
+\begin{itemize}
+% \item We propose to use neural networks to model the class of allowed
+% segmentation functions.
+% \item Neural networks are very flexible and able to learn highly non-linear
+% functions, which makes them suitable for image segmentation.
+% \item Can be efficiently learned from training data using gradient descent.
+% \item Architecture of the neural network can be used to regularize the functions
+% that can be learned
+% \item We propose a combined convolutional-deconvolutional neural network with
+% one convolutional and one deconvolutional layer as illustrated in
+% Figure~\ref{fig:network}
+% \item Convolutional neural network because it scales better to high-resolution
+% images and is better regularized than dense networks
+% \item Filter size can regularize local support.
+% \item Inference in the convolutional and deconvolutional layer. The first
+% layer input units are set to the voxel intensities of the input image
+% $x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$,
+% $x^{(1)}_3 = I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
+% \begin{equation}
+% y^{(1)}_j = \max \left(0, \sum_{i=1}^{4}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
+% b^{(1)}_j\right)
+% \end{equation}
+% The input units of the deconvolutional layer are set to the outputs
+% of the convolutional layer $x^{(2)}_j = y^{(1)}_j$, and $S = y^{(2)} > t$, where
+% $t \in \R$ is the lesion threshold.
+% \begin{equation}
+% y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
+% b^{(2)}\right)
+% \end{equation}
 \item The parameters can be trained by back-propagation using the delta rule
 \begin{align}
 % Error function
@@ -76,7 +136,6 @@ And for the convolutional layer
 \frac{\partial E}{\partial b^{(1)}_j} &= \frac{1}{M^3}\sum_{\vect{q}}
 \delta^{(1)}_j(\vect{q})
 \end{align}
-\item Figure of pre-training and fine-tuning or just fine-tuning.
 % \item Relationship to general segmentation problem
 % \begin{align}
 % \vect{x} &= I \\
@@ -149,52 +208,21 @@ delta update as follows
 
 \end{itemize}
 
-\paragraph{Prevent Overfitting}
+\paragraph{Choosing the right threshold}
+
 \begin{itemize}
-\item Two main sources: 1) bias terms highly tuned to lesion locations observed
-in the training data, and 2) filters tuned to the intensity range observed in
-the training data
-\item Use shared bias terms and add lesion prior calculated from a large data
-set plus smoothing
-\item Use data augmentation, i.e. during training, randomly change the
-brightness contrast and gamma correction of the training images to artificially
-increase the intensity variability in the training set
+\item A single threshold is chosen such that the DSC is maximized on the
+training set and the same threshold is used for the evaluation on the test set.
 \end{itemize}
 
-\paragraph{Training Pipeline}
-\begin{itemize}
-\item Downsample training images and training segmentations from
-\SI{0.5x0.5x0.5}{\milli\meter} to \SI{1x1x1}{\milli\meter} voxel resolution.
-\item Perform brain extraction
-\item Crop to smallest ROI
-\item Pad all images to standard size
-\item[$\Rightarrow$] Calculate combined cropping parameters
-\item Perform training of the NN on the downsampled training set
-\item Calculate probability maps for the entire downsampled training set
-\item Upsample the probability maps to the native resolution
-\item Crop lesion masks in native resolution to fit the same ROI as the
-upsampled probability masks
-\item Choose the threshold that maximizes the DSC in the training set 
-\end{itemize}
-
-\paragraph{Testing Pipeline}
-\begin{itemize}
-\item Downsample test image
-\item Perform brain extraction
-\item Apply combined cropping parameters
-\item Infer probability using the downsampled images
-\item Upsample the probability map to the native resolution
-\item Apply threshold
-\item Crop lesion masks to combined cropping parameters in native resolution
-space
-\item Compare segmentation
-\end{itemize}
-
-
-
-
-
-
-
-
-
+% \paragraph{Prevent Overfitting}
+% \begin{itemize}
+% \item Two main sources: 1) bias terms highly tuned to lesion locations observed
+% in the training data, and 2) filters tuned to the intensity range observed in
+% the training data
+% \item Use shared bias terms and add lesion prior calculated from a large data
+% set plus smoothing
+% \item Use data augmentation, i.e. during training, randomly change the
+% brightness contrast and gamma correction of the training images to artificially
+% increase the intensity variability in the training set
+% \end{itemize}

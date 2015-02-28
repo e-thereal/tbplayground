@@ -3,7 +3,7 @@
 \documentclass{llncs}
 
 \usepackage{tikz}
-\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,positioning,shapes.geometric,matrix}
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,3d,positioning,shapes.geometric,matrix}
 \pgfdeclarelayer{background}
 \pgfsetlayers{background,main}
 
@@ -11,12 +11,13 @@
 \usepackage{booktabs,amsmath,amssymb,dsfont,etoolbox,multirow,calc}
 \usepackage{hyperref}
 \usepackage{subfigure}
+\usepackage{todonotes,comment}
 
 \robustify\bfseries % requires etoolbox
 \newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
 
-\title{Learning to Segment Multiple Sclerosis Lesions using Convolutional
-Encoder Networks}
+\title{Deep Convolutional Encoder Networks for Multiple Sclerosis Lesion
+Segmentation}
 
 \author{%
 ***
