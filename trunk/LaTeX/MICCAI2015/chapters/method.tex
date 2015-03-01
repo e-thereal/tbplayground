@@ -2,18 +2,18 @@
 \label{sec:method}
 
 In this paper, the task of segmenting MS lesions is defined as finding a
-function $s$ that maps multi-modal images $I$, e.g., $I = (I_\text{flair},
-I_\text{t1}, I_\text{t2})$, to corresponding lesion masks $S$.
-Given a set of training images $I_n$, $n \in \N$, and corresponding
-segmentations $S_n$, we model finding an appropriate function for segmenting
-MS lesions as an optimization problem of the following form
+function $s$ that maps multi-modal images $I$, e.g., \todo{need a better way to
+write this}$I = (I_\text{flair}, I_\text{t1}, I_\text{t2})$, to corresponding
+lesion masks $S$. Given a set of training images $I_n$, $n \in \N$, and
+corresponding segmentations $S_n$, we model finding an appropriate function for
+segmenting MS lesions as an optimization problem of the following form
 \begin{equation}
-\hat{s} = \arg \max_{s \in \mathcal{S}} \sum_n \text{sim}(S_n, s(I_n)).
+\hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n)).
 \label{eq:segprob}
 \end{equation}
-where $\text{sim}$ denotes a function that calculates the similarity between
-ground truth segmentations and predicted segmentations, and $\mathcal{S}$ is the
-set of possible segmentation functions.
+where $\mathcal{S}$ is the set of possible segmentation functions, and $E$ is an
+error measure that calculates the dissimilarity between ground truth
+segmentations and predicted segmentations.
 
 % where $x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$, $x^{(1)}_3 =
 %  I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
@@ -53,110 +53,95 @@ neural network.}
 
 The set of possible segmentation functions is modeled by the convolutional
 encoder network illustrated in Figure~\ref{fig:network}. Our network consists of
-two layers, a convolutional layer that extracts automatically learned features
-from multi-modal images, and a deconvolutional layer that uses the extracted
-features to segment MS lesions. The convolutional layer is a deterministic
-function of the following form
+three layers: an input layer, a convolutional layer, and a deconvolutional
+layer. The input layer is composed of the image voxels $x^{(1)}_i(\vect{p})$, $i
+\in [1, C], C \in \N$, where $i$ indexes the modality, $C$ is the number of
+modalities, and $\vect{p} \in \R^3$ are the coordinates of a particular voxel.
+The convolutional layer extracts automatically learned features from the input
+images. It is a deterministic function of the following form
 \begin{equation}
 y^{(1)}_j = \max \left(0, \sum_{i=1}^{C}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
 b^{(1)}_j\right)
-\end{equation}
-where $x^{(1)}_i$ denotes an image representing the $i$th modality, 
-$y^{(1)}_j$ denotes the feature map corresponding to the $j$th feature, $w_{ij}$
-and $b_j \in \R$ are trainable parameters of the model, $*$ denotes
-valid convolution, and $\tilde{w}_{ij}$ denotes a flipped version of $w_{ij}$.
-The convolutional and deconvolutional layer are connected by setting the inputs
-of the deconvolutional layer to the outputs of the convolutional layer, i.e.
-$x^{(2)}_j = y^{(1)}_j$. The output of the deconvolutional layer can be
-calculated with
+\end{equation} 
+where $y^{(1)}_j, j \in [1, F], F \in \N$, denotes the feature map corresponding
+to the $j$th feature, $F$ is the number of features, $w_{ij}$ and $b_j$
+are trainable parameters of the model, $*$ denotes valid convolution, and
+$\tilde{w}_{ij}$ denotes a flipped version of $w_{ij}$. The deconvolutional
+layer uses the extracted features to calculate a probabilistic lesion mask as
+follows\todo{This equation is almost
+identical to equation (1) in \cite{zeiler2011}.
+I've just added the sigmoid function because our output is binary.}
 \begin{equation}
 y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
 b^{(2)}\right)
 \end{equation}
-where $w^{(2)}_j$ and $b^{(2)}$ are trainable parameters, and $\circledast$
-denotes full convolution.\todo{$F$ is the number of features. Also add $C$ as
-the number of input channels or modalities to the convolutional layer.}
+where $x^{(2)}_j = y^{(1)}_j$, $w^{(2)}_j$ and $b^{(2)}$ are trainable
+parameters, $\circledast$ denotes full convolution, and $\sigm(x)$ denotes the
+sigmoid function defined as $\sigm(z) = (1 + \exp(-z))^{-1}, z \in \R$. To
+obtain a binary lesion mask from the probabilistic output of our model, we chose
+a threshold such that the average dice similarity coefficient is maximized on
+the training set.
 
-\paragraph{Class of Segmentation Functions}
-\begin{itemize}
-% \item We propose to use neural networks to model the class of allowed
-% segmentation functions.
-% \item Neural networks are very flexible and able to learn highly non-linear
-% functions, which makes them suitable for image segmentation.
-% \item Can be efficiently learned from training data using gradient descent.
-% \item Architecture of the neural network can be used to regularize the functions
-% that can be learned
-% \item We propose a combined convolutional-deconvolutional neural network with
-% one convolutional and one deconvolutional layer as illustrated in
-% Figure~\ref{fig:network}
-% \item Convolutional neural network because it scales better to high-resolution
-% images and is better regularized than dense networks
-% \item Filter size can regularize local support.
-% \item Inference in the convolutional and deconvolutional layer. The first
-% layer input units are set to the voxel intensities of the input image
-% $x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$,
-% $x^{(1)}_3 = I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
-% \begin{equation}
-% y^{(1)}_j = \max \left(0, \sum_{i=1}^{4}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
-% b^{(1)}_j\right)
-% \end{equation}
-% The input units of the deconvolutional layer are set to the outputs
-% of the convolutional layer $x^{(2)}_j = y^{(1)}_j$, and $S = y^{(2)} > t$, where
-% $t \in \R$ is the lesion threshold.
-% \begin{equation}
-% y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
-% b^{(2)}\right)
-% \end{equation}
-\item The parameters can be trained by back-propagation using the delta rule
-\begin{align}
+The parameters of the model can be efficiently learned by minimizing the error
+$E$ on the training set using stochastic gradient descent (SGD)
+\cite{LeCun1998}. Typically, neural networks are trained by minimizing the sum
+of squared differences (SSD)
+\begin{equation}
 % Error function
-E &= \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
-\\
-% Delta update
-\delta^{(2)} &= \big(y^{(2)} -S\big)y^{(2)}\big(1-y^{(2)}\big)
-\end{align}
+E = \text{SSD} = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
+y^{(2)}(\vect{p})\right)^2.
+\end{equation}
+The partial derivatives of the error with respect to the model parameters can be
+calculated using the delta rule and are given by
 \begin{align}
 % Weight update
-\frac{\partial E}{\partial w^{(2)}_j} &= \delta^{(2)} * \tilde{x}^{(2)}_j \\
+\frac{\partial E}{\partial w^{(2)}_j} &= \delta^{(2)} * \tilde{x}^{(2)}_j
+\text{,} &
 % Bias update
 \frac{\partial E}{\partial b^{(2)}} &= \frac{1}{N^3}\sum_{\vect{p}}
 \delta^{(2)}(\vect{p})
+\label{eq:dE2}
 % Convolutional model
 \end{align}
-And for the convolutional layer
+with 
+\begin{equation}
+% Delta update
+\delta^{(2)} = \big(y^{(2)} -S\big)y^{(2)}\big(1-y^{(2)}\big)
+\label{eq:delta2}
+\end{equation}
+where $N^3$ is the number of voxels of a single input channel. The derivatives
+of the error with respect to the first layer parameters can be calculated by
+applying the chain rule of partial derivatives and is given by
+\begin{align}
+% Weight update
+\frac{\partial E}{\partial w^{(1)}_{ij}} &= x^{(1)}_i * \tilde{\delta}^{(1)}_j,
+&
+% Bias update
+\frac{\partial E}{\partial b^{(1)}_j} &= \frac{1}{M^3}\sum_{\vect{q}}
+\delta^{(1)}_j(\vect{q})
+\label{eq:dE1}
+\end{align}
+with
 \begin{equation}
 % Delta update
 \delta^{(1)}_j = \big(w^{(2)}_{j}\circledast\delta^{(2)}\big)\I\big(y^{(1)}_j >
 0\big)
+\label{eq:delta1}
 \end{equation}
-\begin{align}
-% Weight update
-\frac{\partial E}{\partial w^{(1)}_{ij}} &= x^{(1)}_i * \tilde{\delta}^{(1)}_j\\
-% Bias update
-\frac{\partial E}{\partial b^{(1)}_j} &= \frac{1}{M^3}\sum_{\vect{q}}
-\delta^{(1)}_j(\vect{q})
-\end{align}
-% \item Relationship to general segmentation problem
-% \begin{align}
-% \vect{x} &= I \\
-% \vect{y} &= S 
-% \end{align}
-% \item Gradients:
-% \begin{align}
-% \delta^{(n_l)}&=-(y-a^{(n_l)})f'(z^{(n_l)}) \\
-% \delta^{(l)}&=((W^{(l)})^T\delta^{(l+1)})f'(z^{(l)})\\
-% \nabla_{W^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}(a^{(l)})^T\\
-% \nabla_{b^{(l)}}SSD(W,b;x,y)&=\delta^{(l+1)}
-% \end{align}
-\end{itemize}
+where $M^3$ is the number of voxels of a feature map and $\I(z)$ denotes the
+indicator function, which is defined as $1$ if the predicate $z$ is true and
+$0$ otherwise.
 
-\paragraph{Similarity Measure}
-\begin{itemize}
-\item SSD is problematic for unbalanced classification tasks as the learning will
-greatly favor one class.
-\item To overcome this problem, we calculate the mean squared difference for
-lesion and non-lesion voxels separately and then calculate the weighted sum of
-the two terms form the final error measure
+The sum of squared differences is a good measure of classification accuracy, if
+the two classes are fairly balanced. However, if one class contains vastly more
+samples than the other class, the error measure is dominated by the majority
+class and consequently, the neural network would learn to completely ignore the
+minority class. To overcome this problem, we use a combination of sensitivity
+and specificity, which are two measures that are suitable to measure
+classification performance even for vastly unbalanced classification problems.
+More precisely, we calculate the mean squared difference for lesion and
+non-lesion voxels separately and then calculate the weighted sum of the two
+terms to form the final error measure
 \begin{multline} 
 E = r_\text{sen}\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
@@ -165,26 +150,22 @@ y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 \end{multline}
-In the binary case, the first term is equal to 1 minus the sensitivity and
-the second term is equivalent to 1 minus the specificity. We will therefore call
-these to terms sensitivity and specificity error.
+where the first term captures the squared sensitivity error and the second term
+captures the squared specificity error. We formulate the sensitivity and
+specificity error as a squared error in order to yield smooth gradients, which
+makes the optimization more robust. The sensitivity ratio
+$r_\text{sen}$ can be used to assign different weights to the two terms. Due to
+the large number of non-lesion voxels, weighting the specificity higher than the
+sensitivity is preferable. We found that the sensitivity ratio mostly affects
+the optimal lesion threshold, but has only a minor impact on the actual segmentation
+quality. On all our experiments, a sensitivity ratio between 0.1 and 0.01 yields
+very similar results.
 
-\item The sensitivity ratio $r_\text{sen}$ can be used to assign different
-weights to the two terms. Due to the large number of non-lesion voxels,
-weighting the specificity higher than the sensitivity gives better segmentation
-results in practice. We've found that a sensitivity ratio between 0.1 and 0.01
-gives works best in practice. While the actual choice of the sensitivity ratio
-has a big impact on the optimal threshold, the segmentation result is not
-sensitive to the sensitivity ratio.
-
-% \begin{align} 
-% \alpha &= \frac{2r_\text{sen}}{\textstyle\sum_{\vect{p}}S(\vect{p})}
-% &\text{and}& & \beta &= \frac{2(1 - r_\text{sen})}{\textstyle\sum_{\vect{p}}(1 - S(\vect{p}))}
-% \end{align}
-
-\item Equations (6) to (10) are a consequence of the chain rule of derivatives
-and independent of the chosen similarity measure, so we only need to derive the
-new update rule for $\delta^{(2)}$. With $\alpha = 2r_\text{sen}
+To train our model, we have to derive the derivatives of the modified objective
+function with respect to the model parameters. Equations \eqref{eq:dE2},
+\eqref{eq:dE1}, and \eqref{eq:delta1} are a consequence of the chain rule of
+derivatives and independent of the chosen similarity measure. Hence, we only
+need to derive the update rule for $\delta^{(2)}$. With $\alpha = 2r_\text{sen}
 (\sum_{\vect{p}}S(\vect{p}))^{-1}$ and $\beta = 2(1 -
 r_\text{sen})(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$ we can rewrite $E$ as
 \begin{align} 
@@ -196,33 +177,12 @@ E &= \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
  \beta(1 - S(\vect{p}))\big)
  \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
 \end{align}
-The first term does not depend on $y$ and is therefore constant with respect to
-the model parameters. The second term is identical to the sum of squared
-difference objective function. The derivatives and therefore delta 2 is
-also identical to the SSD, whereby the constant term is carried over to the
-delta update as follows
+Our objective function is similar to the SSD, with the difference that an
+additional term is multiplied to the squared differences. The additional factor
+does not depend on $y^{(2)}$ and is therefore constant with respect to the
+model parameters. Consequently, $\delta^{(2)}$ can be derived analogously to the
+SSD case, where the new factor is carried over:
 \begin{equation} 
 \delta^{(2)} = \big(\alpha S + \beta (1 - S)\big)\big(y^{(2)} - S\big) y^{(2)}
 \big(1 - y^{(2)}\big)
 \end{equation}
-
-\end{itemize}
-
-\paragraph{Choosing the right threshold}
-
-\begin{itemize}
-\item A single threshold is chosen such that the DSC is maximized on the
-training set and the same threshold is used for the evaluation on the test set.
-\end{itemize}
-
-% \paragraph{Prevent Overfitting}
-% \begin{itemize}
-% \item Two main sources: 1) bias terms highly tuned to lesion locations observed
-% in the training data, and 2) filters tuned to the intensity range observed in
-% the training data
-% \item Use shared bias terms and add lesion prior calculated from a large data
-% set plus smoothing
-% \item Use data augmentation, i.e. during training, randomly change the
-% brightness contrast and gamma correction of the training images to artificially
-% increase the intensity variability in the training set
-% \end{itemize}
