@@ -71,26 +71,26 @@ In this paper, we propose a novel method for segmenting MS lesions that can
 automatically learn features tuned for lesion segmentation and scales better to
 large data sets of high-resolution 3D images than previous patch-based feature
 learning approaches, which allows our model to take advantage of large data
-sets. The proposed model is a combination of a convolutional \cite{LeCun1998}
-and a deconvolutional neural network \cite{zeiler2011}. The first layer is a
-convolutional layer that extracts features from multi-modal MRIs at each voxel
-location. The second layer is a deconvolutional layer that uses the extracted
-features from the first layer to classify each voxel of the image in a single
-operation. Both layers are trained at the same time, which facilitates the
-learning of features that are tuned for lesion segmentation. A key difference to
-the network of Ciresan et. al \cite{Ciresan2012} is that our model is trained on
-the entire images instead of multiple patches from the same image, which
-eliminates redundant calculations at the overlap of neighboring patches and
-thereby speeds up the training and eliminates the need to select representative
-patches. This allows our model to be trained on large data sets in order to
-learn features that cover the broad spectrum of lesion variability. The proposed
-network is similar in architecture to a convolutional auto-encoder
-\cite{masci2011} but instead of learning a lower dimensional representation of
-the input images themselves, the output of your network are the predicted lesion
-masks. Due to the structural similarity to convolutional auto-encoders, we will
-call our model a convolutional encoder network (CEN). Traditionally, neural
-networks are trained by back-propagating the sum of squared differences (SSD) of
-the predicted and the expected output. However, if one class is much
+sets. Our model is a neural network that is composed of three layers: an input
+layer composed of the image voxels, a convolutional layer \cite{LeCun1998} that
+extracts features from multi-modal MRIs at each voxel location, and a
+deconvolutional layer \cite{zeiler2011} that uses the extracted features from
+the first layer to classify each voxel of the image in a single operation. Both
+layers are trained at the same time, which facilitates the learning of features
+that are tuned for lesion segmentation. A key difference to the network of
+Ciresan et. al \cite{Ciresan2012} is that our model is trained on the entire
+images instead of multiple patches from the same image, which eliminates
+redundant calculations at the overlap of neighboring patches and thereby speeds
+up the training and eliminates the need to select representative patches. This
+allows our model to be trained on large data sets in order to learn features
+that cover the broad spectrum of lesion variability. The proposed network is
+similar in architecture to a convolutional auto-encoder \cite{masci2011} but
+instead of learning a lower dimensional representation of the input images
+themselves, the output of your network are the predicted lesion masks. Due to
+the structural similarity to convolutional auto-encoders, we will call our model
+a convolutional encoder network (CEN). Traditionally, neural networks are
+trained by back-propagating the sum of squared differences (SSD) of the
+predicted and the expected output. However, if one class is much
 overrepresented, as is the case for lesion segmentation, the algorithm would
 learn to ignore the minority class completely. To overcome this problem, we
 propose to use the weighted sum of sensitivity and specificity error as a new
