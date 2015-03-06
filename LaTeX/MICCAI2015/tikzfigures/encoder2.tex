@@ -1,5 +1,5 @@
 \begin{tikzpicture}[%
-scale=0.7,
+scale=0.65,
 x  = {(0.9cm,-0.1cm)},
 y  = {(0.33cm,0.23cm)},
 z  = {(0cm,1cm)}]
@@ -38,9 +38,9 @@ coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
 \end{scope}
 }
 
-\node[xshift=-0.7cm, yshift=10pt, left] (flair) at (A3) {$I_\text{flair}$};
-\node[xshift=-0.7cm, yshift=3pt, left] (t1w) at (A2) {$I_\text{t1}$}; 
-\node[xshift=-0.7cm, yshift=-3pt, left] (t2w) at (A1) {$I_\text{t2}$};
+\node[xshift=-0.7cm, yshift=10pt, left] (flair) at (A3) {$I_\text{FLAIR}$};
+\node[xshift=-0.7cm, yshift=3pt, left] (t1w) at (A2) {$I_\text{T1}$}; 
+\node[xshift=-0.7cm, yshift=-3pt, left] (t2w) at (A1) {$I_\text{T2}$};
 % \node[xshift=-0.7cm, yshift=-10pt, left] (prior) at (A0) {$I_\text{prior}$};
 
 \draw[pinline, shorten >=4pt] (flair) -- (A3);
@@ -102,9 +102,9 @@ node[right=20pt] {$x^{(2)}_j = y^{(1)}_j$} (G7-|C1);
 \draw[pinline, shorten <=4pt] (C) -- (y2);
 
 \draw[decorate,decoration={brace,raise=75pt,mirror}] (B1-|C) --
-node[right=80pt] {Convolutional\\ layer} (G7-|C1);
+node[right=80pt] {Convolutional\\ network} (G7-|C1);
 
 \draw[decorate,decoration={brace,raise=95pt,mirror}] (G0-|C1) --
-node[right=100pt] {Deconvolutional\\ layer} (C);
+node[right=100pt] {Deconvolutional\\ network} (C);
 
 \end{tikzpicture}

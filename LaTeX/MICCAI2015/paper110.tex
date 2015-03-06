@@ -8,13 +8,16 @@
 \pgfsetlayers{background,main}
 
 \usepackage[range-phrase = --]{siunitx}
-\usepackage{booktabs,amsmath,amssymb,dsfont,etoolbox,multirow,calc}
+\usepackage{booktabs,amsmath,amssymb,dsfont,etoolbox,multirow,calc,printlen}
 \usepackage{hyperref}
 \usepackage{subfigure}
 \usepackage{todonotes,comment}
 
 \robustify\bfseries % requires etoolbox
 \newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 \title{Deep Convolutional Encoder Networks for Multiple Sclerosis Lesion
 Segmentation}
