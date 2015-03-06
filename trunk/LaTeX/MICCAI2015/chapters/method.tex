@@ -2,11 +2,11 @@
 \label{sec:method}
 
 In this paper, the task of segmenting MS lesions is defined as finding a
-function $s$ that maps multi-modal images $I$, e.g., \todo{need a better way to
-write this}$I = (I_\text{flair}, I_\text{t1}, I_\text{t2})$, to corresponding
-lesion masks $S$. Given a set of training images $I_n$, $n \in \N$, and
-corresponding segmentations $S_n$, we model finding an appropriate function for
-segmenting MS lesions as an optimization problem of the following form
+function $s$ that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR},
+I_\text{T1}, I_\text{T2})$, to corresponding lesion masks $S$. Given a set of
+training images $I_n$, $n \in \N$, and corresponding segmentations $S_n$, we
+model finding an appropriate function for segmenting MS lesions as an
+optimization problem of the following form
 \begin{equation}
 \hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n)).
 \label{eq:segprob}
@@ -44,51 +44,51 @@ segmentations and predicted segmentations.
 \begin{figure}[tb]
 \centering
 \input{tikzfigures/encoder2}
-\caption{Convolutional encoder network used to segment MS lesion of images from
-the MICCAI 2008 lesion segmentation challenge. The first two layers form a
-convolutional neural network, and the last two layers form a deconvolutional
-neural network.}
+
+\caption{Convolutional encoder network used to produce a lesion segmentation,
+$S$, from multi-modal images, $I = (I_\text{FLAIR}, I_\text{T1}, I_\text{T2})$.
+The first two layers form a convolutional neural network with trainable filter
+kernels $w^{(1)}_{ij}$, and the last two layers form a deconvolutional neural
+network with trainable filter kernels $w^{(2)}_j$.}
+
 \label{fig:network}
 \end{figure}
 
 The set of possible segmentation functions is modeled by the convolutional
-encoder network illustrated in Figure~\ref{fig:network}. Our network consists of
+encoder network illustrated in Fig.~\ref{fig:network}. Our network consists of
 three layers: an input layer, a convolutional layer, and a deconvolutional
 layer. The input layer is composed of the image voxels $x^{(1)}_i(\vect{p})$, $i
 \in [1, C], C \in \N$, where $i$ indexes the modality, $C$ is the number of
 modalities, and $\vect{p} \in \R^3$ are the coordinates of a particular voxel.
-The convolutional layer extracts automatically learned features from the input
-images. It is a deterministic function of the following form
+The convolutional layer automatically learns features from the input images. It
+is a deterministic function of the following form
 \begin{equation}
 y^{(1)}_j = \max \left(0, \sum_{i=1}^{C}\tilde{w}^{(1)}_{ij}*x^{(1)}_i +
 b^{(1)}_j\right)
-\end{equation} 
+\end{equation}
 where $y^{(1)}_j, j \in [1, F], F \in \N$, denotes the feature map corresponding
-to the $j$th feature, $F$ is the number of features, $w_{ij}$ and $b_j$
-are trainable parameters of the model, $*$ denotes valid convolution, and
-$\tilde{w}_{ij}$ denotes a flipped version of $w_{ij}$. The deconvolutional
-layer uses the extracted features to calculate a probabilistic lesion mask as
-follows\todo{This equation is almost
-identical to equation (1) in \cite{zeiler2011}.
-I've just added the sigmoid function because our output is binary.}
+to the trainable convolution filter $w^{(1)}_{ij}$, $F$ is the number of
+filters, $b_j$ is a trainable bias term, $*$ denotes valid convolution, and
+$\tilde{w}$ denotes a flipped version of $w$. The deconvolutional layer uses the
+extracted features to calculate a probabilistic lesion mask as follows
 \begin{equation}
 y^{(2)} = \sigm\left(\sum_{j=1}^Fw^{(2)}_{j}\circledast x^{(2)}_j +
 b^{(2)}\right)
 \end{equation}
 where $x^{(2)}_j = y^{(1)}_j$, $w^{(2)}_j$ and $b^{(2)}$ are trainable
-parameters, $\circledast$ denotes full convolution, and $\sigm(x)$ denotes the
+parameters, $\circledast$ denotes full convolution, and $\sigm(z)$ denotes the
 sigmoid function defined as $\sigm(z) = (1 + \exp(-z))^{-1}, z \in \R$. To
 obtain a binary lesion mask from the probabilistic output of our model, we chose
-a threshold such that the average dice similarity coefficient is maximized on
-the training set.
+a fixed threshold such that the average Dice similarity coefficient is
+maximized on the training set.
 
 The parameters of the model can be efficiently learned by minimizing the error
-$E$ on the training set using stochastic gradient descent (SGD)
+$E$ on the training set using stochastic gradient descent
 \cite{LeCun1998}. Typically, neural networks are trained by minimizing the sum
 of squared differences (SSD)
 \begin{equation}
 % Error function
-E = \text{SSD} = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
+E = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2.
 \end{equation}
 The partial derivatives of the error with respect to the model parameters can be
@@ -134,40 +134,39 @@ $0$ otherwise.
 
 The sum of squared differences is a good measure of classification accuracy, if
 the two classes are fairly balanced. However, if one class contains vastly more
-samples than the other class, the error measure is dominated by the majority
-class and consequently, the neural network would learn to completely ignore the
-minority class. To overcome this problem, we use a combination of sensitivity
-and specificity, which are two measures that are suitable to measure
-classification performance even for vastly unbalanced classification problems.
-More precisely, we calculate the mean squared difference for lesion and
-non-lesion voxels separately and then calculate the weighted sum of the two
-terms to form the final error measure
-\begin{multline} 
-E = r_\text{sen}\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+samples, as is the case for lesion segmentation, the error measure is dominated
+by the majority class and consequently, the neural network would learn to
+completely ignore the minority class. To overcome this problem, we use a
+combination of sensitivity and specificity, which are two measures that are
+suitable for measuring classification performance even for vastly unbalanced
+problems. More precisely, the final error measure is a weighted sum of the mean
+squared difference of the lesion voxels (sensitivity) and non-lesion voxels
+(specificity), reformulated to be error terms:
+\begin{equation} 
+E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
- \\  +
-(1-r_\text{sen})\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+  +
+(1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
-\end{multline}
+\end{equation}
 where the first term captures the squared sensitivity error and the second term
 captures the squared specificity error. We formulate the sensitivity and
-specificity error as a squared error in order to yield smooth gradients, which
-makes the optimization more robust. The sensitivity ratio
-$r_\text{sen}$ can be used to assign different weights to the two terms. Due to
-the large number of non-lesion voxels, weighting the specificity higher than the
-sensitivity is preferable. We found that the sensitivity ratio mostly affects
-the optimal lesion threshold, but has only a minor impact on the actual segmentation
-quality. On all our experiments, a sensitivity ratio between 0.1 and 0.01 yields
-very similar results.
+specificity errors as squared errors in order to yield smooth gradients, which
+makes the optimization more robust. The sensitivity ratio $r$ can be used to
+assign different weights to the two terms. Due to the large number of non-lesion
+voxels, weighting the specificity higher is important, but the algorithm is
+stable with respect to changes in $r$, which largely affects the threshold
+used to binarize the probabilistic output. On all our experiments, a sensitivity
+ratio between $0.10$ and $0.01$ yields very similar results.
 
-To train our model, we have to derive the derivatives of the modified objective
-function with respect to the model parameters. Equations \eqref{eq:dE2},
+To train our model, we must compute the derivatives of the modified
+objective function with respect to the model parameters. Equations \eqref{eq:dE2},
 \eqref{eq:dE1}, and \eqref{eq:delta1} are a consequence of the chain rule of
 derivatives and independent of the chosen similarity measure. Hence, we only
-need to derive the update rule for $\delta^{(2)}$. With $\alpha = 2r_\text{sen}
+need to derive the update rule for $\delta^{(2)}$. With $\alpha = 2r
 (\sum_{\vect{p}}S(\vect{p}))^{-1}$ and $\beta = 2(1 -
-r_\text{sen})(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$ we can rewrite $E$ as
+r)(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$ we can rewrite $E$ as
 \begin{align} 
 E &= \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
 \alpha S(\vect{p}) +
@@ -177,12 +176,18 @@ E &= \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
  \beta(1 - S(\vect{p}))\big)
  \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
 \end{align}
-Our objective function is similar to the SSD, with the difference that an
-additional term is multiplied to the squared differences. The additional factor
-does not depend on $y^{(2)}$ and is therefore constant with respect to the
-model parameters. Consequently, $\delta^{(2)}$ can be derived analogously to the
-SSD case, where the new factor is carried over:
+Our objective function is similar to the SSD, with an
+additional multiplicative term applied to the squared differences. The
+additional factor is constant with respect to the
+model parameters. Consequently, $\delta^{(2)}$ can be derived
+analogously to the SSD case, and the new factor is simply carried over:
 \begin{equation} 
 \delta^{(2)} = \big(\alpha S + \beta (1 - S)\big)\big(y^{(2)} - S\big) y^{(2)}
 \big(1 - y^{(2)}\big)
 \end{equation}
+
+% To account for the spatial distribution of lesions, we added a lesion
+% distribution map as an additional channel to the input layer. Therefore, we
+% affinely registered 250 subjects of an in-house data set from an MS clinical
+% trial to MNI space and calculated the square root of the average lesion mask to
+% counterbalance large differences in lesion probability between regions.

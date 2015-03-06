@@ -2,3 +2,121 @@
 
 \section{Appending}
 
+Myelin imaging is a form of quantitative magnetic resonance
+imaging (MRI) that measures myelin content and can potentially allow
+demyelinating diseases such as multiple sclerosis (MS) to be detected
+much earlier. Although focal lesions are the most visible sign of MS
+pathology on conventional MRI, it has been shown that even tissues
+that appear normal may exhibit decreased myelin content as revealed
+by myelin-specific images (myelin maps). Current methods for analyzing
+myelin maps typically use global or regional mean myelin measurements
+to detect abnormalities, but ignore any finer spatial patterns that may be
+characteristic of MS. In this paper, we present a method to automatically
+learn, from multimodal images, spatial features that can potentially im-
+prove the detection of MS pathology. More specifically, 3D image patches
+of normal-appearing tissues in T1-weighted (T1w) MRIs are extracted
+along with the corresponding patches in myelin maps, and used to learn
+a joint latent T1w-myelin feature representation, via deep learning. To
+account for missing features due to the presence of focal MS lesions in
+some image patches, a method for unbiased missing feature imputation
+is applied. The resulting feature vectors are then used to train a random
+forest classifier. Using the T1w and myelin images of 55 MS patients
+and 44 healthy controls in an 11-fold cross-validation experiment, the
+proposed joint T1w-myelin feature-based method achieved an average
+classification accuracy of 78.69\%, which is higher than those attained by
+global or regional mean myelin measurements, or deeply learned features
+in either the T1w or myelin images alone, suggesting that the proposed
+method has strong potential for improving the accuracy of MS diagnosis.
+
+
+\begin{comment} 
+\begin{table}[tb]
+\centering
+\sisetup{
+round-precision = 1,
+}%
+\def\Tabspace{7pt}
+\def\tabspace{3pt}
+\caption{This table is here just for reference. I'm not planning to keep it,
+but it shows the full picture of the MICCAI tests.}
+\begin{tabular}{l%
+% @{\hspace{10pt}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]@{\hspace{\Tabspace}}%
+% @{\hspace{\Tabspace}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]@{\hspace{\Tabspace}}%
+% @{\hspace{\Tabspace}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]@{\hspace{\Tabspace}}%
+% @{\hspace{\Tabspace}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]@{\hspace{\tabspace}}%
+% @{\hspace{\tabspace}}S[table-format=2.1]%
+*{10}{S[table-format=2.1]}%
+}
+
+\toprule
+Patient & \multicolumn{2}{@{\hspace{10pt}}c@{\hspace{10pt}}}{Souplet} &
+\multicolumn{2}{c}{Geremia} &
+\multicolumn{3}{c}{Weiss} &
+\multicolumn{3}{c}{Our method} \\
+\addlinespace
+ & {TPR} & {PPV} & {TPR} & {PPV} & {TPR} & {PPV} & {DSC} & {TPR} & {PPV} & {DSC}
+ \\
+\midrule
+CHB01 & 22 & 41 & 49 & 64 & 60 & 58 & 59 & 50 & 69 & 58 \\
+CHB02 & 18 & 29 & 44 & 63 & 27 & 45 & 34 & 42 & 52 & 46 \\
+CHB03 & 17 & 21 & 22 & 57 & 24 & 56 & 34 & 38 & 70 & 49 \\
+CHB04 & 12 & 55 & 31 & 78 & 27 & 66 & 38 & 60 & 63 & 61 \\
+CHB05 & 22 & 42 & 40 & 52 & 29 & 33 & 31 & 42 & 43 & 42 \\
+CHB06 & 13 & 46 & 32 & 52 & 10 & 36 & 16 & 24 & 63 & 35 \\
+CHB07 & 13 & 39 & 40 & 54 & 14 & 48 & 22 & 57 & 65 & 61 \\
+CHB08 & 13 & 55 & 46 & 65 & 21 & 73 & 32 & 47 & 75 & 58 \\
+CHB09 & 3 & 18 & 23 & 28 & 5 & 22 & 8 & 22 & 49 & 30 \\
+CHB10 & 5 & 18 & 23 & 39 & 15 & 12 & 13 & 11 & 64 & 19 \\
+\addlinespace
+UNC01 & 1 & 1 & 2 & 1 & 33 & 29 & 31 & 3 & 6 & 4 \\
+UNC02 & 37 & 39 & 48 & 36 & 54 & 51 & 53 & 54 & 38 & 44 \\
+UNC03 & 12 & 16 & 24 & 35 & 64 & 27 & 38 & 62 & 28 & 39 \\
+UNC04 & 38 & 54 & 54 & 38 & 40 & 51 & 45 & 59 & 35 & 44 \\
+UNC05 & 38 & 8 & 56 & 19 & 25 & 10 & 16 & 10 & 5 & 6 \\
+UNC06 & 57 & 9 & 15 & 8 & 13 & 55 & 20 & 24 & 49 & 32 \\
+UNC07 & 27 & 18 & 76 & 16 & 44 & 23 & 30 & 33 & 19 & 24 \\
+UNC08 & 27 & 20 & 52 & 32 & 43 & 13 & 20 & 51 & 13 & 20 \\
+UNC09 & 16 & 43 & 67 & 36 & 69 & 6 & 11 & 51 & 5 & 9 \\
+UNC10 & 22 & 28 & 53 & 34 & 43 & 23 & 30 & 56 & 19 & 28 \\
+\addlinespace
+Average & 20.65 & 30.00 & 39.85 & 40.35 & 33.00 & 36.85 & 29.05 & 39.71 & 41.38
+& 35.52
+\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{comment}
+
+\begin{comment} 
+
+\begin{table}[tb]
+\sisetup{
+  round-precision = 2,
+}% 
+\centering
+\caption{Comparison of segmentation performance on the training and test set
+for varying number of training samples. The difference between training and
+test performance is reduces for increasing number of training samples. A
+training set size of 150 is sufficient to prevent overfitting.}
+\label{tab:bioms}
+\begin{tabular} {c*{6}{S[table-format=3.3]}}
+\toprule
+Number of & \multicolumn{3}{c}{Training set} &
+\multicolumn{3}{c}{Test set}
+\\
+training samples & {TPR} & {PPV} & {DSC} & {TPR} & {PPV} & {DSC} \\
+\midrule 
+5 & 77.9679 & 66.2261 & 70.9317 & 47.1575 & 57.0428 & 48.5493 \\
+10 & 73.4045 & 68.1603 & 69.7124 & 55.0416 & 59.8499 & 53.9332 \\
+15 & 71.765 & 68.234 & 68.8614 & 56.2786 & 60.883 & 55.4736 \\
+25 & 69.3865 & 70.6347 & 68.9442 & 57.4285 & 61.0626 & 56.2912 \\
+250 & 64.5539 & 58.2538 & 58.5023 & 65.4692 & 56.813 & 57.5434 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{comment}

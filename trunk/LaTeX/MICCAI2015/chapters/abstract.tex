@@ -2,8 +2,8 @@
 
 We propose a novel segmentation approach based on deep convolutional encoder
 networks and apply it to the segmentation of multiple sclerosis (MS) lesions in
-magnetic resonance images (MRIs). Our model is a neural network that is both
-convolutional and deconvolutional, and combines feature extraction and
+magnetic resonance images. Our model is a neural network that has both
+convolutional and deconvolutional layers, and combines feature extraction and
 segmentation prediction in a single model. The joint training of the feature
 extraction and prediction layers allows the model to automatically learn
 features that are optimized for accuracy for any given combination of image
@@ -11,100 +11,15 @@ types and application. In contrast to existing automatic feature learning
 approaches, which are typically patch-based, our model learns features from
 entire images, which eliminates patch selection and reduces redundant
 calculations at the overlap of neighboring patches and thereby speeds up the
-training. This allows our model to be trained on larger data sets in order to
-learn features that cover the broad spectrum of lesion variability. We have
-evaluated our method on the publicly available labeled cases from the MS Lesion
-Segmentation Challenge 2008 data set, showing that our method performs
-comparably to the state-of-the-art even when a relatively small data set is used
-for training, which is typically not the strength of neural networks. In
-addition, we have evaluated our method on 500 images (split equally into
-training and test sets) from a data set from an MS clinical trial, showing that
-the segmentation performance can be greatly improved by having a representative
-training set.
-
-% A challenge of using the entire images is that unbalanced classes can not be
-% rebalanced as part of the patch selection step, which would make learning
-% unstable. To overcome this problem, we propose to the a weighted sum of
-% sensitivity and specificity error as the objective function for training and
-% show how to train neural networks with this new objective function.
-
-\begin{comment} 
-- noval method for MS lesion segmentation
-- automatically learn features tuned for lesion segmentation
-- scales well to large data sets $\Rightarrow$ can take advantage of large data
-sets - combination of convolutional and deconvolutional neural network
-- first layer performs feature extraction, while the second layer performs
-classification
-- Both steps in a single model allows the tuning of the feature extraction step
-- Works on entire images instead of image patches, which eliminates redundant
-calculations on the overlap of patches, which makes it faster than patch-based
-approaches
-- SSD is problematic for unbalanced classes.
-- Propose new similarity measure for neural networks and show how to train
-neural networks with the alternative similarity measure
-- Evaluated on a publicly available data set to allow a direct comparison with
-other state-of-the-art methods
-- Among the best performing methods on that data set
-- Show that can take advantage on large internal data sets of an MS clinical
-trial
-- Average DSC of \SI{58}{\percent}.
-
-In this paper, we propose a novel method for segmenting MS lesions that can
-automatically learn features tuned for lesion segmentation and scales better to
-large data sets of high-resolution 3D images than previous patch-based feature
-learning approaches, which allows our model to take advantage of large data
-sets. The proposed model is a combination of a convolutional \cite{LeCun1998}
-and a deconvolutional neural network \cite{zeiler2011}. The first layer is a
-convolutional layer that extracts features from multi-modal MRIs at each voxel
-location. The second layer is a deconvolutional layer that uses the extracted
-features from the first layer to classify each voxel of the image in a single
-operation. Both layers are trained at the same time, which facilitates the
-learning of features that are tuned for lesion segmentation. A key difference to
-the network of Ciresan et. al \cite{Ciresan2012} is that our model is trained on
-the entire images instead of multiple patches from the same image, which speeds
-up the training and eliminates the need to select representative patches. The
-proposed network is similar in architecture to a convolutional auto-encoder
-\cite{masci2011} but instead of learning a lower dimensional representation of
-the input images themselves, the output of your network are the predicted lesion
-masks. Due to the structural similarity to convolutional auto-encoders, we will
-call our model a convolutional encoder network (CEN). Traditionally, neural
-networks are trained by back-propagating the sum of squared differences (SSD) of
-the predicted and the expected output. However, if one class is much
-overrepresented, as is the case for lesion segmentation, the algorithm would
-learn to ignore the minority class completely. To overcome this problem, we
-propose to use the weighted sum of sensitivity and specificity error as a new
-objective function, which is suitable to deal with very unbalanced
-classification problems, and we will derive the gradients of our proposed
-objective function in order to train the model using stochastic gradient
-descent.
-
-In this paper, we propose a novel approach for segmenting brain lesions in
-magnetic resonance images (MRIs) of multiple sclerosis (MS) patients. Our model
-is a combination of a convolutional and deconvolutional neural network, which
-combines feature extraction and classification in a single model. In
-contrast to the recently proposed patch-based segmentation approaches, our
-method performs segmentation of the entire image in a single feed-forward pass
-through the network, without the need to extract patches to segment each voxel
-individually. This approach makes it much faster than comparable patch-based
-approach that use convolutional neural networks, which allows it to scale much
-better to large data sets of three-dimensional images.
-
-This approach makes segmentation and training much faster, which
-allows the method to scale  Advantages:
-1) don't need to select patches, 2) scales better to large images than patch-based
-approaches, 3) automatically learned features, no predefined features, and 4)
-combines feature-learning and classification phase which allows the supervised
-fine-tuning of features. We have evaluated our method on publicly available data
-set from the MICCAI 2008 MS lesion segmentation challenge, to allow a direct
-comparison of our method with state-of-the-art lesion segmentation methods. Our
-method performs en par with the state-of-the-art method on that data set. In
-addition, our model scales to large data set and can leverage the large amounts
-of labelled data achieving a DSC of \SI{57}{\percent} in that case.
-
-\end{comment}
+training. We have evaluated our method on the publicly available labeled cases
+from the MS lesion segmentation challenge 2008 data set, showing that our method
+performs comparably to the state-of-the-art. In addition, we have evaluated our
+method on 500 images from a data set from an MS clinical trial, and varied the
+number of training samples from 5 to 250 to show that the segmentation
+performance can be greatly improved by having a representative training set.
 
 \begin{keywords}
-Multiple sclerosis lesions, segmentation, MRI, machine learning, unbalanced
+Segmentation, multiple sclerosis lesions, MRI, machine learning, unbalanced
 classification, deep learning, convolutional neural nets
 \end{keywords}
 
