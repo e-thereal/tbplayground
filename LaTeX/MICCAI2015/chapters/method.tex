@@ -79,7 +79,7 @@ where $x^{(2)}_j = y^{(1)}_j$, $w^{(2)}_j$ and $b^{(2)}$ are trainable
 parameters, $\circledast$ denotes full convolution, and $\sigm(z)$ denotes the
 sigmoid function defined as $\sigm(z) = (1 + \exp(-z))^{-1}, z \in \R$. To
 obtain a binary lesion mask from the probabilistic output of our model, we chose
-a fixed threshold such that the average Dice similarity coefficient is
+a fixed threshold such that the mean Dice similarity coefficient is
 maximized on the training set.
 
 The parameters of the model can be efficiently learned by minimizing the error
@@ -128,19 +128,19 @@ with
 0\big)
 \label{eq:delta1}
 \end{equation}
-where $M^3$ is the number of voxels of a feature map and $\I(z)$ denotes the
-indicator function, which is defined as $1$ if the predicate $z$ is true and
-$0$ otherwise.
+where $M^3$ is the number of voxels of a feature map, $\vect{q} \in \R^3$, and
+$\I(z)$ denotes the indicator function defined as $1$ if the predicate
+$z$ is true and $0$ otherwise.
 
 The sum of squared differences is a good measure of classification accuracy, if
 the two classes are fairly balanced. However, if one class contains vastly more
 samples, as is the case for lesion segmentation, the error measure is dominated
 by the majority class and consequently, the neural network would learn to
 completely ignore the minority class. To overcome this problem, we use a
-combination of sensitivity and specificity, which are two measures that are
-suitable for measuring classification performance even for vastly unbalanced
-problems. More precisely, the final error measure is a weighted sum of the mean
-squared difference of the lesion voxels (sensitivity) and non-lesion voxels
+combination of sensitivity and specificity, which can be used together to
+measure classification performance even for vastly unbalanced problems. More
+precisely, the final error measure is a weighted sum of the mean squared
+difference of the lesion voxels (sensitivity) and non-lesion voxels
 (specificity), reformulated to be error terms:
 \begin{equation} 
 E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
@@ -155,9 +155,9 @@ captures the squared specificity error. We formulate the sensitivity and
 specificity errors as squared errors in order to yield smooth gradients, which
 makes the optimization more robust. The sensitivity ratio $r$ can be used to
 assign different weights to the two terms. Due to the large number of non-lesion
-voxels, weighting the specificity higher is important, but the algorithm is
-stable with respect to changes in $r$, which largely affects the threshold
-used to binarize the probabilistic output. On all our experiments, a sensitivity
+voxels, weighting the specificity error higher is important, but the algorithm
+is stable with respect to changes in $r$, which largely affects the threshold
+used to binarize the probabilistic output. In all our experiments, a sensitivity
 ratio between $0.10$ and $0.01$ yields very similar results.
 
 To train our model, we must compute the derivatives of the modified
