@@ -1,0 +1,63 @@
+MICCAI 2015 Rebuttal
+
+R1:
+
++ Novelty is using entire volumes instead of patches
++ Strength novel methodology combined with thorough evaluation
++ Well written
+
+- Does not allow complex network architecture when volumes are large
+- Missing references to other papers which use similar strategy (he doesn't know
+  such papers for MI but has a general reference, http://arxiv.org/abs/1411.4464)
+A: 
+Cited paper uses a convolutional and poolings layers for feature extraction
+ 	and convolutional layers with kernel size of 1 for feature fusion/classification
+(Feature learning step is similar but the classification step only considers
+ 	the features extracted at the current voxel. We use a deconvolutional layer
+ 	for the classification, which, like the 1 voxel convolutional layer, performs
+ 	segmentation, but due to the larger kernel size, incorporates extracted features
+from neighboring voxels in order to achieve a spatially consistent segmentation) After careful reading, I have to admit that they also use 3x3 filters. Only the very last layer uses 1x1 filters. So that point is not valid.
+The combination of convolutional and pooling layers reduces the resolution of the processed images such that the outputs are of lower resolution than the input images. Our model uses deconvolutional layers, which reverse the dimensionality reduction property of the convolutional layers such that our output layer has exactly the same resolution as the input layer, which is important for accurate segmentation of very small lesions
+
+- Discussion of limitations is limited. Feeding in entire volumes limits the application
+  to other problems. (I don't understand how and why)
+-> Need to discuss with Roger
+- Doesn't like the comparison with Ciresan et al. because of the difference in
+  complexity of the two models
+-> We agree and have said so in the paper that the comparison is imprecise due to large differences in complexity of the used models. Their model is more complex (roughly 5x more layers) but uses much smaller images (our images have 18x more voxels), which more than compensates for the complexity of the model in terms of number of required computations. Still shows the potential speed-ups.
+- Doesn't think the loss function is novel. Straight forward extension of loss
+  function used in other papers. (need to find which papers)
+
+R2:
+
+- Framework not novel as referenced by the others (did we do that?) and this missed
+  paper (OASIS is Automated Statistical Inference for Segmentation, with applications
+  to multiple sclerosis lesion segmentation in MRI)
+A: - Cited paper differs in many aspects from the presented work: 
+	Biggest difference is that we learn the filters instead of just applying them and that the filters are learned together with training the classifier in order to learn features that are tuned for image segmentation.
+	2) Processes entire images at once instead of classifying each voxel individually.
+1) segmentation is
+ 	carried out by processing each voxel individually, while our method processes
+ 	entire volumes. 2) The referenced paper uses an elaborate pre- and post-processing
+ 	pipeline and a simple set of hand-crafted features, where the main point of
+ 	our method is that we can automatically learn features, instead of hand-crafting
+ 	them, and that the learned features are robust to intensity variations and don't
+ 	require elaborate pre-processing. Also, no post-processing is done in our method
+ 	to remove false positives.
+- No evaluation of statistical significance and difference to Geremia et al. seems small
+A: - Proof of concept of the novel approach and already on par with the state-of-the-art.
+Data set too small to allow training without overfitting
+* Interesting to understand what filters are important
+* Feed patches into the same system to better understand the differences
+
+-> This reviewer probably missed the fundamental difference of our approach and
+   patch-based approaches
+   
+R3:
+
++ Very well structured
+* Including spatial information might improve the results (suggestions: using atlases,
+  models, context-aware features, ...)
+A: Prior spatial information like WM probability maps can be incorporated in form of an additional input channel, similar to the feature vector extension in Geremia’s work
+* Why did we downsample the images
+A: Images were provided upsampled and all other methods downsampled the images as well. We downsampled the images to allow for a fair comparison with other methods and to reduce memory requirements and speed up the training

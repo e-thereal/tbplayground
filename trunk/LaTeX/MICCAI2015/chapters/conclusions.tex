@@ -1,22 +1,21 @@
 \section{Conclusions}
 
 We have introduced a new method for the automatic segmentation of MS lesions
-based on convolutional auto encoders. The joint training of the feature
+based on convolutional encoder networks. The joint training of the feature
 extraction and prediction layers with a novel objective function allows for the
 automatic learning of features that are tuned for a given combination of image
-types and a segmentation task with very unbalanced classes. 
-% Our model trains on
-% entire MRI volumes rather than extracted patches, and provides much improved
-% computational efficiency.
+types and a segmentation task with very unbalanced classes.
+% Our model trains on entire MRI volumes rather than extracted patches, and
+% provides much improved computational efficiency.
 We have evaluated our method on two data sets showing that approximately 100
-images are required to train the model without overfitting but that the method
-performs comparably to the state-of-the-art algorithms, even when only a
-relatively small data set is used for training. For future work, we plan to
-increase the depth of the network, which would allow the learning of a set of
-hierarchical features. This could further improve segmentation accuracy, but may
-require larger training sets. We would also like to investigate the use of
-different objective functions for training based on other measures of
-segmentation performance.
+images are required to train the model without overfitting but even when only a
+relatively small training set is available, the method still performs comparably
+to the state-of-the-art algorithms. For future work, we plan to increase the
+depth of the network, which would allow the learning of a set of hierarchical
+features. This could further improve segmentation accuracy, but may require
+larger training sets. We would also like to investigate the use of different
+objective functions for training based on other measures of segmentation
+performance.
 
 % \begin{itemize}
 % \item Future work: use more layers to achieve a hierarchical segmentation

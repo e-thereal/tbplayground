@@ -22,16 +22,30 @@ intensity normalization, and background cropping.
 % counterbalance large differences in lesion probability between regions and added
 % the lesion prior as an additional input channel to both data sets.
 %
+% We used a CEN with 32 filters and filter sizes of \num{9x9x9} and \num{9x9x5}
+% voxels for the challenge and in-house data sets, respectively. Training on a
+% single GeForce GTX 780 graphics card took between 24 and 32 hours per model.
+% However, once the network is trained, segmentation of new images can be
+% performed in less than one second.
+%
 We used a CEN with 32 filters and filter sizes of \num{9x9x9} and \num{9x9x5}
 voxels for the challenge and in-house data sets, respectively. Training on a
-single GeForce GTX 780 graphics card took between 24 and 32 hours per model.
-However, once the network is trained, segmentation of new images can be
-performed in less than one second.
+single GeForce GTX 780 graphics card took between 6 and 32 hours per model
+depending on the training set size. However, once the network is trained,
+segmentation of trimodal 3D volumes with a resolution of, e.g.,
+\num{159x201x155} voxels can be performed in less than one second. As a
+rough\footnote{The comparison is imprecise due to differing experimental
+conditions.} comparison, Ciresan et al. \cite{Ciresan2012} reported that their
+patch-based method required 10 to 30 minutes to segment a single 2D image with a
+resolution of \num{512x512} voxels using four graphics cards, which demonstrates
+the large speed-ups gained by processing entire volumes.
+
+% TODO: do something about the time. Why is the time so long for only 5 images?
 
 \begin{figure}[tb]
 \centering
 \small
-\def\MRIwidth{0.17\textwidth}
+\def\MRIwidth{0.159\textwidth}
 
 \begin{tikzpicture} 
 \matrix [matrix of nodes, nodes={anchor=center, inner sep=1pt}] {
@@ -60,9 +74,10 @@ performed in less than one second.
 \caption{Example segmentations of our method for three different subjects from
 the challenge data set. Our method performed well and consistently despite the
 large contrast differences seen between the first two rows. In the third row,
-our method also segments lesions that have similar contrast, but these regions
-were not segmented by the manual rater, which highlights the difficulty in
-distinguishing focal lesions from diffuse damage, even for experts.}
+our method also segmented lesions that have similar contrast, but these regions
+had not been identified as lesions by the manual rater, which highlights the
+difficulty in distinguishing focal lesions from diffuse damage, even for
+experts.}
 
 \label{fig:segmentation}
 \end{figure}
@@ -83,15 +98,15 @@ set. Our method segmented lesions that have similar contrast to the other two
 subjects, but these regions were not classified as lesions by the manual rater.
 This highlights the difficulty of manual lesion segmentation, as the difference
 between diffuse white matter pathology and focal lesions is often indistinct. A
-comparison of our method with other state-of-the-art methods is summarized in
-Table~\ref{tab:state}. Our method outperforms the winning method (Souplet et al.
-\cite{souplet2008}) of the MS lesion segmentation challenge 2008 and the
-currently best unsupervised method reported on that data set (Weiss et al.
-\cite{weiss2013}) in terms of mean TPR and PPV. Our method performs comparably
-to a current method (Geremia et al. \cite{geremia2010}) that uses a carefully
-designed set of features specifically designed for lesion segmentation, despite
-our method having learned its features solely from a relatively small training
-set.
+quantitative comparison of our method with other state-of-the-art methods is
+summarized in Table~\ref{tab:state}. Our method outperforms the winning method
+(Souplet et al. \cite{souplet2008}) of the MS lesion segmentation challenge 2008
+and the currently best unsupervised method reported on that data set (Weiss et
+al. \cite{weiss2013}) in terms of mean TPR and PPV. Our method performs
+comparably to a current method (Geremia et al. \cite{geremia2010}) that uses a
+carefully designed set of features specifically designed for lesion
+segmentation, despite our method having learned its features solely from a
+relatively small training set.
 
 \begin{table}[tb]
 \def\tabspace{12pt}
@@ -124,19 +139,19 @@ samples and calculated the mean DSC on the training and test sets as illustrated
 in Fig.~\ref{fig:bioms}. For small training sets, there is a large difference
 between the DSCs on the training and test sets, which indicates that the
 training set is too small to learn a representative set of features. At around
-100 images, the model becomes stable in terms of test performance and the small
+100 samples, the model becomes stable in terms of test performance and the small
 difference between training and test DSCs, indicating that overfitting of the
 training data is no longer occurring. With 100 training subjects, our method
-achieves a DSC on the test set of \SI{57.38}{\percent}, which shows that the
-segmentation accuracy can be greatly improved compared to the results on the
-challenge data set, when a representative data set is available.
+achieves a mean DSC on the test set of \SI{57.38}{\percent}, which shows that
+the segmentation accuracy can be greatly improved compared to the results on the
+challenge data set, when a representative training set is available.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/train_count}
+\includegraphics[width=0.78\textwidth]{figures/train_count}
 
 \caption{Comparison of DSC scores calculated on the training and test sets for
-varying numbers of training samples. At around 100 images, the model becomes
+varying numbers of training samples. At around 100 samples, the model becomes
 stable in terms of test performance and the small difference between training
 and test DSCs, indicating that overfitting of the training data no longer
 occurs.}

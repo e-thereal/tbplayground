@@ -3,11 +3,11 @@
 % \cite{garcia2013}
 
 Multiple sclerosis (MS) is an inflammatory and demyelinating disease of the
-central nervous system, which is characterized by the formation of lesions,
+central nervous system, and is characterized by the formation of lesions,
 primarily visible in the white matter on conventional magnetic resonance images
 (MRIs). Imaging biomarkers based on the delineation of lesions, such as lesion
 load and lesion count, have established their importance for assessing disease
-progression and treatment affect. However, lesions vary greatly in shape,
+progression and treatment effect. However, lesions vary greatly in size, shape,
 intensity and location, which makes their automatic and accurate segmentation
 challenging. Many automatic methods have been proposed for the segmentation of
 MS lesions over the last two decades, which can be classified into unsupervised
@@ -42,16 +42,16 @@ Yoo et al. \cite{yoo2014} proposed performing unsupervised learning of
 domain-specific features from image patches from unlabelled data using deep
 learning. The most closely related methodology to our currently proposed one
 comes from the domain of cell membrane segmentation, in which Ciresan et al.
-proposed to classify the center of image patches directly using a convolutional
-neural network \cite{LeCun1998} without a dedicated feature extraction step
-\cite{Ciresan2012}. Instead, features are learned indirectly within the lower
-layers of the neural network during training, while the higher layers can be
-regarded as performing the classification. In contrast to unsupervised feature
-learning, this approach allows the learning of features that are specifically
-tuned to the segmentation task. Although deep network-based feature learning
-methods have shown great potential for image segmentation, the time required to
-train complex patch-based methods can make the approach infeasible when the size
-and number of patches are large.
+\cite{Ciresan2012} proposed to classify the centers of image patches directly
+using a convolutional neural network \cite{LeCun1998} without a dedicated
+feature extraction step. Instead, features are learned indirectly within the
+lower layers of the neural network during training, while the higher layers can
+be regarded as performing the classification. In contrast to unsupervised
+feature learning, this approach allows the learning of features that are
+specifically tuned to the segmentation task. Although deep network-based feature
+learning methods have shown great potential for image segmentation, the time
+required to train complex patch-based methods can make the approach infeasible
+when the size and number of patches are large.
 
 % Ciresan et al. reported a training
 % time of more than a week to train their patch-based segmentation model using 4
@@ -70,33 +70,84 @@ and number of patches are large.
 %   
 % \end{itemize}
 
-In this paper, we propose a new method for segmenting MS lesions that feeds
+We propose a new method for segmenting MS lesions that processes
 entire MRI volumes through a neural network with a novel objective function to
-automatically learn features tuned for lesion segmentation. By processing entire
-volumes, our model scales up more efficiently with image resolution than
-patch-based approaches, which allows our model to take advantage of large data
-sets. The improved efficiency of our model is due to the elimination of
-redundant calculations at the overlap of neighboring patches, which speeds up
-the training and removes the need to select representative patches. Our neural
-network is composed of three layers: an input layer composed of the image voxels
-of different modalities, a convolutional layer \cite{LeCun1998} that extracts
-features from the input layer at each voxel location, and a deconvolutional
-layer \cite{zeiler2011} that uses the extracted features to predict
-a lesion mask and thereby classifies each voxel of the image in a single
+automatically learn features tuned for lesion segmentation.
+%
+% Processing entire volumes has two advantages compared to patch-based approaches:
+% 1) it avoid redundant calculations at the overlap of neighboring patches, which
+% speeds up the learning and allows our model to take advantage of larger data
+% sets, and 2) it removes the need to select representative patches.
+%
+% By processing entire volumes instead of image patches, our method avoids
+% redundant calculations at the overlap of neighboring patches, which speeds up
+% the training and allows our model to take advantage of large data sets. In
+% addition, it removes the need to select representative patches, which can be
+% challenging and potentially biasing.
+%
+By processing entire volumes instead of patches, our model removes the need to
+select representative patches, eliminates redundant calculations where patches
+overlap, and therefore scales up more efficiently with image resolution. This
+speeds up training and allows our model to take advantage of large data sets.
+%
+% By processing entire volumes, our model scales up more efficiently with image
+% resolution than patch-based approaches, which allows our model to take advantage
+% of large data sets. The improved efficiency of our model is due to the
+% elimination of redundant calculations at the overlap of neighboring patches,
+% which speeds up the training and removes the need to select representative
+% patches.
+%
+Our neural network is composed of three layers: an input layer composed of the
+image voxels of different modalities, a convolutional layer \cite{LeCun1998}
+that extracts features from the input layer at each voxel location, and a
+deconvolutional layer \cite{zeiler2011} that uses the extracted features to
+predict a lesion mask and thereby classify each voxel of the image in a single
 operation. The entire network is trained at the same time, which enables feature
-learning to be driven by segmentation performance. The proposed network is
-similar in architecture to a convolutional auto-encoder \cite{masci2011} but
-instead of learning a lower dimensional representation of the input images
-themselves, the outputs of our network are the predicted lesion masks. Due to
-the structural similarity to convolutional auto-encoders, we call our model a
-convolutional encoder network (CEN). Traditionally, neural networks are trained
-by back-propagating the sum of squared differences of the predicted and
+learning to be driven by segmentation performance.
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011} but instead of learning a lower dimensional representation of
+% the input images themselves, the outputs of our network are the predicted lesion
+% masks.
+% 
+% "The proposed network is similar in architecture to a convolutional auto-encoder
+% [8], which produces a  lower dimensional encoding of the patterns of variability
+% embedded in the input images, while our network aims to predict optimal lesion
+% masks given unsegmented images."
+% 
+The proposed network is similar in architecture to a convolutional auto-encoder
+\cite{masci2011}, which produces a lower dimensional encoding of the input
+images and uses the decoder output to measure the reconstruction error needed
+for training, while our network uses the decoder to predict lesion masks of the
+input images.
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, which uses the reconstructed images calculated by the decoding
+% layer to drive the learning of a lower dimensional representation of the input
+% images, while our network uses the decoder to predict lesion masks of the input
+% images.
+% 
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, which produces a lower dimensional encoding of the input
+% images by minimizing the difference of input images and and their
+% reconstructions
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, but instead of using the decoder to reconstruct the input
+% images themselves from a lower dimensional representation, our network uses the
+% decoder to predict lesion masks of the input images.
+%
+Due to the structural similarity to convolutional auto-encoders, we call our
+model a convolutional encoder network (CEN). Traditionally, neural networks are
+trained by back-propagating the sum of squared differences of the predicted and
 expected outputs. However, if one class is greatly underrepresented, as is the
 case for lesions, which typically comprise less than \SI{1}{\percent} of the
 image voxels, the algorithm would learn to ignore the minority class completely.
 To overcome this problem, we propose a new objective function based on a
 weighted combination of sensitivity and specificity, designed to deal with
 unbalanced classes and formulated to allow stable gradient computations.
+
+
 
 % \paragraph{Proposed Method}
 % 
