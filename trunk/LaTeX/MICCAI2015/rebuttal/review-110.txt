@@ -1,0 +1,163 @@
+MICCAI 2015
+
+Reviews of submission #110: "Deep Convolutional Encoder Networks for
+Multiple Sclerosis Lesion Segmentation"
+
+------------------------ Submission 110, Review 1 ------------------------
+
+Overall rating:     5  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Expert 
+
+Overall Recommendation
+
+   Good - Accept 
+
+Summary, Contributions and Significance
+
+   The authors try to tackle the well-known problem of white matter lesion
+   segmentation using a convolutional neural network. The main contribution
+   of the paper is a relatively novel way of performing segmentation using
+   entire volumes instead of patch based approaches. I think the results
+   show that these types of techniques have an important place in the future
+   of medical imaging.
+
+Strengths and Weaknesses
+
+   One of the main strengths is the novel methodological approach combined
+   with a thorough evaluation, both on publicly available data and on a
+   large private data set. For me the main novel aspect is moving from
+   patch-based to full image evaluation.
+
+   Strengths:
+
+   - Novel methodology, not just the application of convolutional neural
+   networks, but mostly moving from the traditional patch based approaches
+   to full volume approaches. It is important to note however that this does
+   not translate as well to cases were volumes are larger and that network
+   architecture can not be as complex.
+
+   - Thorough evaluation on both publicly available data and a large set of
+   private data. 
+
+   - Paper is well-written and the methodology is clearly explained.
+
+   Weaknesses:
+
+   - The authors could have give some references to other papers which use a
+   similar strategy to segment areas in an image (I don't know any in
+   medical imaging, but for example the crows segmentation paper by Kang et
+   al. (http://arxiv.org/abs/1411.4464)
+
+   - The discussion of the limitations of their approach is very limited.
+   One disadvantage is that feeding entire volumes to the network currently
+   limits the applicability to other problems. Furthermore, there comparison
+   to the method by Ciresan et al is not really fair, he uses a 11-layer,
+   much more complex network compared to the authors.
+
+   - Personally, I don't think the loss function is very novel, it feels
+   like a relatively straightforward extension to loss functions used in
+   other papers.
+
+Constructive Feedback
+
+   For this paper I wouldn't change too much. I don't like the comparison
+   the Ciresan et al. paper, as it is not completely fair. Furthermore, I
+   would not automatically assume that if a lesion has similar contrast, it
+   was missed during annotation (although I know that annotations of white
+   matter lesions in these types of MRI typically contain a lot of missed
+   lesions).
+
+   If I could give one suggestion to improve it (although I don't feel this
+   is required), I would reduce the description of the loss function and
+   spent a paragraph on the limitations of the proposed methodology.
+
+
+------------------------ Submission 110, Review 2 ------------------------
+
+Overall rating:     3  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Expert 
+
+Overall Recommendation
+
+   Short of acceptable - Probably reject 
+
+Summary, Contributions and Significance
+
+   This paper describes a neural network approach to brain lesion
+   segmentation in multiple sclerosis patients.  The NN applies 32 different
+   spatial filters to the data and learns how to best weight the outputs
+   from the filters. The method is validated on the MICCAI lesion challenge
+   and an in-house data set and shown to perform similar to other state of
+   the art approaches.
+
+Strengths and Weaknesses
+
+   - The approach has some moderate novelty in its application of neural
+   networks but this general idea has been applied before as referenced by
+   the authors and also in Sweeney et al, "OASIS is Automated Statistical
+   Inference for Segmentation, with applications to multiple sclerosis
+   lesion segmentation in MRI", NeuroImage Clinical 2,402-413,2013, which
+   also applies filters and weights the outputs, although using a logistic
+   regression instead of a NN.
+   - There is no evaluation of statistical significance and the differences
+   between the propose approach and Geremia et al seem very small.
+
+Constructive Feedback
+
+   - Comparisons should be more rigorous with measures of statistical
+   significance. 
+   - It would be interesting to understand what filters are important and
+   possibly feed patches into the same system to better understand the
+   differences.  
+
+
+------------------------ Submission 110, Review 3 ------------------------
+
+Overall rating:     4  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Knowledgeable 
+
+Overall Recommendation
+
+   Sufficient - Probably accept 
+
+Summary, Contributions and Significance
+
+   The authors present a method for segmenting MS lesions using
+   convolutional encoder networks and an objective function in the form of a
+   weighted sum of different classes. Their approach combines feature
+   extraction and class prediction within the layers of the network,
+   eliminating the need for manual feature selection and optimizing the task
+   as a function of segmentation performance.
+
+Strengths and Weaknesses
+
+   The paper is very well structured, easily guiding the reader throughout
+   its contents. It presents the advantage of their approach over existing
+   methods and is concise in reviewing their CEN methodology. Even though
+   the CEN kernels implicitly take into account spatial information, an
+   explicit incorporation of prior spatial information might improve the
+   obtained results. Another point is that the authors make no mention as to
+   why the downsampled the images from the MS lesion segmentation challenge.
+   Nonetheless, these are only minor weaknesses of the methodology and
+   paper. 
+
+Constructive Feedback
+
+   The work presents clear advantages of the use of CEN over other automated
+   classification methods and might be considered for participation in the
+   program. Suggestions for improvement are along the line of incorporating
+   spatial information into the classification task to increase its
+   accuracy. This can be achieved using atlases, models, context-aware
+   features, amongst others. 
+
+
+
