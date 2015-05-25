@@ -1,0 +1,15 @@
+R1 states that processing entire volumes may limit the model's complexity. The limiting factor is GPU memory. Training of our most memory-intensive model required only 1.5GB, well within the limits of most consumer graphics cards with room to grow. For very large/complex models, training can be distributed over multiple GPUs with little additional overhead.
+
+R1 notes that our approach is similar to the crowd segmentation work of Kang et al., which we will cite. A key difference is that the neural network of Kang et al. uses only convolutional and pooling layers to perform classification, which reduces the resolution of the inferred segmentation compared to the input, while we use a deconvolutional layer to obtain segmentations at the same resolution as the input images.
+
+R1 states that the speed comparison with the Ciresan paper is not really fair. We agree and have noted in our paper that the comparison is imprecise. However, while Ciresan's network is more complex (~2.3 times more trainable weights), our images contain 18 times more voxels, which more than compensates for the increased complexity. Therefore, we still believe that the large runtime differences indicate that processing whole volumes is a much faster approach.
+
+R1 questions the novelty of the loss function. We agree that the reformulation of sensitivity and specificity into an objective function with stable gradients is a simple idea, but we have not seen it elsewhere and believe that its strong improvement over the sum of squared differences justifies the detailed description.
+
+R2 states that our approach is not novel and has only minor differences to the work of Sweeney et al. We believe our work has fundamental differences, including: 1) we perform segmentation using entire volumes instead of patches, 2) our method automatically learns the filters that are used to extract features instead of using hand-designed filters, and 3) the cited paper segments each voxel independently of neighboring voxels then relies on elaborate post-processing, while our network naturally models inter-voxel relationships to achieve a spatially consistent segmentation.
+
+R2 states that the difference in performance from the state-of-the-art methods is too small to show a clear benefit. We used the MICCAI challenge data set to show that our method can perform on par with the state-of-the-art but believe that this set is too small for proper validation. We show that ~100 images are required to train our model without overfitting.
+
+R3 suggests incorporating spatial priors to improve accuracy. We agree this may help and the model can include priors such as tissue probability maps as additional channels of the input images.
+
+R3 asks why we downsampled the images. The images are only publicly available at a much higher resolution than at which they were acquired. We downsampled the images to reduce the runtime and the amount of required memory, and to allow for a fair comparison to other published methods, which also frequently downsample the images.

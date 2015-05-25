@@ -7,62 +7,63 @@ To allow for a direct comparison with state-of-the-art lesion segmentation
 methods, we evaluated our method on the FLAIR, T1-, and T2-weighted MRIs of the
 20 publicly available labeled cases from the MS lesion segmentation challenge
 2008 \cite{styner20083d}, which we downsampled from the original isotropic voxel
-size of \SI{0.5}{\cubic\milli\metre} to an isotropic voxel
-size of \SI{1.0}{\cubic\milli\metre}. In addition, we evaluated our method on an
+size of \SI{0.5}{\cubic\milli\metre} to an isotropic voxel size of
+\SI{1.0}{\cubic\milli\metre}. In addition, we evaluated our method on an
 in-house data set from an MS clinical trial of 500 subjects split equally into
 training and test sets. The images were acquired from 45 different scanning
 sites. For each subject, the data set contains T2- and PD-weighted MRIs with a
-voxel size of \SI{0.937x0.937x3.000}{\milli\metre}. The main
-preprocessing steps included rigid intra-subject registration, brain extraction,
-intensity normalization, and background cropping.
-%
-% To compute a lesion distribution map, we affinely registered the training
-% subjects of our in-house data set to MNI space and calculated the average lesion
-% mask. We used the square root of the average lesion mask as a prior to
-% counterbalance large differences in lesion probability between regions and added
-% the lesion prior as an additional input channel to both data sets.
-%
-% We used a CEN with 32 filters and filter sizes of \num{9x9x9} and \num{9x9x5}
+voxel size of \SI{0.937x0.937x3.000}{\milli\metre}. The main preprocessing steps
+included rigid intra-subject registration, brain extraction, intensity
+normalization, and background cropping.
+%  To compute a lesion distribution map, we affinely registered the training
+% subjects of our in-house data set to MNI space and calculated the average
+% lesion mask. We used the square root of the average lesion mask as a prior to
+% counterbalance large differences in lesion probability between regions and
+% added the lesion prior as an additional input channel to both data sets.
+%  We used a CEN with 32 filters and filter sizes of \num{9x9x9} and \num{9x9x5}
 % voxels for the challenge and in-house data sets, respectively. Training on a
 % single GeForce GTX 780 graphics card took between 24 and 32 hours per model.
 % However, once the network is trained, segmentation of new images can be
 % performed in less than one second.
-%
+
 We used a CEN with 32 filters and filter sizes of \num{9x9x9} and \num{9x9x5}
 voxels for the challenge and in-house data sets, respectively. Training on a
 single GeForce GTX 780 graphics card took between 6 and 32 hours per model
 depending on the training set size. However, once the network is trained,
 segmentation of trimodal 3D volumes with a resolution of, e.g.,
 \num{159x201x155} voxels can be performed in less than one second. As a
-rough\footnote{The comparison is imprecise due to differing experimental
-conditions.} comparison, Ciresan et al. \cite{Ciresan2012} reported that their
-patch-based method required 10 to 30 minutes to segment a single 2D image with a
-resolution of \num{512x512} voxels using four graphics cards, which demonstrates
-the large speed-ups gained by processing entire volumes.
-
-% TODO: do something about the time. Why is the time so long for only 5 images?
+rough\footnote{Ciresan et al. used a more complex network that is composed of 11
+layers. However, their network was trained on much smaller images, which roughly
+compensates for the increased complexity.} comparison, Ciresan et al.
+\cite{Ciresan2012} reported that their patch-based method required 10 to 30
+minutes to segment a single 2D image with a resolution of \num{512x512} voxels
+using four graphics cards, which demonstrates the large speed-ups gained by
+processing entire volumes.
 
 \begin{figure}[tb]
 \centering
 \small
-\def\MRIwidth{0.159\textwidth}
+%\def\MRIwidth{0.159\textwidth}
+\def\MRIwidth{0.15\textwidth}
 
 \begin{tikzpicture} 
+\tikzstyle{leftlabel}=[rotate=90, align=center,overlay,above]
+
 \matrix [matrix of nodes, nodes={anchor=center, inner sep=1pt}] {
         &[4pt] FLAIR & T1w & T2w & Ground truth & Our method \\[4pt]
-\node[rotate=90,align=center] {CHB\,07\\(DSC\,=\,\SI{60.58}{\percent})}; &
+\node[leftlabel] {CHB\,07\\(DSC\,=\,\SI{60.58}{\percent})}; &
 \includegraphics[width=\MRIwidth]{figures/CHB07-FLAIR-s88} &
 \includegraphics[width=\MRIwidth]{figures/CHB07-T1w-s88} &
 \includegraphics[width=\MRIwidth]{figures/CHB07-T2w-s88} &
 \includegraphics[width=\MRIwidth]{figures/CHB07-gold-s88} &
 \includegraphics[width=\MRIwidth]{figures/CHB07-pred-s88} \\
-\node[rotate=90,align=center] {CHB\,04\\(DSC\,=\,\SI{61.37}{\percent})}; &
+\node[leftlabel] {CHB\,04\\(DSC\,=\,\SI{61.37}{\percent})}; &
 \includegraphics[width=\MRIwidth]{figures/CHB04-FLAIR-s85} &
 \includegraphics[width=\MRIwidth]{figures/CHB04-T1w-s85} &
 \includegraphics[width=\MRIwidth]{figures/CHB04-T2w-s85} &
 \includegraphics[width=\MRIwidth]{figures/CHB04-gold-s85} &
 \includegraphics[width=\MRIwidth]{figures/CHB04-pred-s85} \\
-\node[rotate=90,align=center] {UNC\,09\\(DSC\,=\,\SI{9.01}{\percent})}; &
+\node[leftlabel] {UNC\,09\\(DSC\,=\,\SI{9.01}{\percent})}; &
 \includegraphics[width=\MRIwidth]{figures/UNC09-FLAIR-s89} &
 \includegraphics[width=\MRIwidth]{figures/UNC09-T1w-s89} &
 \includegraphics[width=\MRIwidth]{figures/UNC09-T2w-s89} &

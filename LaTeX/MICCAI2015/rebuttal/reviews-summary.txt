@@ -1,0 +1,57 @@
+R1:
+
++ Novelty is using entire volumes instead of patches
++ Strength novel methodology combined with thorough evaluation
++ Well written
+
+- Does not allow complex network architecture when volumes are large
+- Missing references to other papers which use similar strategy (he doesn't know
+  such papers for MI but has a general reference, http://arxiv.org/abs/1411.4464)
+A: - Cited paper uses a convolutional and poolings layers for feature extraction
+     and convolutional layers with kernel size of 1 for feature fusion/classification
+   - Feature learning step is similar but the classification step only considers
+     the features extracted at the current voxel. We use a deconvolutional layer
+     for the classification, which, like the 1 voxel convolutional layer, performs
+     segmentation, but due to the larger kernel size, incorporates extracted features
+     from neighboring voxels in order to achieve a spatially consistent segmentation
+- Discussion of limitations is limited. Feeding in entire volumes limits the application
+  to other problems. (I don't understand how and why)
+- Doesn't like the comparison with Ciresan et al. because of the difference in
+  complexity of the two models
+  
+R1 states that the speed comparison with the Ciresan paper is not really fair. We agree and have noted in our paper that the comparison is imprecise. However, while Ciresan's network is more complex, our images contain 18 times more voxels, which roughly compensates for the increased complexity. We still believe that the large runtime differences indicate that processing whole volumes is a faster approach.
+  
+- Doesn't think the loss function isn't novel. Straight forward extension of loss
+  function used in other papers. (need to find which papers)
+
+R2:
+
+- Framework not novel as referenced by the others (did we do that?) and this missed
+  paper (OASIS is Automated Statistical Inference for Segmentation, with applications
+  to multiple sclerosis lesion segmentation in MRI)
+A: - Cited paper differs in many aspects from the presented work: 1) segmentation is
+     carried out by processing each voxel individually, while our method processes
+     entire volumes. 2) The referenced paper uses an elaborate pre- and post-processing
+     pipeline and a simple set of hand-crafted features, where the main point of
+     out method is that we can automatically learn features, instead of hand-crafting
+     them, and that the learned features are robust to intensity variations and don't
+     require elaborate pre-processing. Also, no post-processing is done in our method
+     to remove false positives.
+- No evaluation of statistical significants
+- Difference to Geremia et al. seems small
+
+* Interesting to understand what filters are important
+* Feed patches into the same system to better understand the differences
+
+-> This reviewer probably missed the fundamental difference of our approach and
+   patch-based approaches
+   
+R3:
+
++ Very well structured
+* Including spatial information might improve the results (suggestions: using atlases,
+  models, context-aware features, ...)
+* Why did we downsample the images
+A: Images were provided upsampled. We downsampled the images to the resolution used
+   by such and such.
+

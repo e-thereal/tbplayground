@@ -10,8 +10,8 @@ load and lesion count, have established their importance for assessing disease
 progression and treatment effect. However, lesions vary greatly in size, shape,
 intensity and location, which makes their automatic and accurate segmentation
 challenging. Many automatic methods have been proposed for the segmentation of
-MS lesions over the last two decades, which can be classified into unsupervised
-and supervised methods. Unsupervised methods do not require a labeled data set
+MS \mbox{lesions} over the last two decades, which can be classified into
+unsupervised and supervised methods. Unsupervised methods do not require a labeled data set
 for training. Instead, lesions are identified as an outlier class using, e.g.,
 clustering methods \cite{souplet2008} or dictionary learning and sparse coding
 to model healthy tissue \cite{weiss2013}. Current supervised approaches
@@ -85,10 +85,13 @@ automatically learn features tuned for lesion segmentation.
 % addition, it removes the need to select representative patches, which can be
 % challenging and potentially biasing.
 %
-By processing entire volumes instead of patches, our model removes the need to
-select representative patches, eliminates redundant calculations where patches
-overlap, and therefore scales up more efficiently with image resolution. This
-speeds up training and allows our model to take advantage of large data sets.
+Like fully convolutional networks \cite{kang2014fully}, our network processes
+entire volumes instead of patches, which removes
+%By processing entire volumes instead of patches, our modelremoves
+the need to select representative patches, eliminates redundant calculations
+where patches overlap, and therefore scales up more efficiently with image
+resolution. This speeds up training and allows our model to take advantage of
+large data sets.
 %
 % By processing entire volumes, our model scales up more efficiently with image
 % resolution than patch-based approaches, which allows our model to take advantage

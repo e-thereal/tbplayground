@@ -1,0 +1,224 @@
+MICCAI 2015
+
+Reviews of submission #779: "Deep Learning of Spatial Features in Myelin
+Maps to Improve Diagnosis of Multiple Sclerosis in Normal-Appearing Brain
+Tissue"
+
+------------------------ Submission 779, Review 1 ------------------------
+
+Overall rating:     5  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Knowledgeable 
+
+Overall Recommendation
+
+   Good - Accept 
+
+Summary, Contributions and Significance
+
+   The paper proposes to learn a joint representation from T1 and myelin
+   images via deep learning, and to use this representation for  supervised
+   classification of MS. This representation achieves better results than a
+   deep representation learnt from T1 or myelin images alone, or global,
+   averaged myelin features which have previously been used in literature.
+   Important findings are that the local variations in myelin, as well as
+   the interaction of myelin and T1, are predictive of MS. 
+
+Strengths and Weaknesses
+
+   The idea of the paper is interesting, the paper is clearly written and
+   the results are convincing. Learning a joint representation from multiple
+   modalities is not necessarily novel, but the application to MS diagnosis
+   is explained well, and interesting results are presented. I think the
+   paper addresses a relevant audience and therefore would fit well in the
+   MICCAI program. 
+
+   I am happy to see the baselines which are included in Table 1. , i.e. 
+   each feature type on a single modality, and the differences between
+   global, local and deep learnt features. The biggest improvement seems to
+   come from the T1+myelin combination, rather than from local->deep
+   learning step. As a sanity check, it would also be interesting to see
+   feature types 2 and 4 combined (perhaps by concatenating the features). 
+   Information about the variability of performances would also be valuable.
+
+   Although the architecture choices seem reasonable, it would be good to
+   get a bit more of an understanding how to make these choices, or how
+   these choices can affect the results. I am trying to get a feeling of
+   whether a researcher with a different MS dataset, not necessarily
+   familiar with RBMs, would arrive at similar conclusions. It is perfectly
+   fine if these are rules of thumb given by [16], but this is not clear
+   from the current description.
+
+   A choice which worries me, is how the image patches are chosen in Section
+   3.1.. As I understand, this is done once, using the label information of
+   the complete dataset.  While this apparently has been done in literature
+   before, it threatens the conclusions about the absolute performance which
+   can be achieved by such a method. I do think that the relative
+   conclusions (e.g. T1 vs myelin) still hold, so for me it is not a reason
+   to rate the paper lower, but I think the implications of this choice
+   should be made more clear.
+
+Constructive Feedback
+
+   -Please include standard deviations in Table 1 (perhaps just for Accuracy
+   or AUC, to mind the space).  To further save space, it would be fine to
+   show 1 decimal instead of 2, and decrease the spacing of the rows. 
+
+   -A sentence about the architecture choices to guide readers in applying
+   this method on a different 
+
+   - A sentence on the implications of choosing discriminative patches in
+   Section 3.1. using the label information
+
+
+------------------------ Submission 779, Review 2 ------------------------
+
+Overall rating:     3  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Passing Knowledge 
+
+Overall Recommendation
+
+   Short of acceptable - Probably reject 
+
+Summary, Contributions and Significance
+
+   This manuscript proposes a deep learning-based feature learning method
+   for the detection of multiple sclerosis in normal-appearing brain tissue,
+   by using multi-modality images (i.e., T1-weighted MRIs and myelin maps).
+   Specifically, the authors proposed to learn high-level features from
+   T1-weighted MRIs and myelin maps via multimodal deep belief network
+   (DBN). The learned features are evaluated in 55 multiple sclerosis (MS)
+   patients and 44 healthy controls (HC), and achieved an accuracy of 78.69%
+   for MS vs. HC classification. 
+
+Strengths and Weaknesses
+
+   Major comments:
+   1) My main concern is that it seems that the proposed method is not
+   useful in practice. The first reason is that, in the proposed method, the
+   patch selection stage requires full class labels for both MC patients and
+   HCs (via t-test between MS and HC images). However, it is impossible to
+   know exactly what a new test sample is a MC or HC in practice. The second
+   reason is that the proposed method use only normal-appearing patches,
+   while the patches overlapping with focal lesions are excluded for each
+   patient. This operation has the similar problem, because whether there
+   are focal lesions are actually unknown for a new test image. In addition,
+   since the learned model is trained using only the normal-appearing
+   patches, such model is not robust to noise. For example, if patches
+   overlapping with focal lesions are fed into this model, the learning
+   performance is expected to be bad. In view of this, I am not sure whether
+   the method proposed in this paper can be used in practice.
+
+   2) The second concern is that the learned feature vector for each image
+   is of 1188400-dimensional, while the number of training samples in each
+   fold of cross-validation is only 90. This is a typical small-sample-size
+   problem, and such problem will deteriorate the performance of the
+   classification model, which is not discussed in this paper.
+
+   3) There are two atlases used in the experiments, i.e., MNI152 template
+   and Harvard-Oxford sub-cortical structural atlas. Why don’t use a
+   common atlas (e.g., Harvard-Oxford sub-cortical structural atlas)?
+
+   4) The authors use a missing feature imputation method in the learned
+   feature space. It seems to make sense if they perform missing feature
+   imputation before they learn high-level features, which is not discussed
+   in this paper.
+
+   Minor comments: 
+   1)	The meaning of terms “global mean” and “regional mean” in
+   Table 1 and Section 4 are not mentioned at all, which are confused. 
+
+   2)	The patch size, the dimension of each layer in DBN, and the number of
+   binary decision trees are fixed in the experiments. How to determine
+   these numbers?
+
+   3)	 There are some typos, e.g., the vector v_i in the fist sentence of
+   Section 3.2.
+
+Constructive Feedback
+
+
+
+------------------------ Submission 779, Review 3 ------------------------
+
+Overall rating:     2  (scale is 0..6; 6 is best)
+
+Expertise
+
+   Expert 
+
+Overall Recommendation
+
+   Poor quality - Reject 
+
+Summary, Contributions and Significance
+
+   In this paper, the authors present a deep learning method of spatial
+   features in myelin maps for detecting multiple sclerosis in
+   normal-apprearing brain tissue.   3D image patches of normal-appearing
+   tissues in T1-weighted MRIs were extracted along with the corresponding
+   patches in myelin maps, and used to learn a joint latent T1w-myelin
+   feature representation based on deep learning. 
+
+   In addition, the authors introduced  a method for unbiased missing
+   feature imputation in order to account for missing features due to the
+   presence of focal MS lesions in some image patches.
+
+Strengths and Weaknesses
+
+   The authors  employed the deep learning method to learn effective
+   features of normal-appearing brain tissues from myelin images for MS
+   diagnosis.  A four-layer multi-modal DBN, unbiased feature imputation to
+   exclude lesion voxels, and a random forest classifier were utilised to
+   detect MS.
+
+   The organisation  of the paper was not clear. The section 2 for image
+   preprocessing may should be introduced in details. In section 3, the
+   flowchart  of this paper was not clear. The authors may should describe
+   each part of the system in details.
+
+   As we known, the overfitting problem is a challenging  task of deep
+   learning.
+   The main concern of the reviewer is how does this paper  overcome the
+   overfitting problem on small dataset? 
+
+    The methodological contributions are not clear in this paper. The
+   authors should clarify their own contributions clearly in Section 2 and
+   3, not just simply adopting the existing methods. Based on the successful
+    cases in medical imaging analysis using deep learning, some simple
+   structure  networks (deep belief network with 3 or 4 layers) are enough
+   to get good performance.  Why do the authors employ multimodal deep
+   learning?
+
+Constructive Feedback
+
+   The experiments should be performed on more benchmark datasets not only
+   one dataset . The authors should clarify their own contributions in the
+   methodology in the paper, especially in Section 3.
+
+   More introduction to multimodal deep learning  should be stated in the
+   paper.
+   MS detection  in medical imaging is a hot topic. The authors should
+   compare their method with much more state-of-the-art algorithms
+   with/without deep learning.
+
+   The improvement shown in Table 1 is not significant. 
+
+   Another suggestion is to better organize the content in Table 1. For
+   example, the results can be arranged in pair (with /without deep
+   learning) for easier comparison. 
+   It will be better if the authors compare ‘deep learned T1W and
+   myelin’ with ‘T1w and myelin without deep learning.
+
+   Also, it is highly recommended if the authors compare the method with
+   other feature selection approaches.
+
+
+
+
+
