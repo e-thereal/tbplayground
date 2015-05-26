@@ -1,0 +1,177 @@
+\section{Introduction}
+
+% \cite{garcia2013}
+
+Multiple sclerosis (MS) is an inflammatory and demyelinating disease of the
+central nervous system, and is characterized by the formation of lesions,
+primarily visible in the white matter on conventional magnetic resonance images
+(MRIs). Imaging biomarkers based on the delineation of lesions, such as lesion
+load and lesion count, have established their importance for assessing disease
+progression and treatment effect. However, lesions vary greatly in size, shape,
+intensity and location, which makes their automatic and accurate segmentation
+challenging. Many automatic methods have been proposed for the segmentation of
+MS \mbox{lesions} over the last two decades, which can be classified into
+unsupervised and supervised methods. Unsupervised methods do not require a labeled data set
+for training. Instead, lesions are identified as an outlier class using, e.g.,
+clustering methods \cite{souplet2008} or dictionary learning and sparse coding
+to model healthy tissue \cite{weiss2013}. Current supervised approaches
+typically start with a large set of features, either predefined by the user
+\cite{geremia2010} or gathered in a feature extraction step, which is followed
+by a separate training step with labeled data to determine which set of features
+are the most important for segmentation in the particular domain. For example,
+% While early approaches have used the intensity values from different
+% modalities of a particular voxel as the input features \cite{zijdenbos1994},
+% these simple features are sensitive to intensity variations caused by, e.g.,
+% different scanners or MRI acquisition protocols.
+% Most methods formalize lesion segmentation as a voxel classification problem,
+% where each voxel of an image is assigned one of the two classes ``lesion
+% voxel'' and ``non-lesion voxel''. The classification problem itself can then
+% be solved either in a supervised way using, e.g., artificial neural networks
+% \cite{zijdenbos1994} or random forests \cite{geremia2010}, or unsupervised
+% using clustering methods with one outlier class \cite{souplet2008} or by
+% treating lesions as an outlier of a generative model \cite{weiss2013}. A
+% variety of features have been proposed to drive the segmentation. Early
+% approaches have used the intensity values of different modalities at a
+% particular voxel location as the input features \cite{zijdenbos1994}. However,
+% simple intensity features can be sensitive to intensity variations between
+% images.
+% Geremia et. al \cite{geremia2010} have shown that carefully chosen
+% context-rich features are more robust to intensity variations, which improves
+% segmentation accuracy. Instead of using a large set of hand-crafted features,
+Yoo et al. \cite{yoo2014} proposed performing unsupervised learning of
+domain-specific features from image patches from unlabelled data using deep
+learning. The most closely related methodology to our currently proposed one
+comes from the domain of cell membrane segmentation, in which Ciresan et al.
+\cite{Ciresan2012} proposed to classify the centers of image patches directly
+using a convolutional neural network \cite{LeCun1998} without a dedicated
+feature extraction step. Instead, features are learned indirectly within the
+lower layers of the neural network during training, while the higher layers can
+be regarded as performing the classification. In contrast to unsupervised
+feature learning, this approach allows the learning of features that are
+specifically tuned to the segmentation task. Although deep network-based feature
+learning methods have shown great potential for image segmentation, the time
+required to train complex patch-based methods can make the approach infeasible
+when the size and number of patches are large.
+
+% Ciresan et al. reported a training
+% time of more than a week to train their patch-based segmentation model using 4
+% GPUs on 2D images with a resolution of \num{512x512} pixels \cite{Ciresan2012}.
+% To scale patch-based classification to 3D images with a resolution of
+% \num{256x256x50}, Yoo et. al used only a small fraction (\SI{0.1}{\percent}) of
+% the possible patches for training, which might limit the ability to learn
+% features that are representative of the entire image.
+
+% \paragraph{Related Work}
+% 
+% \begin{itemize}
+% 
+% \item Trend from simple intensity based features to more complex features
+% extracted or learned from image patches.
+%   
+% \end{itemize}
+
+We propose a new method for segmenting MS lesions that processes
+entire MRI volumes through a neural network with a novel objective function to
+automatically learn features tuned for lesion segmentation.
+%
+% Processing entire volumes has two advantages compared to patch-based approaches:
+% 1) it avoid redundant calculations at the overlap of neighboring patches, which
+% speeds up the learning and allows our model to take advantage of larger data
+% sets, and 2) it removes the need to select representative patches.
+%
+% By processing entire volumes instead of image patches, our method avoids
+% redundant calculations at the overlap of neighboring patches, which speeds up
+% the training and allows our model to take advantage of large data sets. In
+% addition, it removes the need to select representative patches, which can be
+% challenging and potentially biasing.
+%
+Similar to fully convolutional networks \cite{kang2014fully}, our network
+processes entire volumes instead of patches, which removes
+%By processing entire volumes instead of patches, our modelremoves
+the need to select representative patches, eliminates redundant calculations
+where patches overlap, and therefore scales up more efficiently with image
+resolution. This speeds up training and allows our model to take advantage of
+large data sets.
+%
+% By processing entire volumes, our model scales up more efficiently with image
+% resolution than patch-based approaches, which allows our model to take advantage
+% of large data sets. The improved efficiency of our model is due to the
+% elimination of redundant calculations at the overlap of neighboring patches,
+% which speeds up the training and removes the need to select representative
+% patches.
+%
+Our neural network is composed of three layers: an input layer composed of the
+image voxels of different modalities, a convolutional layer \cite{LeCun1998}
+that extracts features from the input layer at each voxel location, and a
+deconvolutional layer \cite{zeiler2011} that uses the extracted features to
+predict a lesion mask and thereby classify each voxel of the image in a single
+operation. The entire network is trained at the same time, which enables feature
+learning to be driven by segmentation performance.
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011} but instead of learning a lower dimensional representation of
+% the input images themselves, the outputs of our network are the predicted lesion
+% masks.
+% 
+% "The proposed network is similar in architecture to a convolutional auto-encoder
+% [8], which produces a  lower dimensional encoding of the patterns of variability
+% embedded in the input images, while our network aims to predict optimal lesion
+% masks given unsegmented images."
+% 
+The proposed network is similar in architecture to a convolutional auto-encoder
+\cite{masci2011}, which produces a lower dimensional encoding of the input
+images and uses the decoder output to measure the reconstruction error needed
+for training, while our network uses the decoder to predict lesion masks of the
+input images.
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, which uses the reconstructed images calculated by the decoding
+% layer to drive the learning of a lower dimensional representation of the input
+% images, while our network uses the decoder to predict lesion masks of the input
+% images.
+% 
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, which produces a lower dimensional encoding of the input
+% images by minimizing the difference of input images and and their
+% reconstructions
+%
+% The proposed network is similar in architecture to a convolutional auto-encoder
+% \cite{masci2011}, but instead of using the decoder to reconstruct the input
+% images themselves from a lower dimensional representation, our network uses the
+% decoder to predict lesion masks of the input images.
+%
+Due to the structural similarity to convolutional auto-encoders, we call our
+model a convolutional encoder network (CEN). Traditionally, neural networks are
+trained by back-propagating the sum of squared differences of the predicted and
+expected outputs. However, if one class is greatly underrepresented, as is the
+case for lesions, which typically comprise less than \SI{1}{\percent} of the
+image voxels, the algorithm would learn to ignore the minority class completely.
+To overcome this problem, we propose a new objective function based on a
+weighted combination of sensitivity and specificity, designed to deal with
+unbalanced classes and formulated to allow stable gradient computations.
+
+
+
+% \paragraph{Proposed Method}
+% 
+% \begin{itemize}
+% 
+% % What it is
+% 
+% % Why it is great
+% 
+% % \item Our model is fast because we can segment an entire image in a single
+% % feed-forward pass through the network. Allows to evaluate the segmentation
+% % performance at training time. Allows direct maximization of the similarity
+% % between predicted and ground truth segmentation during the training stage.
+% 
+% % Challenge
+% 
+% % How we overcome the challenge
+% % \item The second contribution is our new proposed objective function that allows
+% % NN to be applied to the voxel-wise classification in the case of very unbalanced
+% % classification problems. We propose to use a weighted sum of sensitivity and
+% % specificity error to better balance. We will show how convolutional neural
+% % networks can be trained using the modified objective function.
+% 
+% \end{itemize}

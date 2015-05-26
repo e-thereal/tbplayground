@@ -1,0 +1,67 @@
+\begin{thebibliography}{10}
+
+\bibitem{souplet2008}
+Souplet, J.C., Lebrun, C., Ayache, N., Malandain, G.:
+\newblock An automatic segmentation of {T2-FLAIR} multiple sclerosis lesions.
+\newblock In: MIDAS Journal - MICCAI 2008 Workshop. (2008)
+
+\bibitem{weiss2013}
+Weiss, N., Rueckert, D., Rao, A.:
+\newblock Multiple sclerosis lesion segmentation using dictionary learning and
+  sparse coding.
+\newblock In: Mori, K., Sakuma, I., Sato, Y., Barillot, C., Navab, N. (eds.)
+  MICCAI 2013, Part I. LNCS 8149.
+\newblock Springer, Heidelberg (2013)  735--742
+
+\bibitem{geremia2010}
+Geremia, E., Menze, B.H., Clatz, O., Konukoglu, E., Criminisi, A., Ayache, N.:
+\newblock Spatial decision forests for {MS} lesion segmentation in
+  multi-channel {MR} images.
+\newblock In: Jian, T., Navab, N., Pluim, J., Viergever, M. (eds.) MICCAI 2010,
+  Part I. LNCS, vol. 6362, Springer, Heidelberg (2010)  111--118
+
+\bibitem{yoo2014}
+Yoo, Y., Brosch, T., Traboulsee, A., Li, D.K., Tam, R.:
+\newblock Deep learning of image features from unlabeled data for multiple
+  sclerosis lesion segmentation.
+\newblock In: Wu, G., Zhang D., Zhou L. (eds.) MLMI 2014, LNCS, vol. 8679.
+\newblock Springer, Heidelberg (2014)  117--124
+
+\bibitem{Ciresan2012}
+Ciresan, D., Giusti, A., Schmidhuber, J.:
+\newblock Deep neural networks segment neuronal membranes in electron
+  microscopy images.
+\newblock Advances in Neural Information Processing Systems (2012)  1--9
+
+\bibitem{LeCun1998}
+LeCun, Y., Bottou, L., Bengio, Y., Haffner, P.:
+\newblock Gradient-based learning applied to document recognition.
+\newblock Proceedings of the {IEEE} \textbf{86}(11) (1998)  2278--2324
+
+\bibitem{kang2014fully}
+Kang, K., Wang, X.:
+\newblock Fully convolutional neural networks for crowd segmentation.
+\newblock arXiv preprint arXiv:1411.4464 (2014)
+
+\bibitem{zeiler2011}
+Zeiler, M.D., Taylor, G.W., Fergus, R.:
+\newblock Adaptive deconvolutional networks for mid and high level feature
+  learning.
+\newblock In: 2011 IEEE International Conference on Computer Vision (ICCV),
+  IEEE (2011)  2018--2025
+
+\bibitem{masci2011}
+Masci, J., Meier, U., Cire{\c{s}}an, D., Schmidhuber, J.:
+\newblock Stacked convolutional auto-encoders for hierarchical feature
+  extraction.
+\newblock In: Artificial Neural Networks and Machine Learning--ICANN 2011.
+\newblock Springer (2011)  52--59
+
+\bibitem{styner20083d}
+Styner, M., Lee, J., Chin, B., Chin, M., Commowick, O., Tran, H.,
+  Markovic-Plese, S., Jewells, V., Warfield, S.:
+\newblock {3D} segmentation in the clinic: A grand challenge {II}: {MS} lesion
+  segmentation.
+\newblock MIDAS Journal - MICCAI 2008 Workshop (2008)  1--6
+
+\end{thebibliography}
