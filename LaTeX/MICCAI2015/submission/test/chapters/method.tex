@@ -15,6 +15,32 @@ where $\mathcal{S}$ is the set of possible segmentation functions, and $E$ is an
 error measure that calculates the dissimilarity between ground truth
 segmentations and predicted segmentations.
 
+% where $x^{(1)}_1 = I_\text{flair}$, $x^{(1)}_2 = I_\text{t1}$, $x^{(1)}_3 =
+%  I_\text{t2}$, and $x^{(1)}_4 = I_\text{prior}$.
+
+% \paragraph{Problem definition}
+% \begin{itemize}
+% 
+% \item Given a set of multi-modal images $I_n = (I_{n, \text{flair}})$ and
+% corresponding segmentations $S_n$, we define the task of finding an appropriate
+% segmentation algorithm, as the task of finding a function $s$ that maps images
+% to their segmentations, i.e. $S_n = s(I_n)$.
+% 
+% \item Segmentation is a function $s$ that maps an image $I$ to its segmentation
+% $S$. That is $S = s(I)$.
+% 
+% \item Given a set of training images $I_i$ and corresponding segmentations
+% $S_i$, we treat finding an appropriate function for segmenting T2 lesions as an
+% optimization problem of the following form:
+%  \begin{equation} 
+% \hat{s} = \arg \max_{s \in \mathcal{S}} \sum_n \text{sim}(S_n, s(I_n)).
+% \label{eq:segprob}
+% \end{equation}
+% where $\text{sim}$ denotes a function that calculates the similarity between
+% ground truth segmentations and predicted segmentations, and $\mathcal{S}$ is the
+% set of possible functions.
+% \end{itemize}
+
 \begin{figure}[tb]
 \centering
 \input{tikzfigures/encoder2}
@@ -124,19 +150,23 @@ y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 \end{equation}
-We formulate the sensitivity and specificity errors as squared errors in order
-to yield smooth gradients, which makes the optimization more robust. The
-sensitivity ratio $r$ can be used to assign different weights to the two terms.
-Due to the large number of non-lesion voxels, weighting the specificity error
-higher is important, but the algorithm is stable with respect to changes in $r$,
-which largely affects the threshold used to binarize the probabilistic output.
-In all our experiments, a sensitivity ratio between $0.10$ and $0.01$ yields
-very similar results.
+%where the first term captures the squared sensitivity error and the second term
+%captures the squared specificity error.
+We formulate the sensitivity and
+specificity errors as squared errors in order to yield smooth gradients, which
+makes the optimization more robust. The sensitivity ratio $r$ can be used to
+assign different weights to the two terms. Due to the large number of non-lesion
+voxels, weighting the specificity error higher is important, but the algorithm
+is stable with respect to changes in $r$, which largely affects the threshold
+used to binarize the probabilistic output. In all our experiments, a sensitivity
+ratio between $0.10$ and $0.01$ yields very similar results.
 
 To train our model, we must compute the derivatives of the modified
 objective function with respect to the model parameters. Equations \eqref{eq:dE2},
 \eqref{eq:dE1}, and \eqref{eq:delta1} are a consequence of the chain rule
+%of derivatives
 and independent of the chosen similarity measure.
+%
 The update for $\delta^{(2)}$ can be derived analogously to the SSD case,
 and is given by
 \begin{equation} 
@@ -145,3 +175,31 @@ and is given by
 \end{equation}
 where $\alpha = 2r (\sum_{\vect{p}}S(\vect{p}))^{-1}$ and $\beta = 2(1 -
 r)(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$.
+
+% Hence, we only need to derive the update rule for $\delta^{(2)}$.
+% With $\alpha = 2r (\sum_{\vect{p}}S(\vect{p}))^{-1}$ and $\beta = 2(1 -
+% r)(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$ we can rewrite $E$ as
+% \begin{align}
+% E &= \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+% \alpha S(\vect{p}) +
+% \frac{1}{2}\sum_{\vect{p}} \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+% \beta\big(1 - S(\vect{p})\big) \\
+%  &= \frac{1}{2}\sum_{\vect{p}} \big(\alpha S(\vect{p}) +
+%  \beta(1 - S(\vect{p}))\big)
+%  \left(S(\vect{p}) - y^{(2)}(\vect{p})\right)^2
+% \end{align}
+% Our objective function is similar to the SSD, with an
+% additional multiplicative term applied to the squared differences. The
+% additional factor is constant with respect to the
+% model parameters. Consequently, $\delta^{(2)}$ can be derived
+% analogously to the SSD case, and the new factor is simply carried over:
+% \begin{equation}
+% \delta^{(2)} = \big(\alpha S + \beta (1 - S)\big)\big(y^{(2)} - S\big) y^{(2)}
+% \big(1 - y^{(2)}\big)
+% \end{equation}
+
+% To account for the spatial distribution of lesions, we added a lesion
+% distribution map as an additional channel to the input layer. Therefore, we
+% affinely registered 250 subjects of an in-house data set from an MS clinical
+% trial to MNI space and calculated the square root of the average lesion mask to
+% counterbalance large differences in lesion probability between regions.

@@ -1,0 +1,47 @@
+\section{Conclusions}
+
+We have introduced a new method for the automatic segmentation of MS lesions
+based on convolutional encoder networks. The joint training of the feature
+extraction and prediction layers with a novel objective function allows for the
+automatic learning of features that are tuned for a given combination of image
+types and a segmentation task with very unbalanced classes.
+% Our model trains on entire MRI volumes rather than extracted patches, and
+% provides much improved computational efficiency.
+We have evaluated our method on two data sets showing that approximately 100
+images are required to train the model without overfitting but even when only a
+relatively small training set is available, the method still performs comparably
+to the state-of-the-art algorithms. For future work, we plan to increase the
+depth of the network, which would allow the learning of a set of hierarchical
+features. This could further improve segmentation accuracy, but may require
+larger training sets. We would also like to investigate the use of different
+objective functions for training based on other measures of segmentation
+performance.
+
+% \begin{itemize}
+% \item Future work: use more layers to achieve a hierarchical segmentation
+% method, but this paper, focus on the simplest possible network to evaluate the
+% potential of such an approach.
+% \item Used a simple model to reduce the risk of overfitting. In the future, we
+% are planning to add more layers and use more filters and apply the model to
+% larger data sets.
+% \item We have demonstrated the potential of our approach for MS lesion
+% segmentation, although the method is not inherently limited to this kind of
+% segmentation. We are planning to apply this framework to other segmentation
+% problems and we anticipate that other groups will adopt this approach to a
+% variety of segmentation problems.
+% \end{itemize}
+
+% We have introduced a new method for modeling the variability in brain morphology
+% and lesion distribution of a large set of MRIs of MS patients. Our method is a
+% statistical model of brain images composed of three DBNs: one for morphology,
+% one for lesion distribution, and one that jointly models both. We have
+% demonstrated that such a model, which requires no built-in priors on image
+% similarity, can automatically discover patterns of variability that can be
+% parameterized in a low-dimensional space and are clinically relevant. In
+% addition, our model can generate sample images from model parameters for
+% visualization. For future work, we plan to incorporate clinical parameters into
+% the learning stage using discriminative fine-tuning, which we expect would
+% result in further improvements in the clinical score correlations. In addition,
+% we would like to extend our approach to model longitudinal patterns of
+% variability with the goal of predicting future clinical status from current
+% images.

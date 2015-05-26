@@ -1,0 +1,110 @@
+\begin{tikzpicture}[%
+scale=0.65,
+x  = {(0.9cm,-0.1cm)},
+y  = {(0.33cm,0.23cm)},
+z  = {(0cm,1cm)}]
+
+\tikzstyle{every node}=[font=\small, inner sep=3pt, align=center]
+\tikzstyle{every pin}=[align=center,fill=white]
+\tikzstyle{dbnlabel}=[font=\sffamily\normalsize]
+
+\tikzstyle{image}=[fill=white, fill opacity=0.75]
+\tikzstyle{pinline}=[thin, gray]
+\tikzstyle{kernelline}=[very thin]
+
+
+%%%%%%%%%%%%%%%%%         
+% INPUT LAYER
+%%%%%%%%%%%%%%%%%
+
+\foreach \x in {1, ..., 3} {
+\begin{scope}[canvas is xy plane at z=0.25*\x]
+\draw[image] (-2,-2) coordinate (A\x) -- (2,-2)
+coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
+
+\draw[kernelline] 
+      (-1.6, -1.6) \ifnum\x=3 \else -- +(0, 0, 0.25) +(0,0) \fi
+   -- (-0.8, -1.6) \ifnum\x=3 \else -- +(0, 0, 0.25) +(0,0) \fi
+   -- (-0.8, -0.8) \ifnum\x=3 \else -- +(0, 0, 0.25) +(0,0) \fi
+   -- (-1.6, -0.8) \ifnum\x=3 \else -- +(0, 0, 0.25) +(0,0) \fi
+   -- (-1.6, -1.6);
+\ifnum\x=3
+\draw[kernelline] (-1.6, -1.6) -- (-1.2, -1.2, 0.9);
+\draw[kernelline] (-1.6, -0.8) -- (-1.2, -1.2, 0.9);
+\draw[kernelline] (-0.8, -0.8) coordinate(c3) -- (-1.2, -1.2, 0.9);
+\draw[kernelline] (-0.8, -1.6) -- (-1.2, -1.2, 0.9);
+\fi 
+
+\end{scope}
+}
+
+\node[xshift=-0.7cm, yshift=10pt, left] (flair) at (A3) {$I_\text{FLAIR}$};
+\node[xshift=-0.7cm, yshift=3pt, left] (t1w) at (A2) {$I_\text{T1}$}; 
+\node[xshift=-0.7cm, yshift=-3pt, left] (t2w) at (A1) {$I_\text{T2}$};
+% \node[xshift=-0.7cm, yshift=-10pt, left] (prior) at (A0) {$I_\text{prior}$};
+
+\draw[pinline, shorten >=4pt] (flair) -- (A3);
+\draw[pinline, shorten >=4pt] (t1w) -- (A2);
+\draw[pinline, shorten >=4pt] (t2w) -- (A1);
+% \draw[pinline, shorten >=4pt] (prior) -- (A0);
+
+\draw[decorate,decoration={brace,raise=15pt,mirror}] (C1) --
+node[right=20pt] {$x^{(1)}_i$} (C3);
+
+\node[xshift=0.5cm, right] (weights) at (c3) {$w^{(1)}_{ij}$};
+\draw[pinline, shorten >=4pt] (weights) -- (c3);
+
+%%%%%%%%%%%%%%%%%         
+% HIDDEN LAYER
+%%%%%%%%%%%%%%%%%
+
+\foreach \x in {0, ..., 7} {
+\begin{scope}[canvas is xy plane at z=0.125*\x+1.65]
+\draw[image] (-1.6,-1.6) -- (1.6,-1.6)
+-- (1.6,1.6) coordinate (G\x) -- (-1.6,1.6) -- cycle;
+
+\draw[kernelline]
+      (-1.2, -1.2) \ifnum\x=7 \else -- +(0, 0, 0.125) +(0,0) \fi
+   -- (-0.4, -1.2) \ifnum\x=7 \else -- +(0, 0, 0.125) +(0,0) \fi
+   -- (-0.4, -0.4) \ifnum\x=7 \else -- +(0, 0, 0.125) +(0,0) \fi
+   -- (-1.2, -0.4) \ifnum\x=7 \else -- +(0, 0, 0.125) +(0,0) \fi
+   -- (-1.2, -1.2);
+\ifnum\x=7
+\draw[kernelline] (-1.2, -1.2) -- (-0.8, -0.8, 0.9);
+\draw[kernelline] (-1.2, -0.4) -- (-0.8, -0.8, 0.9);
+\draw[kernelline] (-0.4, -0.4) coordinate (g7) -- (-0.8, -0.8, 0.9);
+\draw[kernelline] (-0.4, -1.2) -- (-0.8, -0.8, 0.9);
+\fi 
+
+\end{scope}
+}
+
+\draw[decorate,decoration={brace,raise=15pt,mirror}] (G0-|C1) --
+node[right=20pt] {$x^{(2)}_j = y^{(1)}_j$} (G7-|C1);
+
+\node[xshift=0.5cm, yshift=-1pt, right] (weights2) at (g7) {$w^{(2)}_{j}$};
+\draw[pinline, shorten >=4pt] (weights2) -- (g7);
+
+
+%%%%%%%%%%%%%%%%%         
+% OUTPUT LAYER
+%%%%%%%%%%%%%%%%%
+
+\begin{scope}[canvas is xy plane at z=3.425]
+\draw[image] (-2,-2) coordinate (A) -- (2,-2)
+-- (2,2) coordinate (C) -- (-2,2) -- cycle;
+\end{scope}
+
+\node[xshift=-0.7cm, left] (lesion) at (A) {$S$};
+\draw[pinline, shorten >=4pt] (lesion) -- (A);
+
+\node[xshift=0.7cm, right] (y2) at (C) {$y^{(2)}$};
+\draw[pinline, shorten <=4pt] (C) -- (y2);
+
+\draw[decorate,decoration={brace,raise=75pt,mirror}] (B1-|C) --
+node[right=80pt] {Convolutional\\ network} (G7-|C1);
+
+\draw[decorate,decoration={brace,raise=95pt,mirror}] (G0-|C1) --
+node[right=100pt] {Deconvolutional\\ network} (C);
+
+\end{tikzpicture}
