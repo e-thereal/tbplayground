@@ -1,0 +1,174 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{report}
+
+\usepackage{todonotes, amsmath}
+
+\begin{document}
+
+\chapter{Deep Learning of Brain Images and its Application to Multiple Sclerosis}
+
+\section{Introduction}
+
+What is deep learning? Deep learning is used to describe a multitude of
+learning-based methods with certain common characteristics: a) the use of
+multiple layers of nonlinear processing units, and b) the unsupervised or
+supervised learning of feature representations in each layer, with the layers
+forming a hierarchy from low-level to high-level features. In this chapter, we
+will introduce the most commonly used deep learning methods for medical image
+analysis. We start with a description of unsupervised models like the restricted
+Boltzmann Machine (RBM), which are the building blocks of deep belief networks,
+a model that can be used for learning a hierarchical set of features from input
+images without the need of labels. Later, we will introduce supervised models
+like neural networks, how these models can be adapted for unsupervised learning,
+e.g., stacked auto encoders, and scaled to larger images using convolutional
+neural networks.
+
+Distinction between supervised and unsupervised models is lose. Primarily
+unsupervised models can also be used for supervised tasks like classification,
+while supervised models can be used for unsupervised feature learning, be
+reformulating the unsupervised problem to a supervised problem. Examples will be
+given below.
+
+\subsection{Deep Graphical Models}
+
+Unsupervised models are mostly used for the automatic learning of features from
+an image domain. They are particularly interesting for medical image analysis as
+they can be trained without the need of labelled data (e.g., segmented images,
+images with patient data), which can be difficult to obtain. In this chapter, we
+will first introduce the restricted Boltzmann machines, which are the building
+blocks of the later described deep belief networks and deep Boltzmann machines.
+
+\subsubsection{Restricted Boltzmann Machines}
+
+A restricted Boltzmann machine is a probabilistic graphical models defined by a
+bipartite graph as shown in Figure~\ref{fig:rbm}. The units of the RBM are
+divided into visible units and hidden units. There are no direct connections
+between the visible units. Moreover, the relationships between the visible units
+are model in terms of features represented by the hidden units. The RBM defined
+the joint probability of visible and hidden units in terms of the energy $E$ and
+is given by:
+\begin{align} 
+p &= \text{e}^{-E} \\
+E &= \sum Wvh + \sum b + \sum c
+\end{align}
+
+Reiterate the inference and training method from my proposal. Can be used for
+classification as well, by modelling the joint probability of inputs and
+outputs.
+
+\begin{figure} 
+\missingfigure{RBM graph}
+\caption{RBM graph labelled with everything. Might take it from my proposal.}
+\label{fig:rbm}
+\end{figure}
+
+\paragraph{Gaussian--Bernoulli RBM} To model real-valued inputs like the
+intensities of medical images.
+
+\paragraph{Rectified linear units} Hidden state is only binary in an RBM. Encode
+signal strength by repetition of the same unit with different bias. It can be
+shown that this type of unit as an activation of $\exp(...)$, which can be
+approximated as $\max(0, x)$. This units are refered to as rectified linear
+units and have shown to improve classification performance.
+
+\paragraph{Convolutional RBMs} To scale to larger images, can use weight sharing
+and limited receptive field. Can be expressed as a convolution. Greatly reduces
+the number of trainable weights, employs translational equivariance. Allows RBMs
+to be trained an high-resolution images.
+
+Training can be further optimized by training in the frequency domain as has
+been done by some people: ICLR paper, our neural computation paper, facebook fft
+paper.
+
+\subsubsection{Deep Belief Networks}
+
+RBMs are arguably not deep. To learn a hierarchy of features, RBMs can be
+stacked on top of each other to form a deep belief network. DBNs are trained
+layer by layer and are often fine-tuned using a neural network.
+
+\paragraph{For hierarchical feature learning}
+Train on input images. Can be done with convolutional and dense DBNs. Learns a
+hierarchy of features.
+
+\paragraph{For multi-model feature learning}
+Different pathways that are then later joint.
+
+\paragraph{For classification}
+A special case of multi-modal feature learning, where the output labels are
+modelled as an additional modality.
+
+\subsubsection{Deep Boltzmann Machine}
+
+Similar to DBN but connections are undirected. Inference of one layer requires
+the unit activation of the previous and following layer. Inference need to be
+performed using Gibbs sampling. Can be pre-trained using RBMs using
+weight-doubling and fine-tuned using persistent contrastive divergence.
+
+\subsection{Deep Neural Networks}
+
+First, we will introduce dense and convolutional neural networks separately.
+Later we will talk about specific variations, which apply to both models.
+
+\subsubsection{Dense Neural Networks}
+
+A neural network is a deterministic function. Successive propagation of a signal
+through multiple layers. Give the equation of a neural network. Neural networks
+are used to predict the output given some inputs and are trained supervised.
+Given an error function, we can formulate learning as minimizing the error, as
+opposed to maximizing the log-likelihood. Optimization can be performed using
+stochastic gradient descent (SGD). The gradient can be calculated as follows:
+\begin{itemize}
+\item Calculate derivative of error function using the chain rule
+\item Calculate derivative of the non-linearity using the chain rule
+\item Calculate derivative of total activation using chain rule
+\item Proceed to lower layers using the chain rule
+\end{itemize}
+This procedure is often called backpropagation.
+
+\subsubsection{Convolutional Neural Networks}
+
+Very similar to dense models but uses a convolution to calculate activation.
+Show equations for convolutional models and derivative of the gradient using
+back-propagation.
+
+% I might want to shorten the training section
+
+\subsubsection{Training}
+
+Training algorithms can be roughly catagorized into algorithms that use second
+order information and algorithms that only use first-order information.
+
+Vanilla stochastic gradient descent is prone to oscillation. This can be limited
+by using a momentum term. Momentum update favours persistent directions, as they
+are accumulated.
+
+Nesterov momentum is a slightly different version. Since we gonna take a step in
+the momentum direction anyways, we calculate the gradient of the look-ahead step
+instead of the current step. With some massaging to the equations, we can the
+following update rule.
+
+The exists also a large buddy of work on per-parameter update methods. For
+example AdaGrad, AdaDelta, Adam, vSGD, eSGD, RMSprop.
+
+There are also a lot of methods that leverage second order information, e.g.,
+Hessian-free optimization used information from the Hessian without ever
+calculating the full Hessian in order to better navigate pathological curvature.
+Recenter, it was hypothesised that characteristic points that were believed to
+be local minima are infact saddle points. To escape saddle-points and to improve
+optimization, Bengio et al. have developed the so-called saddle-free Newton's
+method that uses second order information to quickly escape saddle points.
+
+\subsubsection{Stacked Auto-Encoders}
+
+Neural networks can be used for feature learning even when no labels are
+present. This can be done by using auto-encoder networks. An autoencoder is a
+neural network with a bottleneck layers, that is trained to predict the input
+images themselves. The bottleneck layer is used to force the network to learn
+more abstract features. Auto-encoders can be pre-trained layer-by-layer similar
+to DBNs. The first auto-encoder has 2 layers and is trained on the training
+images. Subsequent autoencoders are trained on the hidden activations of the
+previous auto encoder. I need an image for that. For fine-tuning all layers can
+be combined into a single network.
+
+\end{document}

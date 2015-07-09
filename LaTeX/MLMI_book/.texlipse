@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Fri Jun 26 15:33:39 PDT 2015
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=MLMIbook.tex
+outputFile=MLMIbook.pdf
+langSpell=en
+markDer=true
+srcDir=
