@@ -1,9 +1,9 @@
 \documentclass[%
-portrait,%paperwidth=42in,paperheight=48in,%
+portrait,paperwidth=841mm,paperheight=1180mm,%
 %landscape,
-a0paper,
+%a0paper,
 margin=2cm,
-fontscale=0.3
+fontscale=0.32
 %fontscale=0.29
 ]{baposter}
 
@@ -157,8 +157,7 @@ UBC\quad \inst{2}Department of Radiology, UBC\\[0.65ex]
 \begin{compactitem}
 \item Multiple sclerosis (MS) is an inflammatory and demyelinating disease of
 the central nervous system, and is characterized by the formation of lesions,
-primarily visible in the white matter on conventional magnetic resonance images
-(MRIs).
+primarily visible in the white matter on conventional MRIs.
 \item Imaging biomarkers based on the delineation of lesions, such as lesion
 load and lesion count, have established their importance for assessing disease
 progression and treatment effect.
@@ -215,13 +214,11 @@ image voxels.
 %%%%%%%%%%%%%%%%%%%%%%%
 % Method 
 %%%%%%%%%%%%%%%%%%%%%%%
-\begin{headerblock}{Method}{below=contributions, above=bottom}
+\begin{headerblock}{Method}{below=contributions, name=method}
 \begin{compactitem}
-
 \item The task of segmenting MS lesions is defined as finding a function $s$
 that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR}, I_\text{T1},
 I_\text{T2})$, to corresponding lesion masks $S$.
-
 \item Given a training set $(I_n,S_n)$, finding $s$ is modeled as an
 optimization problem of the following form
 \begin{equation}
@@ -232,18 +229,20 @@ where $\mathcal{S}$ is the set of possible segmentation functions, and $E$ is an
 error measure.
 %\end{compactitem}
 %\end{headerblock}
-
 %\begin{headerblock}{Method (continued)}{row=0, column=1, name=method2}
 %\begin{compactitem}
 \item The set of possible segmentation functions, $\mathcal{S}$, is modeled by
 the following 3-layer convolutional encoder network:
 \end{compactitem}
-\vspace{1em}
 \begin{center}
 \input{figures/encoder2}
 \end{center}
+% %\end{headerblock}
+% 
+% %\begin{headerblock}{Method (continued)}{row=0, column=1,name=method}
 \begin{compactitem}
-\item The input layer is composed of the image voxels of different modalities.
+\item The input layer is composed of the image voxels of different
+modalities.
 \item The convolutional layer extracts features from the input layer at
 each voxel location.
 \item The deconvolutional layer uses the extracted features to predict a lesion
@@ -254,31 +253,20 @@ difference of the lesion voxels (sensitivity) and non-lesion voxels
 \begin{equation}
 E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
-  +
-(1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
++(1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 \end{equation}
 \end{compactitem}
-% \begin{multline}
-% E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
-% y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}\\
-%   +
-% (1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
-% y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
-% \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
-% \end{multline}
+% % \begin{multline}
+% % E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+% % y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}\\
+% %   +
+% % (1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+% % y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
+% % \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
+% % \end{multline}
 \end{headerblock}
-
-% \begin{headerblock}{Evaluation}{below=method2,column=1,above=bottom}
-% \begin{compactitem}
-% \item BioMS results
-% \item 100 samples need to prevent overfitting.
-% \end{compactitem}
-% \begin{center}
-% \includegraphics[width=\textwidth]{figures/train_count}
-% \end{center}
-% \end{headerblock}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Evaluation
@@ -286,9 +274,26 @@ y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 
 \begin{headerblock}{Evaluation}{row=0, column=1, name=evaluation}
 
+\minisection{Evaluation on Public Data}
+\begin{compactdesc}
+\item[Dataset] FLAIR, T1-, and T2-weighted MRIs of the
+20 publicly available labeled cases from the MS lesion segmentation challenge
+2008 \cite{styner20083d}.
+\item[Pre-processing] Downsampled from the original isotropic voxel
+size of \SI{0.5}{\cubic\milli\metre} to an isotropic voxel size of
+\SI{1.0}{\cubic\milli\metre}
+\end{compactdesc}
+\begin{compactitem}
+\item Example segmentations of our method for three different subjects.
+\item Our method performed well and consistently despite the
+large contrast differences seen between the first two rows.
+\item In the third row, our method also segmented regions that have similar
+contrast, although these regions had not been identified as lesions by the
+manual rater.
+\end{compactitem}
+
 % \vspace{0.5em}
-\def\MRIwidth{0.175\textwidth}
-\small
+\def\MRIwidth{0.13\textwidth}
 \begin{center}
 \begin{tikzpicture}[every node/.append style={font=\footnotesize}]
 \tikzstyle{leftlabel}=[rotate=90, align=center,above]
@@ -296,19 +301,19 @@ y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \matrix [matrix of nodes, ampersand replacement=\&, nodes={anchor=center, inner
 sep=1.5pt}] {
 \&[4pt] FLAIR \& T1w \& T2w \& Gold \& CEN \\[2pt]
-\node[leftlabel] {CHB\,07}; \&
+\node[leftlabel] {CHB\,07\\DSC\,=\,\SI{60.58}{\percent}}; \&
 \includegraphics[width=\MRIwidth]{figures/CHB07-FLAIR-s88} \&
 \includegraphics[width=\MRIwidth]{figures/CHB07-T1w-s88} \&
 \includegraphics[width=\MRIwidth]{figures/CHB07-T2w-s88} \&
 \includegraphics[width=\MRIwidth]{figures/CHB07-gold-s88} \&
 \includegraphics[width=\MRIwidth]{figures/CHB07-pred-s88} \\
-\node[leftlabel] {CHB\,07}; \&
+\node[leftlabel] {CHB\,07\\DSC\,=\,\SI{60.58}{\percent}}; \&
 \includegraphics[width=\MRIwidth]{figures/CHB04-FLAIR-s85} \&
 \includegraphics[width=\MRIwidth]{figures/CHB04-T1w-s85} \&
 \includegraphics[width=\MRIwidth]{figures/CHB04-T2w-s85} \&
 \includegraphics[width=\MRIwidth]{figures/CHB04-gold-s85} \&
 \includegraphics[width=\MRIwidth]{figures/CHB04-pred-s85} \\
-\node[leftlabel] {UNC\,09}; \&
+\node[leftlabel] {UNC\,09\\DSC\,=\,\SI{9.01}{\percent}}; \&
 \includegraphics[width=\MRIwidth]{figures/UNC09-FLAIR-s89} \&
 \includegraphics[width=\MRIwidth]{figures/UNC09-T1w-s89} \&
 \includegraphics[width=\MRIwidth]{figures/UNC09-T2w-s89} \&
@@ -317,12 +322,14 @@ sep=1.5pt}] {
 };
 \end{tikzpicture}
 \end{center}
-CHB\,07 (DSC\,=\,\SI{60.58}{\percent}),
-CHB\,07 (DSC\,=\,\SI{60.58}{\percent}),
-UNC\,09 (DSC\,=\,\SI{9.01}{\percent})
+%\end{headerblock}
 
+%\begin{headerblock}{Evaluation (continued)}{row=0, column=2, name=evaluation}
+\begin{compactitem}
+\item Comparison of our method with state-of-the-art lesion segmentation
+methods in terms of mean TPR, PPV, and DSC.
+\end{compactitem}
 \begin{center}
-
 \def\tabspace{12pt}
 \begin{tabular}{l%
 @{\hspace{\tabspace}}S[table-format=2.2]
@@ -339,23 +346,39 @@ Our method & 39.71 & 41.38 & 35.52 \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\minisection{Evaluation on a Large Data Set from an MS Clinical Trial}
+
+\begin{compactdesc}
+\item[Dataset] The T2- and PD-weighted MRIs of 500 subjects acquired from 45
+different scanning were sites split equally into training and test sets.
+\item[Pre-processing] Rigid intra-subject registration, brain extraction,
+intensity normalization, and background cropping.
+%(\SI{0.937x0.937x3.000}{\milli\metre})  
+\end{compactdesc}
 \begin{compactitem}
-\item BioMS results
-\item 100 samples need to prevent overfitting.
+\item Comparison of DSC scores calculated on the training and test sets for
+varying numbers of training samples.
+\item At around 100 samples, the model becomes
+stable in terms of test performance.
+\item The small difference between training and test DSCs, indicating that
+overfitting of the training data no longer occurs.
 \end{compactitem}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/train_count}
+\includegraphics[width=0.9\textwidth]{figures/train_count}
 \end{center}
 \end{headerblock}
 
-\begin{headerblock}{Conclusions}{below=evaluation, column=1, name=conclusions}
+\begin{headerblock}{Conclusions}{below=evaluation, column=1,
+name=conclusions,above=bottom}
 \begin{compactitem} 
-  \item Our model performs on par with the state-of-the-art on a small data set
-  \item Performs can be much improved when a suitable training set is available
+  \item Our method performs comparably to the best methods reported on the MS
+lesion segmentation challenge data set.
+  \item Performs can be much improved when a suitable training set is available.
 \end{compactitem} 
 \end{headerblock}
 
-\begin{headerblock}{Acknowledgement}{below=conclusions, column=1,
+\begin{headerblock}{Acknowledgement}{below=method, column=0,
 name=acknowledgement}
 This work was supported by the Natural Sciences and
 Engineering Research Council of Canada and the Milan and Maureen Ilich Foundation.
@@ -363,7 +386,7 @@ Engineering Research Council of Canada and the Milan and Maureen Ilich Foundatio
 
 %\normalsize 
 \begin{headerblock}{Contact Information}{below=acknowledgement,
-column=1,above=bottom}
+column=0,above=bottom}
 % \begin{tabular}{@{}c@{\, }ll}
 \begin{tabular}{@{}cll}
   \Letter & \texttt{tombr@msmri.medicine.ubc.ca} \\
