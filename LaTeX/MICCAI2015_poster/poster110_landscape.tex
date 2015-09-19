@@ -1,0 +1,375 @@
+\documentclass[%
+%portrait,%paperwidth=42in,paperheight=48in,%
+landscape,
+a0paper,
+margin=2cm,
+fontscale=0.3
+%fontscale=0.29
+]{baposter}
+
+\usepackage{environ}
+
+\NewEnviron{headerblock}[2]{\headerbox{#1}{#2}{\BODY}}
+
+\usepackage{marvosym,url,siunitx,paralist}
+\usepackage{amsmath,amssymb,booktabs,dsfont,comment,epstopdf,multirow}
+\usepackage{etoolbox}
+\robustify\bfseries % requires etoolbox
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,3d,positioning,shapes.geometric,matrix}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\mus}{\vec{\mu}}
+\newcommand{\data}{\mathcal{D}}
+\newcommand{\given}{\mid}
+\DeclareMathOperator{\sigm}{sigm}
+\DeclareMathOperator{\conj}{conj}
+\DeclareMathOperator{\fft}{fft}
+\DeclareMathOperator{\ifft}{ifft}
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\Q}{\ensuremath{\mathds{Q}}}
+\newcommand{\N}{\ensuremath{\mathds{N}}}
+\newcommand{\E}{\ensuremath{\mathds{E}}}
+\newcommand{\F}{\ensuremath{\mathcal{F}}}
+\newcommand{\Norm}{\ensuremath{\mathcal{N}}}
+
+\renewcommand*\sfdefault{uop}
+\newcommand{\spanA}{2}
+\newcommand{\spanB}{2}
+
+%\selectcolormodel{cmyk}
+
+\begin{document}
+
+%\definecolor{ubcblue}{cmyk}{0.392, 0.352, 0.051, 0.267}
+\definecolor{ubcblue}{HTML}{002145}
+\definecolor{ubcgraya}{HTML}{5E869F}
+\definecolor{ubcgrayb}{HTML}{2F5D7C}
+\definecolor{ubcgrayc}{HTML}{98B2C3}
+\definecolor{ubcgrayd}{HTML}{C3D0DB}
+\definecolor{ubcgrayf}{HTML}{B7C9D3}
+
+\newcommand{\alert}[1]{\textbf{\textcolor{ubcblue}{#1}}}
+\newcommand{\minisection}[1]{\textcolor{ubcblue}{\large\textbf{%
+\tikz \fill[ubcblue] (0,0)-- ++(90:0.25)-- ++(-30:0.25)--cycle; #1}}\\[0.5em]}
+\setdefaultleftmargin{1em}{}{}{}{.5em}{.5em}
+\setlength{\plitemsep}{4.0pt plus 1.0pt minus 1.0pt}
+\setlength{\pltopsep}{8.0pt plus 1.0pt minus 4.0pt}
+\setlength{\plpartopsep}{2.0pt plus 1.0pt minus 1.0pt}
+
+\renewcommand*\descriptionlabel[1]{%
+\hspace\labelsep\bfseries\textcolor{ubcblue}{#1}}
+
+\sffamily
+
+%\background{
+%\begin{tikzpicture}[remember picture,overlay]%
+%  %\draw (current page.north west)+(-2em,2em) node[anchor=north west]
+%  %{\includegraphics[height=1.1\textheight]{background}};
+%  \fill[ubcgray!20!white] (current page.north west) rectangle (current
+%  page.south east);
+%  \end{tikzpicture}
+%}
+
+\newcommand{\inst}[1]{$^{#1}$}
+
+\begin{poster}{
+  %grid=false,
+  %eyecatcher=false,
+  columns=3,
+  background=shadetb,
+  bgColorOne=white,
+  bgColorTwo=white,
+  %bgColorTwo=ubcgrayf,
+  headershade=plain,
+  headershape=roundedright,
+  headerColorOne=ubcblue,
+  headerColorTwo=ubcblue,
+  borderColor=ubcblue,
+  boxshade=none,
+  textborder=faded,
+  headerborder=open,
+  headerFontColor=white,
+  headerfont=\scshape\Large,
+  linewidth=1pt,
+  %headerheight=0.135\textheight,
+  %colspacing=1.25em
+  headerheight=0.13\textwidth,
+  colspacing=1.25em
+}
+%%% Eye Catcher %%%
+{
+\includegraphics[width=0.14\textwidth]{images/Logo_MICCAI15}
+}
+%%% Title %%%
+{
+% Manifold\hspace{0.5ex}Learning\hspace{0.5ex}of\hspace{0.5ex}Brain\hspace{0.5ex}MRIs\\
+% by\hspace{0.5ex}Deep\hspace{0.5ex}Learning~~\vspace{0.5em}
+Deep Convolutional Encoder Networks for Multiple Sclerosis Lesion
+Segmentation\vspace{0.5em} }
+%%% Authors %%%
+{
+%Tom Brosch$^1$ and Roger Tam$^2$, MS/MRI Research Group, UBC,
+%Vancouver\\[0.65ex]
+%$^1$\texttt{tombr@msmri.medicine.ubc.ca}, $^2$\texttt{roger.tam@ubc.ca}
+Tom Brosch\inst{1,4},
+Youngjin Yoo\inst{1,4},
+Lisa Y.W. Tang\inst{4},
+David K.B. Li\inst{2,4},
+Anthony Traboulsee\inst{3,4}, and
+Roger Tam\inst{2,4}\\[0.65ex]
+\large \inst{1}Department of Electrical and Computer Engineering, UBC\quad
+\inst{2}Department of Radiology, UBC\quad
+\inst{3}Division of Neurology, UBC\\[0.65ex]
+\inst{4}MS/MRI Research Group, University of British Columbia, Vancouver, Canada
+%\\[0.65ex]
+}
+%%% Logo %%%
+{
+\begin{tabular}{c}
+\\
+\includegraphics[height=0.07\textwidth]{images/s4b282c}\\
+\addlinespace
+\includegraphics[height=0.03\textwidth]{images/msmri_simple}
+\end{tabular}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Footer
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{headerblock}{Acknowledgement}{above=bottom, column=0,name=acknowledgement}
+% 
+% This work was supported by the Natural Sciences and Engineering Research Council
+% of Canada and the Milan and Maureen Ilich Foundation.
+% 
+% \end{headerblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{headerblock}{Introduction}{row=0, column=0, name=introduction}
+\begin{compactitem}
+\item Multiple sclerosis (MS) is an inflammatory and demyelinating disease of
+the central nervous system, and is characterized by the formation of lesions,
+primarily visible in the white matter on conventional magnetic resonance images
+(MRIs).
+\item Imaging biomarkers based on the delineation of lesions, such as lesion
+load and lesion count, have established their importance for assessing disease
+progression and treatment effect.
+% \item However, lesions vary greatly in size, shape,
+% intensity and location, which makes their automatic and accurate segmentation
+% challenging.
+\item We propose a new method for segmenting MS lesions that processes entire
+MRI volumes through a neural network
+%with a novel objective function
+to automatically learn features tuned for lesion segmentation. 
+\end{compactitem}
+\end{headerblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Contributions
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{headerblock}{Contributions}{below=introduction, name=contributions}
+\begin{compactitem}
+\item Our network processes entire volumes instead of patches, which removes the
+need to select representative patches, eliminates redundant calculations where
+patches overlap, and therefore scales up more efficiently with image resolution.
+\item Our approach combines feature learning and segmentation in a single model,
+which allows for the automatic learning of features that are tuned towards lesion
+segmentation.
+\item We propose a new objective function based on a weighted combination of
+sensitivity and specificity, designed to deal with unbalanced classes, as is the
+case for lesions, which typically comprise less than \SI{1}{\percent} of the
+image voxels.
+\end{compactitem}
+\end{headerblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Overview
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{headerblock}{Overview}{row=0, column=1, span=1}
+% \begin{compactdesc}
+%   \item[Data set:] 474 T1-weighted, T2-weighted, and PD-weighted MRIs of
+%   secondary progressive MS patients with a resolution of \num{256x256x50} voxels
+%  and a voxel size of \SI{0.937x0.937x3.000}{\milli\meter}
+%  \item[Pre-processing:] Brain extraction, intensity normalization, background
+%  cropping, lesion segmentation, affine registration to ICBM 152 nonlinear atlas
+%  template image
+%  \item[Morphology model:] a model that aims to find patterns of morphological changes in deformation
+% fields
+% \item[Lesion model:] a model that aims to find patterns in the spatial
+% distribution of lesions
+% \item[Joint model:] a joint model that aims to find concurring deformation and
+% lesion distribution patterns
+% \end{compactdesc}
+% \end{headerblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Method 
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{headerblock}{Method}{below=contributions, above=bottom}
+\begin{compactitem}
+
+\item The task of segmenting MS lesions is defined as finding a function $s$
+that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR}, I_\text{T1},
+I_\text{T2})$, to corresponding lesion masks $S$.
+
+\item Given a training set $(I_n,S_n)$, finding $s$ is modeled as an
+optimization problem of the following form
+\begin{equation}
+\hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n))
+\label{eq:segprob}
+\end{equation}
+where $\mathcal{S}$ is the set of possible segmentation functions, and $E$ is an
+error measure.
+\end{compactitem}
+\end{headerblock}
+
+\begin{headerblock}{Method (continued)}{row=0, column=1, name=method2}
+\begin{compactitem}
+\item The set of possible segmentation functions, $\mathcal{S}$, is modeled by
+the following 3-layer convolutional encoder network:
+\end{compactitem}
+\vspace{1em}
+\input{figures/encoder2}
+\begin{compactitem}
+\item The input layer is composed of the image voxels of different modalities.
+\item The convolutional layer extracts features from the input layer at
+each voxel location.
+\item The deconvolutional layer uses the extracted features to predict a lesion
+mask and thereby classify each voxel of the image in a single operation.
+\item The error measure, $E$, is a weighted sum of the mean squared
+difference of the lesion voxels (sensitivity) and non-lesion voxels
+(specificity), reformulated to be error terms.
+% \begin{multline} 
+% E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+% y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}\\
+%   +
+% (1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
+% y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
+% \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
+% \end{multline}
+\end{compactitem}
+%\begin{center}
+%\end{center}
+\end{headerblock}
+
+\begin{headerblock}{Evaluation}{below=method2,column=1,above=bottom}
+\begin{compactitem}
+\item BioMS results
+\item 100 samples need to prevent overfitting.
+\end{compactitem}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/train_count}
+\end{center}
+\end{headerblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Evaluation
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{headerblock}{Evaluation (continued)}{row=0, column=2, name=evaluation}
+
+% \vspace{0.5em}
+\def\MRIwidth{0.12\textwidth}
+\small
+\begin{center}
+\begin{tikzpicture}[every node/.append style={font=\footnotesize}]
+\tikzstyle{leftlabel}=[rotate=90, align=center,above]
+
+\matrix [matrix of nodes, ampersand replacement=\&, nodes={anchor=center, inner
+sep=1.5pt}] {
+\&[4pt] FLAIR \& T1w \& T2w \& Gold \& CEN \\[2pt]
+\node[leftlabel] {CHB\,07}; \&
+\includegraphics[width=\MRIwidth]{figures/CHB07-FLAIR-s88} \&
+\includegraphics[width=\MRIwidth]{figures/CHB07-T1w-s88} \&
+\includegraphics[width=\MRIwidth]{figures/CHB07-T2w-s88} \&
+\includegraphics[width=\MRIwidth]{figures/CHB07-gold-s88} \&
+\includegraphics[width=\MRIwidth]{figures/CHB07-pred-s88} \\
+\node[leftlabel] {CHB\,07}; \&
+\includegraphics[width=\MRIwidth]{figures/CHB04-FLAIR-s85} \&
+\includegraphics[width=\MRIwidth]{figures/CHB04-T1w-s85} \&
+\includegraphics[width=\MRIwidth]{figures/CHB04-T2w-s85} \&
+\includegraphics[width=\MRIwidth]{figures/CHB04-gold-s85} \&
+\includegraphics[width=\MRIwidth]{figures/CHB04-pred-s85} \\
+\node[leftlabel] {UNC\,09}; \&
+\includegraphics[width=\MRIwidth]{figures/UNC09-FLAIR-s89} \&
+\includegraphics[width=\MRIwidth]{figures/UNC09-T1w-s89} \&
+\includegraphics[width=\MRIwidth]{figures/UNC09-T2w-s89} \&
+\includegraphics[width=\MRIwidth]{figures/UNC09-gold-s89} \&
+\includegraphics[width=\MRIwidth]{figures/UNC09-pred-s89} \\
+};
+\end{tikzpicture}
+\end{center}
+CHB\,07 (DSC\,=\,\SI{60.58}{\percent}),
+CHB\,07 (DSC\,=\,\SI{60.58}{\percent}),
+UNC\,09 (DSC\,=\,\SI{9.01}{\percent})
+
+\begin{center}
+
+\def\tabspace{12pt}
+\begin{tabular}{l%
+@{\hspace{\tabspace}}S[table-format=2.2]
+@{\hspace{\tabspace}}S[table-format=2.2]
+@{\hspace{\tabspace}}S[table-format=2.2]
+}
+\toprule
+Method & {TPR} & {PPV} & {DSC} \\ 
+\midrule
+Souplet et al. \cite{souplet2008} & 20.65 & 30.00 & {---} \\ 
+Weiss et al. \cite{weiss2013} & 33.00 & 36.85 & 29.05 \\ 
+Geremia et al. \cite{geremia2010} & 39.85 & 40.35 & {---}  \\
+Our method & 39.71 & 41.38 & 35.52 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{headerblock}
+
+\begin{headerblock}{Conclusions}{below=evaluation, column=2, name=conclusions}
+\begin{compactitem} 
+  \item Our model performs on par with the state-of-the-art on a small data set
+  \item Performs can be much improved when a suitable training set is available
+\end{compactitem} 
+\end{headerblock}
+
+\begin{headerblock}{Acknowledgement}{below=conclusions, column=2,
+name=acknowledgement}
+This work was supported by the Natural Sciences and
+Engineering Research Council of Canada and the Milan and Maureen Ilich Foundation.
+\end{headerblock}
+
+%\normalsize 
+\begin{headerblock}{Contact Information}{below=acknowledgement,
+column=2,above=bottom}
+% \begin{tabular}{@{}c@{\, }ll}
+\begin{tabular}{@{}cll}
+  \Letter & \texttt{tombr@msmri.medicine.ubc.ca} \\
+  \Mundus & \url{http://tbrosch.blogspot.com/} \\
+  %& \multicolumn{1}{c}{\includegraphics[width=0.5\textwidth]{figures/contact}}
+\end{tabular}
+%\Letter\ \texttt{tombr@msmri.medicine.ubc.ca}\quad\Mundus{}
+%\url{http://tbrosch.blogspot.com/}
+\end{headerblock}
+
+% TODO: add references
+% TODO: Put a picture of me on the poster so people can find me at the
+% conference if I'm not at my poster
+
+% \headerbox{Contact}{name=contact,below=acknowledge}{
+% Please contact us via e-mail:
+% \begin{compactitem}
+%   \item Tom Brosch: \texttt{tombr@msmri.medicine.ubc.ca}
+%   \item Roger Tam: \texttt{roger.tam@ubc.ca}
+% \end{compactitem}
+% }
+
+\end{poster}
+
+\end{document}

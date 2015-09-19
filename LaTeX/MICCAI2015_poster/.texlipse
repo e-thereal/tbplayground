@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Sun Sep 13 15:52:20 PDT 2015
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=poster110.tex
+outputFile=poster110.pdf
+langSpell=en
+markDer=true
+srcDir=
