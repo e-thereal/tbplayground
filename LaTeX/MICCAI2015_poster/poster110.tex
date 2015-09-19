@@ -97,12 +97,12 @@ fontscale=0.32
   linewidth=1pt,
   %headerheight=0.135\textheight,
   %colspacing=1.25em
-  headerheight=0.2\textwidth,
+  headerheight=0.19\textwidth,
   colspacing=1.25em
 }
 %%% Eye Catcher %%%
 {
-\includegraphics[width=0.15\textwidth]{images/Logo_MICCAI15}
+\includegraphics[width=0.17\textwidth]{images/Logo_MICCAI15}
 }
 %%% Title %%%
 {
@@ -132,9 +132,9 @@ UBC\quad \inst{2}Department of Radiology, UBC\\[0.65ex]
 {
 \begin{tabular}{c}
 \\
-\includegraphics[height=0.07\textwidth]{images/s4b282c}\\
+\includegraphics[height=0.08\textwidth]{images/s4b282c}\\
 \addlinespace
-\includegraphics[height=0.03\textwidth]{images/msmri_simple}
+\includegraphics[height=0.04\textwidth]{images/msmri_simple}
 \end{tabular}
 }
 
@@ -359,10 +359,8 @@ intensity normalization, and background cropping.
 \begin{compactitem}
 \item Comparison of DSC scores calculated on the training and test sets for
 varying numbers of training samples.
-\item At around 100 samples, the model becomes
-stable in terms of test performance.
-\item The small difference between training and test DSCs, indicating that
-overfitting of the training data no longer occurs.
+\item Approximately 100 samples are required to train the model without
+overfitting.
 \end{compactitem}
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/train_count}
@@ -373,8 +371,9 @@ overfitting of the training data no longer occurs.
 name=conclusions,above=bottom}
 \begin{compactitem} 
   \item Our method performs comparably to the best methods reported on the MS
-lesion segmentation challenge data set.
-  \item Performs can be much improved when a suitable training set is available.
+lesion segmentation challenge 2008 data set.
+  \item Segmentation performance can be greatly improved by having a
+  representative data set.
 \end{compactitem} 
 \end{headerblock}
 
