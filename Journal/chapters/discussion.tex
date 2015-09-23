@@ -1,0 +1,24 @@
+\section{Discussion}
+
+We have introduced a new method for the automatic segmentation of MS lesions
+based on convolutional encoder networks. The joint training of the feature
+extraction and prediction layers with a novel objective function allows for the
+automatic learning of features that are tuned for a given combination of image
+types and a segmentation task with very unbalanced classes.
+We have evaluated our method on two data sets showing that approximately 100
+images are required to train the model without overfitting but even when only a
+relatively small training set is available, the method still performs comparably
+to the state-of-the-art algorithms. For future work, we plan to increase the
+depth of the network, which would allow the learning of a set of hierarchical
+features. This could further improve segmentation accuracy, but may require
+larger training sets. We would also like to investigate the use of different
+objective functions for training based on other measures of segmentation
+performance.
+
+\begin{itemize}
+\item What else is new? 
+\item Could incorporate lesion prior in form of white matter lesion mask.
+However, the presence of lesions might compromise the correct classification of
+tissues, which in turn could further disturb the segmentation instead of help
+it.
+\end{itemize}
