@@ -1,0 +1,81 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,3d,positioning,shapes.geometric,matrix}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\usepackage[range-phrase = --]{siunitx}
+\usepackage{booktabs,amsmath,amssymb,dsfont,etoolbox,multirow,calc,printlen}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{todonotes,comment}
+
+\robustify\bfseries % requires etoolbox
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\title{Training Deep Convolutional Encoder Networks for Multiple Sclerosis
+Lesion Segmentation}
+
+\author{%
+Tom Brosch,
+Youngjin Yoo,
+Lisa Y.W. Tang,
+David K.B. Li,\\
+Anthony Traboulsee, and
+Roger Tam
+}
+
+% \institute{%
+% Department of Electrical and Computer Engineering, UBC
+% \and
+% Department of Radiology, UBC
+% \and
+% Division of Neurology, UBC
+% \and
+% MS/MRI Research Group, University of British Columbia, Vancouver, Canada
+% }
+
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\thetas}{\vec{\theta}}
+\newcommand{\mus}{\vec{\mu}}
+\newcommand{\data}{\mathcal{D}}
+\newcommand{\given}{\mid}
+\DeclareMathOperator{\sigm}{sigm}
+\DeclareMathOperator{\conj}{conj}
+\DeclareMathOperator{\fft}{fft}
+\DeclareMathOperator{\ifft}{ifft}
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\Q}{\ensuremath{\mathds{Q}}}
+\newcommand{\N}{\ensuremath{\mathds{N}}}
+\newcommand{\E}{\ensuremath{\mathds{E}}}
+\newcommand{\I}{\ensuremath{\mathds{I}}}
+\newcommand{\F}{\ensuremath{\mathcal{F}}}
+\newcommand{\Norm}{\ensuremath{\mathcal{N}}}
+
+\hyphenation{conv-RBM}
+\hyphenation{conv-RBMs}
+\hyphenation{sconv-RBM}
+\hyphenation{sconv-RBMs}
+
+\begin{document}
+
+\input{chapters/title}
+
+%\setcounter{footnote}{0}
+\input{chapters/abstract}
+\input{chapters/introduction}
+\input{chapters/method}
+\input{chapters/results}
+\input{chapters/conclusions}
+\input{chapters/acknowledgements}
+
+\bibliographystyle{plain}
+\bibliography{bib}
+
+\end{document}

@@ -1,0 +1,28 @@
+\begin{abstract}
+
+We propose a novel segmentation approach based on deep convolutional encoder
+networks and apply it to the segmentation of multiple sclerosis (MS) lesions in
+magnetic resonance images. Our model is a neural network that has both
+convolutional and deconvolutional layers, and combines feature extraction and
+segmentation prediction in a single model. The joint training of the feature
+extraction and prediction layers allows the model to automatically learn
+features that are optimized for accuracy for any given combination of image
+types. In contrast to existing automatic feature learning approaches, which are
+typically patch-based, our model learns features from entire images, which
+eliminates patch selection and redundant calculations at the overlap of
+neighboring patches and thereby speeds up the training. Our network also uses a
+novel objective function that works well for segmenting underrepresented
+classes, such as MS lesions. We have evaluated our method on the publicly
+available labeled cases from the MS lesion segmentation challenge 2008 data set,
+showing that our method performs comparably to the state-of-the-art. In
+addition, we have evaluated our method on the images of 500 subjects from an MS
+clinical trial and varied the number of training samples from 5 to 250 to show
+that the segmentation performance can be greatly improved by having a
+representative data set.
+\end{abstract}
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+Segmentation, multiple sclerosis lesions, MRI, machine learning, unbalanced
+classification, deep learning, convolutional neural nets
+\end{IEEEkeywords}

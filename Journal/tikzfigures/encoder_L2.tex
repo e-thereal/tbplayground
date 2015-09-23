@@ -1,0 +1,169 @@
+\begin{tikzpicture}[
+  node distance=0.75cm and 0.65cm,
+  font=\footnotesize,
+  conv/.style={green!60!black,-latex,thick},
+  conv2/.style={green!60!black,latex-latex,thick},
+  pooling/.style={-latex,red!60!black,thick},
+  deconv/.style={-latex,blue!60!black,thick},
+  unpooling/.style={-latex,brown!60!black,thick},
+  channel/.style args={#1 and #2}{draw, fill=lightgray, inner sep=0pt,
+      minimum width=#1, minimum height=#2}
+]
+
+% \tikzstyle{channel}=[draw,minimum width=64pt,fill=lightgray,inner
+% sep=0pt,minimum height=#1]
+
+% Network
+
+\begin{scope}[local bounding box=network]
+\node[channel=64pt and 3pt,pin=270:Input images] (inputs) {};
+\node[channel=60pt and 16pt,above=of inputs] (clayer1) {};
+\node[channel=30pt and 16pt,above=of clayer1] (pooling1) {};
+
+\node[channel=64pt and 1pt,right=of inputs,pin=270:Segmentations] (outputs) {};
+\node[channel=60pt and 16pt] (dlayer1) at (clayer1-|outputs) {};
+\node[channel=30pt and 16pt,above=of dlayer1] (dpooling1) {};
+
+\node[fit=(pooling1)(dpooling1),inner sep = 0pt] (pooling) {};
+\node[channel=26pt and 16pt,above=of pooling] (clayer2) {};
+\end{scope}
+
+\draw[conv] (inputs)--node[left] {$w^{(1)}_\text{c}$} (clayer1);
+\draw[pooling] (clayer1)--node[left] {} (pooling1);
+\draw[conv] (pooling1)--node[left] {$w^{(3)}_\text{c}$} (clayer2);
+\draw[deconv] (clayer2)--node[right=5pt] {$w^{(3)}_\text{d}$} (dpooling1);
+\draw[unpooling] (dpooling1)--node[right] {} (dlayer1);
+\draw[deconv] (dlayer1)--node[right] {$w^{(1)}_\text{d}$} (outputs);
+\draw[deconv] (clayer1)--node[anchor=188,inner sep=10pt]
+{$w^{(1)}_\text{s}$}(outputs);
+
+% Part labels
+
+\node[left=1pt of inputs] {$x^{(0)}$};
+\node[left=1pt of clayer1] {$x^{(1)}$};
+\node[left=1pt of pooling1] {$x^{(2)}$};
+\node[left=1pt of clayer2] {$x^{(3)}$};
+
+\node[right=1pt of outputs] {$y^{(0)}$};
+\node[right=1pt of dlayer1] {$y^{(1)}$};
+\node[right=1pt of dpooling1] {$y^{(2)}$};
+\node[right=1pt of clayer2] {$y^{(3)}$};
+
+% Layers
+
+\draw[decorate,decoration={brace,raise=30pt}] (inputs.south west)
+--node[left=35pt,align=center] (convl) {Convolutional\\ layer} (inputs.south
+west|-clayer1.north west);
+
+\draw[decorate,decoration={brace,raise=22pt}] (clayer1.south west)
+--node[left=27pt,align=center] {Pooling\\ layer} (clayer1.south
+west|-pooling1.north west);
+
+\draw[decorate,decoration={brace,raise=25pt}] (pooling1.south west)
+--node[left=30pt,align=center] {Convolutional\\ layer} (clayer2.north
+west-|pooling1.south west);
+
+\draw[decorate,decoration={brace,raise=30pt,mirror}] (outputs.south east)
+--node[right=35pt,align=center] {Deconvolutional\\ layer with shortcut}
+ (dlayer1.north east-|outputs.south east);
+
+\draw[decorate,decoration={brace,raise=22pt,mirror}] (dlayer1.south east)
+--node[right=27pt,align=center] {Unpooling\\ layer}
+(dpooling1.north east-|dlayer1.south east);
+
+\draw[decorate,decoration={brace,raise=25pt,mirror}] (dpooling1.south east)
+--node[right=30pt,align=center] {Deconvolutional\\ layer}
+(clayer2.north east-|dpooling1.south east);
+
+% Legend
+
+\begin{scope}[local bounding box=ghost,opacity=0]
+\path[conv] node (conv) {convolution} [draw] (conv.west)
+++(left:0.5)--++(right:0.5);
+
+\path[pooling] node[right=0.8 of conv] (pool) {pooling} [draw] (pool.west)
+++(left:0.5)--++(right:0.5);
+
+\path[deconv] node[right=0.8 of pool] (dconv) {deconvolution} [draw]
+(dconv.west) ++(left:0.5)--++(right:0.5);
+
+\path[unpooling] node[right=0.8 of dconv] (unpool) {unpooling} [draw]
+(unpool.west) ++(left:0.5)--++(right:0.5);
+\end{scope}
+
+\begin{scope}[local bounding box=ghost2,
+    shift={($(network.south)-(ghost.north)$)},xshift=2pt,yshift=-7pt]
+
+\path[conv] node (conv) {convolution} [draw] (conv.west)
+++(left:0.5)--++(right:0.5);
+
+\path[pooling] node[right=0.8 of conv] (pool) {pooling} [draw] (pool.west)
+++(left:0.5)--++(right:0.5);
+
+\path[deconv] node[right=0.8 of pool] (dconv) {deconvolution} [draw]
+(dconv.west) ++(left:0.5)--++(right:0.5);
+
+\path[unpooling] node[right=0.8 of dconv] (unpool) {unpooling} [draw]
+(unpool.west) ++(left:0.5)--++(right:0.5);
+\end{scope}
+
+% Stack of CRBMs
+
+\begin{scope}[local bounding box=dbn]
+\node[channel=64pt and 3pt, left=6cm of inputs,pin=270:Input images] (rinputs)
+{}; 
+\node[channel=60pt and 16pt,above=of rinputs] (rclayer1) {};
+\node[channel=30pt and 16pt,above=of rclayer1] (rpooling1) {};
+\node[channel=26pt and 16pt,above=of rpooling1] (rclayer2) {};
+\end{scope}
+
+\draw[conv2] (rinputs)--node[left] {$\hat{w}^{(1)}$} (rclayer1);
+\draw[pooling] (rclayer1)--node[right] {pooling} (rpooling1);
+\draw[conv2] (rpooling1)--node[left] {$\hat{w}^{(2)}$} (rclayer2);
+
+\node[left=1pt of rinputs] {$v^{(1)}$};
+\node[left=1pt of rclayer1] {$h^{(1)}$};
+\node[left=1pt of rpooling1] {$v^{(2)}$};
+\node[left=1pt of rclayer2] {$h^{(2)}$};
+
+\draw[decorate,decoration={brace,raise=5pt,mirror}] (rinputs.south east)
+--node[right=10pt,align=center] (crbm) {convRBM$_1$} (rinputs.south
+east|-rclayer1.north east);
+
+\draw[decorate,decoration={brace,raise=5pt,mirror}] (rpooling1.south east)
+--node[right=10pt,align=center] {convRBM$_2$} (rclayer2.north
+east-|rpooling1.south east);
+
+% \node[above=10pt of dbn,align=center] {Stack of Convolutional\\ Restricted
+% Boltzmann Machines};
+% \node[above=10pt of network] {Convolutional Encoder Network};
+
+\node[above=15pt of dbn,align=center,font=\normalsize] {Pre-training};
+\node[above=15pt of network,font=\normalsize] {Fine-tuning};
+
+% \draw[->] (crbm.east|-dbn)-- node[above=2pt] {convert} 
+% node[above,align=center]
+% {$w_\text{c}^{(1)} = w^{(1)}$ \\
+%  $w_\text{c}^{(2)} = w^{(2)}$ \\
+%  $w_\text{d}^{(2)} = w^{(2)}$ \\
+%  $w_\text{d}^{(1)} = 0.5w^{(1)}$ \\
+%  $w_\text{s}^{(1)} = 0.5w^{(1)}$}
+% (convl.west|-network);
+
+%\draw (network.north west) rectangle (network.south east);
+%\draw (ghost.north west) rectangle (ghost.south east);
+%\draw (ghost2.north west) rectangle (ghost2.south east);
+
+%\path[pooling] node (pool) at (-3,-1) {convolution};
+%\draw[pooling] (conv.west) ++(left:0.5)--++(right:0.5);
+
+%\draw[conv] (-3,-1)-- +(right:0.5) node[right] {convolution};
+%\draw[pooling] (-0.5,-1)-- +(right:0.5) node[right] {pooling};
+%\draw[deconv] (2,-1)-- +(right:0.5) node[right] {deconvolution};
+%\draw[unpooling] (4.5,-1)-- +(right:0.5) node[right] {unpooling};
+
+%\draw[pooling] (0,-1.5)-- +(right:0.5) node[right] {pooling};
+%\draw[deconv] (0,-2)-- +(right:0.5) node[right] {deconvolution};
+%\draw[unpooling] (0,-2.5)-- +(right:0.5) node[right] {unpooling};
+
+\end{tikzpicture}
