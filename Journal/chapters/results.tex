@@ -16,6 +16,8 @@ background cropping to a \num{164x206x52} voxels region of interest.
 \subsection{Comparison of Network Architectures}
 
 \begin{itemize}
+\item Add definitions of TPR, PPV, and DSC and a short intuition what they
+measure.
 \item We used 3 different architectures: 3-layer, 7-layer without shortcuts and
 7-layer with shortcuts.
 \item 7-layer CEN parameters are summarized in Table~\ref{tab:arch7}.
@@ -77,8 +79,8 @@ lesionTOADS}
 Method & TPR [\%] & PPV [\%] & DSC [\%] \\
 \midrule
 3-layer CEN & \num{49.62+-20.32} & \num{59.87+-20.95} & \num{49.1+-15.78} \\
-7-layer CEN* & \num{49.94+-19.96} & \num{63.5+-20} & \num{51.04+-14.71} \\
-7-layer CEN** & \num{52.75+-20.31} & \num{66.58+-20.71} &
+7-layer CEN & \num{49.94+-19.96} & \num{63.5+-20} & \num{51.04+-14.71} \\
+7-layer SCEN & \num{52.75+-20.31} & \num{66.58+-20.71} &
 \num{54.02+-15.24}
 \\[0.2em]
 lesionTOADS & \num{49.83+-14.79} & \num{39.86+-20.95} & \num{40.04+-14.86} \\
@@ -87,16 +89,24 @@ lesionTOADS & \num{49.83+-14.79} & \num{39.86+-20.95} & \num{40.04+-14.86} \\
 \end{center}
 Note: The table shows the mean and standard deviation of the true positive rate
 (TPR), positive predictive value (PPV), and Dice similarity coefficient (DSC).
-(* without shortcut connections, ** with shortcut connections)
 \end{table}
 
 \subsection{Segmentation performance vs. lesion load}
 
 \begin{itemize}
+\item Analyse where the performance gains come from
+\item 7-layer CEN improves across the board but improvements are particularly
+high for large lesion loads
+\item Large lesion load is also associated with larger lesions
+\item Small filters fail to detect large lesions correctly
+\item 7-layer CEN uses a hierachy of features where each layer represents
+features of a different scale
+\item This allows the detection of a wider spectrum of lesion sizes.
 \item Analyse the relationship of segmentation performance and lesion load
 \item Divided the test set into 5 classes with roughly the same number of
-samples. Classes are (0,1250), (1250,2500), (2500, 3800), (3800,10000), above
-10000.
+samples. Classes are (0,1250) ($n=17$), (1250,2500) ($n=16$), (2500, 3800)
+($n=18$), (3800,10000) ($n=18$), above 10000 ($n=8$). Mention the number of
+samples per class.
 \item CEN outperforms lesionTOADS for all lesion load categories, except for
 very high lesion load.
 \item For very high lesion load, no difference to lesion TOADS found using
@@ -106,13 +116,48 @@ t-test.
 
 \begin{figure}[tb]
 \centering
-\includegraphics[width=\columnwidth]{figures/boxplot_LL}
-\caption{Comparison of DSC scores of lesionTOADS and a 7-layer CEN for different
-lesion loads. CEN approach performs consistently well through a wide range of
-lesion loads.}
+\includegraphics[width=\columnwidth]{figures/boxplot_L1vsL2}
+\caption{Comparison of segmentation accuracy measured by the DSC of a 3-layer
+CEN and a 7-layer CEN for different lesion load categories. The 7-layer CEN
+improves the performance across all lesion sizes compared to the 3-layer CEN,
+where the improvements are especially large for large lesion loads and lesion
+size.}
 \end{figure}
 
-\subsection{Discussion}
+\begin{figure}[tb] \centering
+\includegraphics[width=\columnwidth]{figures/boxplot_L2vsLT}
+
+\caption{Comparison of segmentation accuracy measured by the DSC of lesionTOADS
+and a 7-layer CEN for different lesion loads. The CEN approach is much more
+sensitive in detecting small lesions, while still being able to detect large
+lesions.}
+\end{figure}
+
+\begin{table}
+\caption{Comparison of segmentation accuracy for different lesion load
+categories.}
+\begin{center}
+\begin{tabular}{@{}ccccccc@{}}
+\toprule
+\multicolumn{1}{@{}l}{Lesion load} & \multicolumn{3}{c}{7-layer SCEN} &
+\multicolumn{3}{c@{}}{lesionTOADS}
+\\
+& TPR & PPV & DSC & TPR & PPV & DSC \\
+\midrule
+\phantom{000}$(0,1250]$\phantom{0} & \num{50.00} & \num{41.15} & \num{39.34} &
+\num{49.96} & \num{13.09} & \num{18.86}\\
+$(1250,2500]$\phantom{0} & \num{61.92} & \num{59.01} & \num{57.45} & \num{52.39}
+& \num{29.95} & \num{37.74}\\
+$(2500,3800]$\phantom{0} & \num{57.64} & \num{71.54} & \num{61.31} & \num{54.17}
+& \num{41.83} & \num{46.53}\\
+$(3800,10000]$ & \num{51.14} & \num{81.11} & \num{60.13} & \num{47.97} &
+\num{56.56} & \num{50.76}\\
+$> 10000$ & \num{32.82} & \num{91.95} & \num{48.19} & \num{38.88} & \num{74.6} &
+\num{50.93}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \begin{itemize}
 \item Have some sample images and discuss what we can see here.

@@ -79,7 +79,7 @@ fontscale=0.32
 \begin{poster}{
   %grid=false,
   %eyecatcher=false,
-  columns=2,
+  columns=4,
   background=shadetb,
   bgColorOne=white,
   bgColorTwo=white,
@@ -153,7 +153,7 @@ UBC\quad \inst{2}Department of Radiology, UBC\\[0.65ex]
 % Introduction
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{headerblock}{Introduction}{row=0, column=0, name=introduction}
+\begin{headerblock}{Introduction}{row=0, column=0, name=introduction,span=1}
 \begin{compactitem}
 \item Multiple sclerosis (MS) is an inflammatory and demyelinating disease of
 the central nervous system, and is characterized by the formation of lesions,
@@ -175,7 +175,8 @@ to automatically learn features tuned for lesion segmentation.
 % Contributions
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{headerblock}{Contributions}{below=introduction, name=contributions}
+\begin{headerblock}{Contributions}{row=0, column=1, name=contributions,
+span=1}
 \begin{compactitem}
 \item Our network processes entire volumes instead of patches, which removes the
 need to select representative patches, eliminates redundant calculations where
@@ -214,7 +215,7 @@ image voxels.
 %%%%%%%%%%%%%%%%%%%%%%%
 % Method 
 %%%%%%%%%%%%%%%%%%%%%%%
-\begin{headerblock}{Method}{below=contributions, name=method}
+\begin{headerblock}{Method}{below=contributions, name=method, span=2}
 \begin{compactitem}
 \item The task of segmenting MS lesions is defined as finding a function $s$
 that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR}, I_\text{T1},
@@ -266,13 +267,14 @@ y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 % % y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 % % \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 % % \end{multline}
+\vspace{1.5em}
 \end{headerblock}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Evaluation
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{headerblock}{Evaluation}{row=0, column=1, name=evaluation}
+\begin{headerblock}{Evaluation}{row=0, column=2, name=evaluation, span=2}
 
 \minisection{Evaluation on Public Data}
 \begin{compactdesc}
@@ -339,9 +341,9 @@ methods in terms of mean TPR, PPV, and DSC.
 \toprule
 Method & {TPR} & {PPV} & {DSC} \\ 
 \midrule
-Souplet et al. \cite{souplet2008} & 20.65 & 30.00 & {---} \\ 
-Weiss et al. \cite{weiss2013} & 33.00 & 36.85 & 29.05 \\ 
-Geremia et al. \cite{geremia2010} & 39.85 & 40.35 & {---}  \\
+Souplet et al. [1] & 20.65 & 30.00 & {---} \\ 
+Weiss et al. [2] & 33.00 & 36.85 & 29.05 \\ 
+Geremia et al. [3] & 39.85 & 40.35 & {---}  \\
 Our method & 39.71 & 41.38 & 35.52 \\
 \bottomrule
 \end{tabular}
@@ -367,33 +369,75 @@ overfitting.
 \end{center}
 \end{headerblock}
 
-\begin{headerblock}{Conclusions}{below=evaluation, column=1,
-name=conclusions,above=bottom}
-\begin{compactitem} 
-  \item Our method performs comparably to the best methods reported on the MS
-lesion segmentation challenge 2008 data set.
-  \item Segmentation performance can be greatly improved by having a
-  representative data set.
-\end{compactitem} 
-\end{headerblock}
+% TODO: Put some of these statements into the main text and make figures a
+% little bit smaller to make everything fit.
 
-\begin{headerblock}{Acknowledgement}{below=method, column=0,
-name=acknowledgement}
-This work was supported by the Natural Sciences and
-Engineering Research Council of Canada and the Milan and Maureen Ilich Foundation.
-\end{headerblock}
+% \begin{headerblock}{Conclusions}{below=evaluation, column=2,
+% name=conclusions,above=bottom, span=1}
+% \begin{compactitem} 
+%   \item Our method performs comparably to the best methods reported on the MS
+% lesion segmentation challenge 2008 data set.
+%   \item Segmentation performance can be greatly improved by having a
+%   representative data set.
+% \end{compactitem} 
+% \end{headerblock}
+
+ %\begin{headerblock}{Video}{below=method, column=1, above=bottom, span=1}
+ %\end{headerblock}
+
 
 %\normalsize 
-\begin{headerblock}{Contact Information}{below=acknowledgement,
-column=0,above=bottom}
+\begin{headerblock}{Contact Information and Video}{%below=acknowledgement,
+column=0, span=2, above=bottom, name=contact}
 % \begin{tabular}{@{}c@{\, }ll}
-\begin{tabular}{@{}cll}
-  \Letter & \texttt{tombr@msmri.medicine.ubc.ca} \\
-  \Mundus & \url{http://tbrosch.blogspot.com/} \\
+\begin{tabular}{@{}clc@{\hspace{5pt}}c}
+  \Letter & \texttt{brosch.tom@gmail.com} &
+  \multirow{4}{*}{\hspace{2em}Video:} &
+  \multirow{4}{*}{\includegraphics[width=0.15\textwidth]{images/qrcode}}
+  \\
+  \Mundus & \url{tbrosch.blogspot.com} \\
+  \includegraphics[width=0.8em]{images/linkedin} &
+  %\url{/in/tombrosch} \\
+  \url{linkedin.com/in/tombrosch} \\
+  \tikz \node[fill=black,text=white,inner sep=1pt, rounded
+  corners=1pt]{ \includegraphics[height=0.6em]{images/RG_white_Logo}};
+  %& \url{/profile/Tom_Brosch} \\
+  & \url{researchgate.net/profile/Tom_Brosch} \\
   %& \multicolumn{1}{c}{\includegraphics[width=0.5\textwidth]{figures/contact}}
 \end{tabular}
 %\Letter\ \texttt{tombr@msmri.medicine.ubc.ca}\quad\Mundus{}
 %\url{http://tbrosch.blogspot.com/}
+\end{headerblock}
+
+\begin{headerblock}{Acknowledgement}{column=0, span=2,
+name=acknowledgement,above=contact,below=method}
+This work was supported by the Natural Sciences and
+Engineering Research Council of Canada and the Milan and Maureen Ilich Foundation.
+\end{headerblock}
+
+\begin{headerblock}{References}{%below=evaluation,
+column=2,span=2,above=bottom}
+\small
+\begin{compactenum}[{[1]}]
+\item[{[1]}] Souplet et al., ``An automatic segmentation
+of T2-FLAIR multiple sclerosis lesions.'' In: MIDAS Journal -- MICCAI 2008
+Workshop (2008)
+\item[{[2]}] Weiss et al., ``Multiple sclerosis lesion segmentation using
+dictionary learning and sparse coding.'' In: MICCAI 2013, Part I. LNCS, vol. 8149, pp. 735--742.
+\item[{[3]}] Geremia et al., ``Spatial decision forests for MS lesion
+segmentation in multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol. 6361, pp.
+111--118.
+\end{compactenum}
+% [1] Souplet et al., ``An automatic segmentation
+% of T2-FLAIR multiple sclerosis lesions.'' In: MIDAS Journal -- MICCAI 2008
+% Workshop (2008)
+% \\[0.25em]
+% [2] Weiss et al., ``Multiple sclerosis lesion segmentation using dictionary
+% learning and sparse coding.'' In: MICCAI 2013, Part I. LNCS, vol. 8149, pp. 735--742.
+% \\[0.25em]
+% [3] Geremia et al., ``Spatial decision forests for MS lesion segmentation in
+% multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol. 6361, pp.
+% 111--118.
 \end{headerblock}
 
 % TODO: add references
