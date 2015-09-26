@@ -2,64 +2,64 @@
 
 \IEEEPARstart{M}{ultiple}
 sclerosis (MS) is an inflammatory and demyelinating disease of the central
-nervous system, and is characterized by the formation of lesions, primarily
-visible in the white matter on conventional magnetic resonance images (MRIs).
-Imaging biomarkers based on the delineation of lesions, such as lesion load and
-lesion count, have established their importance for assessing disease
-progression and treatment effect. However, lesions vary greatly in size, shape,
-intensity and location, which makes their automatic and accurate segmentation
-challenging. Many automatic methods have been proposed for the segmentation of
-MS \mbox{lesions} over the last two decades, which can be classified into
-unsupervised and supervised methods. Unsupervised methods do not require a
-labeled data set for training. Instead, lesions are identified as an outlier
-class using, e.g., clustering methods \cite{souplet2008} or dictionary learning
-and sparse coding to model healthy tissue \cite{weiss2013}. Current supervised
-approaches typically start with a large set of features, either predefined by
-the user \cite{geremia2010} or gathered in a feature extraction step, which is
-followed by a separate training step with labeled data to determine which set of
-features are the most important for segmentation in the particular domain. For
-example, Yoo et al. \cite{yoo2014} proposed performing unsupervised learning of
-domain-specific features from image patches from unlabelled data using deep
-learning. A major breakthrough for the fully automatic segmentation of medical
-images using deep learning comes from the domain of cell membrane segmentation,
-in which Ciresan et al. \cite{Ciresan2012} proposed to classify the centers of
-image patches directly using a convolutional neural network (CNN)
-\cite{LeCun1998} without a dedicated feature extraction step. Instead, features
-are learned indirectly within the lower layers of the neural network during
-training, while the higher layers can be regarded as performing the
-classification. In contrast to unsupervised feature learning, this approach
-allows the learning of features that are specifically tuned to the segmentation
-task. Although deep network-based feature learning methods have shown great
-potential for image segmentation, the time required to train complex patch-based
-methods can make the approach infeasible when the size and number of patches are
-large.
+nervous system with pathology that can be observed in vivo by magnetic resonance
+imaging (MRI). MS is characterized by the formation of lesions, primarily
+visible in the white matter on conventional MRI. Imaging biomarkers based on the
+delineation of lesions, such as lesion load and lesion count, have established
+their importance for assessing disease progression and treatment effect.
+However, lesions vary greatly in size, shape, intensity and location, which
+makes their automatic and accurate segmentation challenging. Many automatic
+methods have been proposed for the segmentation of MS \mbox{lesions} over the
+last two decades \cite{garcia2013review}, which can be classified into
+unsupervised and supervised methods. Unsupervised methods do not require a labeled data set for training.
+Instead, lesions are identified as an outlier class using, e.g., clustering
+methods \cite{souplet2008} or dictionary learning and sparse coding to model
+healthy tissue \cite{weiss2013}. Current supervised approaches typically start
+with a large set of features, either predefined by the user \cite{geremia2010}
+or gathered in a feature extraction step, which is followed by a separate
+training step with labeled data to determine which set of features are the most
+important for segmentation in the particular domain. For example, Yoo et al.
+\cite{yoo2014} proposed performing unsupervised learning of domain-specific
+features from image patches from unlabelled data using deep learning. A major
+breakthrough for the fully automatic segmentation of medical images using deep
+learning comes from the domain of cell membrane segmentation, in which Ciresan
+et al. \cite{Ciresan2012} proposed to classify the centers of image patches
+directly using a convolutional neural network (CNN) \cite{LeCun1998} without a
+dedicated feature extraction step. Instead, features are learned indirectly
+within the lower layers of the neural network during training, while the higher
+layers can be regarded as performing the classification. In contrast to
+unsupervised feature learning, this approach allows the learning of features
+that are specifically tuned to the segmentation task. Although deep
+network-based feature learning methods have shown great potential for image
+segmentation, the time required to train complex patch-based methods can make
+the approach infeasible when the size and number of patches are large.
 
-More recently, CNN architectures have been proposed that are able to learn to
-segment entire images instead of patches
-\cite{ronneberger2015,brosch2015,kang2014fully}, which removes the need to
+More recently, different CNN architectures
+\cite{ronneberger2015,brosch2015,kang2014fully} have been proposed that are able
+to learn to segment entire images instead of patches, which removes the need to
 select representative patches, eliminates redundant calculations where patches
 overlap, and therefore scales up more efficiently with image resolution. Kang et
-al. introduced the fully convolutional neural network to segment crowds in
-surveillance videos \cite{kang2014fully}. Fully convolutional neural networks
+al. used a fully convolutional neural network to segment crowds in surveillance
+videos \cite{kang2014fully}. However, fully convolutional neural networks
 predict segmented images of lower resolution than the input images due to the
 successive use of convolutional and pooling layers, which both reduce the
-dimensionality. In our previous work \cite{brosch2015}, we proposed to use a
-3-layer convolutional encoder network (CEN) for multiple sclerosis lesion
-segmentation, which combines convolutional and deconvolutional layers in order
-to predict lesion segmentations that have the same resolution as the input
-images and are therefore potentially more accurate compared to segmentations
-predicted by fully convolutional neural networks. Ronneberger et al.
-\cite{ronneberger2015} found that increasing the depth of the CNN, and thereby
-increasing the size of the receptive field of a particular voxel, increases the
-abstraction from the input data, which makes the segmentation method more robust
-to anatomical and intensity variations. They proposed an 11-layer u-shaped
-network architecture called u-net, which leverages high-level and low-level
-features in order to predict segmentations that are both robust and accurate.
-However, the successive application of convolutional, pooling and unpooling
-layers reduces the size of the predicted segmentation by the size of the
-receptive field. This requires special handling of the border regions and limits
-the maximum size of the receptive field without compromising training
-performance (and I mean speed thereby and memory).
+dimensionality. To predict segmentations of the same resolution as the input
+images, we proposed to use a 3-layer convolutional encoder network (CEN)
+\cite{brosch2015} for multiple sclerosis lesion segmentation. The combination of
+convolutional \cite{LeCun1998} and deconvolutional \cite{zeiler2011} layers
+allows our network to produce segmentations that are of the same resolution as
+the input images and are therefore potentially more accurate compared to
+segmentations predicted by a fully convolutional neural network. Ronneberger et
+al. \cite{ronneberger2015} found that increasing the depth of the CNN, and
+thereby increasing the size of the receptive field of a segmented voxel,
+increases the abstraction from the input data, which makes the segmentation
+method more robust to anatomical and intensity variations. They proposed an
+11-layer u-shaped network architecture called u-net, which leverages high-level
+and low-level features in order to predict segmentations that are both robust
+and accurate. However, the successive application of convolutional, pooling, and
+unpooling layers reduces the size of the predicted segmentation by the size of
+the receptive field. This requires special handling of the border regions and
+limits the maximum size of the receptive field.
 
 % Easier to apply than u-net because it does not need padding or cropping of the
 % segmentation for training.
@@ -76,36 +76,33 @@ performance (and I mean speed thereby and memory).
 % allows errors to be propagated through the shortcut connections, which in tern
 % allows the learning of low-level features that are tuned for segmentation.
 
-The contributions of our paper are two-fold. First, we propose a new
-convolutional network architecture that combines the advantages of a 3-layer CEN
-and an 11-layer u-net. Our network is divided into two pathways, a convolutional
-pathway which consists of alternating convolutional and pooling layers and
-learns increasingly more abstract and robust features, and a deconvolutional
-pathway which consists of alternating deconvolutional and unpooling layers and
-predicts the final segmentation. In order for the segmentation to be driven by
-both low-level and high-level features, we introduce shortcut connections
-between layers of the two pathways, similar to the u-net architecture. In
-contrast to the u-net architecture, our network predicts segmentations that have
-the same resolution as the input images and therefore does not require special
-handling of the border of the image. Because the size of the predicted
-segmentation is independent of the receptive field size, our network
-architecture can be extended to learn global features, whose receptive fields
-span the entire image.\footnote{might move that to the discussion or future
-work, because we haven't explored this feature yet.} We have evaluated the
-segmentation performance of our method on a large data set and compared our
-results with lesionTOADS, a widely used publicly available method for fully
-automatic lesion segmentation, showing that our newly proposed architecture
-further improves segmentation accuracy over the state-of-the-art.
+We propose a new convolutional network architecture with 7-layers that combines
+the advantages of a 3-layer CEN and an 11-layer u-net. Our network is divided
+into two pathways, a convolutional pathway, which consists of alternating
+convolutional and pooling layers and learns increasingly more abstract and
+robust features, and a deconvolutional pathway, which consists of alternating
+deconvolutional and unpooling layers and predicts the final segmentation. In
+order for the segmentation to be driven by both low-level and high-level
+features, we introduce shortcut connections between layers of the two pathways,
+similar to the u-net architecture. In contrast to the u-net architecture, our
+network predicts segmentations that have the same resolution as the input images
+and therefore does not require special handling of the border of the image. We
+have evaluated the segmentation performance of our method on a large data set
+from an MS clinical trial and compared our results with Lesion-TOADS
+\cite{shiee2010topology}, a widely used freely available method for fully
+automatic lesion segmentation. Our results show that the CEN approach is able to
+segment MS lesions more accurately than Lesions-TOADS, and that our new CEN
+architecture further improves segmentation accuracy.
 
-There has been a lot of interest in recent years in the machine learning
-community to develop better training methods for CNNs. However, training CNNs
-for medical image segmentation is particularly challenging due to the relatively
-small size of available training sets and the large size of 3D medical images,
-which only allows a few iterations to be used for training and hyperparameter
-tuning. Our second contribution is a comprehensive comparison of different first
-order and second order training method and parameter initialization strategies
-that can serve as a guideline for other researchers for training convolutional
-models for medical image segmentation.
+% There has been a lot of interest in recent years in the machine learning
+% community to develop better training methods for CNNs. However, training CNNs
+% for medical image segmentation is particularly challenging due to the relatively
+% small size of available training sets and the large size of 3D medical images,
+% which only allows a few iterations to be used for training and hyperparameter
+% tuning. Our second contribution is a comprehensive comparison of different first
+% order and second order training method and parameter initialization strategies
+% that can serve as a guideline for other researchers for training convolutional
+% models for medical image segmentation.
 
 % \item (Analysis of the relationship between regularization and training set
 % size to avoid over- and underfitting)

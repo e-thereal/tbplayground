@@ -1,36 +1,111 @@
+\sisetup{separate-uncertainty=true,detect-weight=true,detect-inline-weight=math}
+
 \section{Experiments and Results}
 
 % \uselengthunit{in}\printlength{\textwidth} = 4.8041 in
 % \uselengthunit{mm}\printlength{\textwidth} = 121.99854 mm
 
-\subsection{Data Sets and Pre-processing}
+%\subsection{Data Sets and Pre-processing}
 
 The method was evaluation on a large data set from a multi-center MS clinical
-trial of 195 subjects. The data was acquired from 67 different scanning sites.
-The data set consists of 377 pairs of FLAIR and T1-weighted MRIs with a
-resolution of \num{256x256x60} voxels and a voxel size of
-\SI{0.936x0.936x3.000}{\milli\metre}. The main preprocessing steps included
-rigid intra-subject registration, brain extraction, intensity normalization, and
-background cropping to a \num{164x206x52} voxels region of interest.
+trial that was acquired from 67 different scanning sites. The data set consists
+of 377 pairs of FLAIR and T1-weighted MRIs from 195 subjects with a resolution
+of \num{256x256x60} voxels and a voxel size of
+\SI{0.936x0.936x3.000}{\milli\metre}. All images were skull-stripped using the
+brain extraction tool (BET) \cite{jenkinson2005bet2}, followed by an intensity
+normalization to the interval $[0,1]$, and a 6 degrees of freedom intra-subject
+registration. To speed-up the training, all images were cropped to a
+\num{164x206x52} voxels region of interest with the brain roughly centered. We
+used 300 image pairs for pre-training and fine-tuning, and the remaining 77
+image pairs for the evaluation. Pre-training and fine-tuning was performed using
+a highly optimized GPU-accelerated implementation of 3D convRBMs and CENs that
+was develop in-house \cite{brosch2014efficient}. Each model was trained using
+500 epochs.
+Pre-training and fine-tuning of a 7-layer CEN with shortcut connections took
+approximately 27 hours and 37 hours, respectively, on a single GeForce GTX 780
+graphics card. However, once the network is trained, new image pairs can be
+segmented in less than one second. We compared our results to the lesion masks
+produced by Lesion-TOADS \cite{shiee2010topology}, a widely used freely
+available tool for the fully automatic segmentation of MS lesions.
+
+\subsection{Measures of Segmentation Accuracy}
+
+We have used three different metrics to measure segmentation accuracy. The
+primary measure of accuracy that we employ is the Dice similarity coefficient
+(DSC) \cite{dice1945measures}, which computes a normalized overlap value between
+the produced and ground truth segmentation. Is is defined as
+\begin{equation}
+\text{DSC} = \frac{2 \times \text{TP}}{2 \times \text{TP} + \text{FP} +
+\text{FN}},
+\end{equation}
+where TP, FP, and FN denote the number of true positives, false positives, and
+false negatives, respectively. A value of \SI{100}{\percent} indicates a perfect
+overlap of the produced segmentation and the ground truth. The DSC incorporates
+measures of over- and undersegmentation into a single metric, which makes it a
+suitable measure to compare overall segmentation accuracy. In addition, we have
+used the true positive rate (TPR) and the positive predictive value (PPV) to
+provide further information on specific aspects of segmentation performance. The
+TPR is used to measure the fraction of the regions classified as lesion by the
+ground truth that were also identified as lesions by an automatic method. It is
+defined as
+\begin{equation}
+\text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}},
+\end{equation}
+where a value of \SI{100}{\percent} indicates that all true lesion voxels were
+automatically identified. The PPV is used to determine the extent of the regions
+falsely classified as lesion by an automatic method. It is defined as the ratio of
+the correctly identified lesion voxels and all identified lesion voxels
+\begin{equation}
+\text{PPV} = \frac{\text{TP}}{\text{TP} + \text{FP}},
+\end{equation}
+where a value of \SI{100}{\percent} indicates that all voxels that were
+automatically classified as lesion voxels are indeed lesion voxels as defined
+by the ground truth.
 
 \subsection{Comparison of Network Architectures}
 
-\begin{itemize}
-\item Add definitions of TPR, PPV, and DSC and a short intuition what they
-measure.
-\item We used 3 different architectures: 3-layer, 7-layer without shortcuts and
-7-layer with shortcuts.
-\item 7-layer CEN parameters are summarized in Table~\ref{tab:arch7}.
-\item Comparison of segmentation performance on the test set with 3 different
-architectures and lesionTOADS is shown in Table~\ref{tab:results1}
-\item Even the 3-layer model performs much better than lesionTOADS on average.
-\item Better was confirmed using a one-sided paired t-test. Give the p-value.
-\item Better than lesionTOADS ($p$-value = \num{4.732e-9})
-\item Better than 3-layer ($p$-value = \num{0.002})
-\item Better with shortcut connections ($p$-value = \num{1.566e-11})
-\item Adding more layers also improves performance. T-test.
-\item Adding shortcut connections improves performance. t-test.
-\end{itemize}
+In the first experiment, we have compared the segmentation performance of three
+different network architectures with each other and with Lesion-TOADS.
+Therefore, we trained a 3-layer CEN and two 7-layer CENs with and one without
+shortcut connections on the 300 training pairs. The parameters of the used
+networks are given in Table~\ref{tab:arch3} and Table~\ref{tab:arch7}. A
+comparison of the segmentation accuracy of the trained networks and Lesion-TOADS
+is summarized in Table~\ref{tab:results1}. All CEN architectures performed
+significantly better than Lesion-TOADS in terms of the overall segmentation
+accuracy, where the improvements of the mean DSC scores range from 9\,pts for
+the 3-layer CEN to 14\,pts for the 7-layer CEN with shortcut connections. The
+improved segmentation performance is mostly due to a reduction of the false
+positives. Lesion-TOADS achieved a mean PPV of only \SI{39.86}{\percent}, where
+the best performing CEN architecture achieved a mean PPV of
+\SI{66.58}{\percent}---an improvement of 27\,pts. The mean TPRs were roughly the
+same ($\text{TPR}\approx \SI{50}{\percent}$) for all methods except for the
+7-layer CEN with shortcuts, which performed slightly better than the other
+methods with a mean TPR of \SI{52.75}{\percent}.
+
+Furthermore, the first experiment showed that increasing the depth of the CEN
+and adding shortcut connections improves the segmentation accuracy. Increasing
+the depth of the CEN from three layers to seven layers improved the mean DSC by
+2\,pts. The improvement was confirmed to be statistically significant using a
+one-sided paired $t$-test ($p\text{-value}=\num{0.002}$). Adding shortcut
+connections to the network further improved the segmentation accuracy as
+measured by the DSC by 3\,pts. A second one-sided paired $t$-test was performed
+to confirm the statistical significance of the improvement with a $p$-value of
+\num{1.566e-11}.
+
+% \begin{itemize}
+% \item We used 3 different architectures: 3-layer, 7-layer without shortcuts and
+% 7-layer with shortcuts.
+% \item 7-layer CEN parameters are summarized in Table~\ref{tab:arch7}.
+% \item Comparison of segmentation performance on the test set with 3 different
+% architectures and lesionTOADS is shown in Table~\ref{tab:results1}
+% \item Even the 3-layer model performs much better than lesionTOADS on average.
+% \item Better was confirmed using a one-sided paired t-test. Give the p-value.
+% \item Better than lesionTOADS ($p$-value = \num{4.732e-9})
+% \item Better than 3-layer ($p$-value = \num{0.002})
+% \item Better with shortcut connections ($p$-value = \num{1.566e-11})
+% \item Adding more layers also improves performance. T-test.
+% \item Adding shortcut connections improves performance. t-test.
+% \end{itemize}
 
 \begin{table}[tb]
 \caption{Parameters of the 3-layer CEN used to evaluating different training
@@ -69,10 +144,9 @@ Deconvolutional & \num{9x9x5x32} & 1 & \num{164x206x52x1}\phantom{0} \\
 \end{table}
 
 \begin{table}
-\sisetup{separate-uncertainty=true,detect-weight=true,detect-inline-weight=math}
 \begin{center}
 \caption{Comparison of the segmentation accuracy of different CEN models with
-lesionTOADS}
+Lesion-TOADS}
 \label{tab:results1}
 \begin{tabular}{@{}lccc@{}}
 \toprule
@@ -83,7 +157,7 @@ Method & TPR [\%] & PPV [\%] & DSC [\%] \\
 7-layer SCEN & \num{52.75+-20.31} & \num{66.58+-20.71} &
 \num{54.02+-15.24}
 \\[0.2em]
-lesionTOADS & \num{49.83+-14.79} & \num{39.86+-20.95} & \num{40.04+-14.86} \\
+Lesion-TOADS & \num{49.83+-14.79} & \num{39.86+-20.95} & \num{40.04+-14.86} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -91,56 +165,108 @@ Note: The table shows the mean and standard deviation of the true positive rate
 (TPR), positive predictive value (PPV), and Dice similarity coefficient (DSC).
 \end{table}
 
-\subsection{Segmentation performance vs. lesion load}
+\subsection{Comparison for Different Lesion Loads}
 
-\begin{itemize}
-\item Analyse where the performance gains come from
-\item 7-layer CEN improves across the board but improvements are particularly
-high for large lesion loads
-\item Large lesion load is also associated with larger lesions
-\item Small filters fail to detect large lesions correctly
-\item 7-layer CEN uses a hierachy of features where each layer represents
-features of a different scale
-\item This allows the detection of a wider spectrum of lesion sizes.
-\item Analyse the relationship of segmentation performance and lesion load
-\item Divided the test set into 5 classes with roughly the same number of
-samples. Classes are (0,1250) ($n=17$), (1250,2500) ($n=16$), (2500, 3800)
-($n=18$), (3800,10000) ($n=18$), above 10000 ($n=8$). Mention the number of
-samples per class.
-\item CEN outperforms lesionTOADS for all lesion load categories, except for
-very high lesion load.
-\item For very high lesion load, no difference to lesion TOADS found using
-t-test.
-\item TPR, PPV, DSC for different lesion loads in a table.
-\end{itemize}
+To further examine the results, we have stratified the test set into five groups
+based on their reference lesion loads as summarized in Table~\ref{tab:groups}. A
+comparison of segmentation accuracy of a 3-layer CEN and a 7-layer CEN with
+shortcut connections for different lesion loads is illustrated in
+Fig.~\ref{fig:l1vl2}. Adding four layers and shortcut connections improves the
+segmentation accuracy for all lesion load groups, where the improvements are
+largest for very high lesion loads. In our data set, lesion load is strongly
+correlated with lesion size, which means that the group with the highest lesion
+load also contains scans with the largest lesions. The receptive field of
+the 3-layer CEN has a size of only \num{17x17x9} voxels, which reduces its
+ability to identify very large lesions. In contrast, the 7-layer CEN has a
+receptive field size of \num{49x53x26} voxels, which allows it to learn features
+that can capture much larger lesions than the 3-layer CEN. Consequently, the
+7-layer CEN is able to learn a feature set that captures a wider range of lesion
+sizes, which in turn improves the segmentation accuracy especially for very high
+lesion loads, where larger lesions are also more prevalent.
+
+\begin{table}[tb]
+\caption{Lesion load classes as used for the detailed analysis.}
+\label{tab:groups}
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Group & Lesion load in \si{\cubic\milli\metre} & Number of samples \\
+\midrule
+% 0, 1250, 2500, 3800, 10000
+Very low & $[0,3250]$ & 17 \\
+Low      & $(3250,6500]$ & 16 \\
+Medium & $(6500,10000]$ & 18 \\
+High & $(10000,25000]$ & 18 \\
+Very high & $> 25000$ & 8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% \begin{itemize}
+% \item Analyse where the performance gains come from
+% \item 7-layer CEN improves across the board but improvements are particularly
+% high for large lesion loads
+% \item Large lesion load is also associated with larger lesions
+% \item Small filters fail to detect large lesions correctly
+% \item 7-layer CEN uses a hierachy of features where each layer represents
+% features of a different scale
+% \item This allows the detection of a wider spectrum of lesion sizes.
+% \item Analyse the relationship of segmentation performance and lesion load
+% \item Divided the test set into 5 classes with roughly the same number of
+% samples. Classes are (0,1250) ($n=17$), (1250,2500) ($n=16$), (2500, 3800)
+% ($n=18$), (3800,10000) ($n=18$), above 10000 ($n=8$). Mention the number of
+% samples per class.
+% \item CEN outperforms Lesion-TOADS for all lesion load categories, except for
+% very high lesion load.
+% \item For very high lesion load, no difference to Lesion-TOADS found using
+% t-test.
+% \item TPR, PPV, DSC for different lesion loads in a table.
+% \end{itemize}
 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\columnwidth]{figures/boxplot_L1vsL2}
-\caption{Comparison of segmentation accuracy measured by the DSC of a 3-layer
-CEN and a 7-layer CEN for different lesion load categories. The 7-layer CEN
-improves the performance across all lesion sizes compared to the 3-layer CEN,
-where the improvements are especially large for large lesion loads and lesion
-size.}
+
+\caption{Comparison of the segmentation accuracy measured by the DSC of a
+3-layer CEN and a 7-layer CEN for different lesion load groups. Adding four layers and
+shortcut connections improves the performance across all lesion loads, where the
+improvements are especially large for scan with large lesion loads, which are
+also correlated with an increase in lesion size.}
+
+\label{fig:l1vl2}
 \end{figure}
+
+Fig.~\ref{fig:l2vlt} shows a comparison of the 7-layer CEN with shortcut
+connections and Lesion-TOADS. The CEN approach performs more consistently
+throughout all lesion load groups than Lesion-TOADS, where the improvements are
+largest for very low to medium lesion loads. For very high lesion loads,
+Lesion-TOADS achieves a higher mean DSC than the CEN approach. However, a
+two-sided paired $t$-test yielded that the differences are not statistically
+significant ($p\text{-value}=0.2566$). Table~\ref{tab:result2} shows a more
+detailed comparison. While the PPV increases consistently with higher lesion
+loads for both methods, the TPR is highest for low to medium lesion loads and
+decreases again for high to very high lesion loads. This shows the difficulty
+for both methods to correctly identify very large lesions that can extend far
+into the white matter.
 
 \begin{figure}[tb] \centering
 \includegraphics[width=\columnwidth]{figures/boxplot_L2vsLT}
-
-\caption{Comparison of segmentation accuracy measured by the DSC of lesionTOADS
-and a 7-layer CEN for different lesion loads. The CEN approach is much more
-sensitive in detecting small lesions, while still being able to detect large
-lesions.}
+\caption{Comparison of the segmentation accuracy measured by the DSC of
+Lesion-TOADS and a 7-layer CEN with shortcut connections for different lesion
+loads. The CEN approach is much more sensitive in detecting small lesions, while
+still being able to detect large lesions.}
+\label{fig:l2vlt}
 \end{figure}
 
 \begin{table}
 \caption{Comparison of segmentation accuracy for different lesion load
 categories.}
+\label{tab:result2}
 \begin{center}
 \begin{tabular}{@{}ccccccc@{}}
 \toprule
 \multicolumn{1}{@{}l}{Lesion load} & \multicolumn{3}{c}{7-layer SCEN} &
-\multicolumn{3}{c@{}}{lesionTOADS}
+\multicolumn{3}{c@{}}{Lesion-TOADS}
 \\
 & TPR & PPV & DSC & TPR & PPV & DSC \\
 \midrule
@@ -159,9 +285,95 @@ $> 10000$ & \num{32.82} & \num{91.95} & \num{48.19} & \num{38.88} & \num{74.6} &
 \end{center}
 \end{table}
 
-\begin{itemize}
-\item Have some sample images and discuss what we can see here.
-\end{itemize}
+% \begin{itemize}
+% \item Have some sample images and discuss what we can see here.
+% \end{itemize}
+
+\subsection{Qualitative Results}
+
+A qualitative comparison of segmentation performance for four characteristic
+cases is shown in Fig.~\ref{fig:images}. Our method produces segmentations that
+are spatially consistent (see Fig.~\ref{fig:images}a), while still being able to
+detect small isolated lesions (green circle). Furthermore, our method is able to
+learn a wide spectrum of lesion shapes and appearances from training data. This
+allows our method to correctly identify multiple different types of MS lesions
+(e.g., T1 black holes), which can be challenging to detect for Lesion-TOADS (see
+Fig.~\ref{fig:images}b).
+Our method uses a combination of automatically learned intensity and appearance
+features, which makes it inherently robust to noise as shown in
+Fig.~\ref{fig:images}c. Figure~\ref{fig:images}d shows one of the most
+challenging cases for our method. Very large lesions might extend beyond the
+size of the receptive field of the CEN, which reduces its ability to extract
+characteristic lesion features. Consequently, our method might underestimate
+the size of very large lesions for some cases.
+
+\begin{figure*}
+%\centering
+\hspace*{-5pt}
+\subfloat[Spatially consistent segmentation] {
+\begin{tikzpicture}[node distance=1.5cm and 0.2\columnwidth,
+  font=\footnotesize, on grid]
+  
+\node[,inner sep=0] (image) {
+  \includegraphics[width=\columnwidth]{figures/p17s29_noisy_lesionTOADS} };
+\node[above=of image] (gt) {\phantom{g}Ground truth\phantom{g}};
+\node[left=of gt] (flair) {\phantom{g}FLAIR\phantom{g}};
+\node[left=of flair] {T1-weighted};
+\node[right=of gt,align=center] (cen) {\phantom{g}Our method\phantom{g}};
+\node[right=of cen,align=center] {Lesion-\\ TOADS};
+
+\draw[green, thick] (-7pt,-3.5pt) circle (3pt);
+\begin{scope}[xshift=0.2\columnwidth]
+\draw[green, thick] (-7pt,-3.5pt) circle (3pt);
+\end{scope}
+
+\end{tikzpicture}
+}
+\subfloat[Can handle multiple types of lesions (e.g., T1 black holes)
+correctly] {
+\begin{tikzpicture}[node distance=1.5cm and 0.2\columnwidth,
+  font=\footnotesize, on grid]
+  
+\node[,inner sep=0] (image) {
+  \includegraphics[width=\columnwidth]{figures/p36s30_blackhole}};
+\node[above=of image] (gt) {\phantom{g}Ground truth\phantom{g}};
+\node[left=of gt] (flair) {\phantom{g}FLAIR\phantom{g}};
+\node[left=of flair] {T1-weighted};
+\node[right=of gt,align=center] (cen) {\phantom{g}Our method\phantom{g}};
+\node[right=of cen,align=center] {Lesion-\\ TOADS};
+
+\draw[red,thick] (-10pt,12pt) circle (7pt);
+\begin{scope}[xshift=-0.2\columnwidth]
+\draw[red,thick] (-10pt,12pt) circle (7pt);
+\end{scope}
+\begin{scope}[xshift=-0.4\columnwidth]
+\draw[red,thick] (-10pt,12pt) circle (7pt);
+\end{scope}
+\begin{scope}[xshift=0.2\columnwidth]
+\draw[red,thick] (-10pt,12pt) circle (7pt);
+\end{scope}
+\begin{scope}[xshift=0.4\columnwidth]
+\draw[red,thick] (-10pt,12pt) circle (7pt);
+\end{scope}
+
+\end{tikzpicture}
+}\\
+\hspace*{-5pt}
+\subfloat[Robust to noise] {
+\includegraphics[width=\columnwidth]{figures/p15s34_robust_to_noise3}
+}
+\subfloat[Underestimates very large lesions] {
+\includegraphics[width=\columnwidth]{figures/p54s32_large_lesions}
+}
+
+\caption{Four cases illustrating the strengths and weaknesses of our method
+compared to Lesion-TOADS. Our method is able a) to produce spatially consistent
+segmentations, b) to handle multiple different types of lesions correctly (e.g.,
+T1 black holes), and c) is inherently robust to noise. (d) Our method
+might underestimate the size of very large lesions for some cases.}
+
+\label{fig:images}
+\end{figure*}
 
 \begin{comment}
 \subsection{BioMS Data Set}

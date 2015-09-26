@@ -24,7 +24,7 @@ training images $I_n$, $n \in \N$, and corresponding segmentations $S_n$, we
 model finding an appropriate function for segmenting MS lesions as an
 optimization problem of the following form
 \begin{equation}
-\hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n))
+\hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n)),
 \label{eq:segprob}
 \end{equation}
 where $\mathcal{S}$ is the set of possible segmentation functions, and $E$ is an
@@ -34,43 +34,44 @@ segmentations and predicted segmentations.
 \subsection{Model Architecture}
 
 The set of possible segmentation functions is modeled by the convolutional
-encoder network illustrated in Fig.~\ref{fig:network}. \todo[inline]{There are
-gaps in the description and a general understanding of CNNs is required to fill
-these gaps in order to be able to implement the CEN.}Our network is divided into
-two pathways, the convolutional pathway and the deconvolutional pathway.
-The convolutional pathway consists of alternating convolutional and pooling
-layers. The input layer of the convolutional pathway is composed of the image
-voxels $x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$ indexes the
+encoder network (CEN) illustrated in Fig.~\ref{fig:network}. A CEN is a type of
+convolutional neural network (CNN) \cite{LeCun1998} that is divided into two
+pathways, the convolutional pathway and the deconvolutional \cite{zeiler2011}
+pathway. The convolutional pathway consists of alternating convolutional and
+pooling layers. The input layer of the convolutional pathway is composed of the
+image voxels $x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$ indexes the
 modality or input channel, $C$ is the number of modalities or channels, and
 $\vect{p} \in \N^3$ are the coordinates of a particular voxel. The convolutional
 layers automatically learn a feature hierarchy from the input images. A
 convolutional layer is a deterministic function of the following form
 \begin{equation}
 x^{(l)}_j = \max \Bigg(0, \sum_{i=1}\tilde{w}^{(l)}_{\text{c},ij}*x^{(l-1)}_i +
-b^{(l)}_j\Bigg)
+b^{(l)}_j\Bigg),
 \end{equation}
 where $l$ is the index of a convolutional layer, $x^{(l)}_j$, $j \in [1,F]$,
 denotes the feature map corresponding to the trainable convolution filter
 $w^{(l)}_{\text{c},ij}$, $F$ is the number of filters of the current layer,
 $b^{(l)}_j$ are trainable bias terms, $*$ denotes valid convolution, and
 $\tilde{w}$ denotes a flipped version of $w$. A convolutional layer is followed
-by an average pooling layer that halves the number of units in each dimension.
+by an average pooling layer \cite{scherer2010evaluation} that halves the number
+of units in each dimension by calculating the average of each block of
+\num{2x2x2} units per channel.
 
 The deconvolutional pathway consists of alternating unpooling layers and
 deconvolutional layers with optional shortcut connections to the corresponding
 convolutional layers. The first deconvolutional layer uses the extracted
 features of the convolutional pathway to calculate abstract segmentation
-features as follows
+features
 \begin{equation}
 y^{(L-1)}_i = \max\Bigg(0, \sum_{j=1}w^{(L)}_{\text{d},ij}\circledast
-y^{(L)}_j + c^{(L-1)}_{i}\Bigg)
+y^{(L)}_j + c^{(L-1)}_{i}\Bigg),
 \end{equation}
 where $y^{(L)} = x^{(L)}$, $L$ denotes the number of layers of the convolutional
 pathway, $w^{(L)}_{\text{d},ij}$ and $c^{(L-1)}_i$ are trainable parameters of
 the deconvolutional layer, and $\circledast$ denotes full convolution. Subsequent
 deconvolutional layers use the activations of the previous layer
 and corresponding convolutional layer to calculate less abstract segmentation
-features as follows
+features
 % \begin{multline}
 % y^{(l)}_i = \max\Bigg(0, \sum_{j=1}\Big(w^{(l+1)}_{\text{d},ij}\circledast
 % y^{(l+1)}_j\\
@@ -81,23 +82,24 @@ features as follows
 y^{(l)}_i = \max\Bigg(0, 
 \sum_{j=1}w^{(l+1)}_{\text{d},ij}\circledast y^{(l+1)}_j\\
 + \sum_{j=1} w^{(l+1)}_{\text{s},ij}\circledast x^{(l+1)}_j +
-c^{(l)}_i\Bigg)
+c^{(l)}_i\Bigg),
 \end{multline}
 where $l$ is the index of a deconvolutional layer with shortcuts, and
 $w^{(l+1)}_{\text{s},ij}$ are the filter kernels connecting the activations of
 the convolutional pathway with the activations of the deconvolutional pathway.
 The last deconvolutional layer integrates the low-level features extracted by
 the first convolutional layer with the high-level features from the previous
-layer to calculate a probabilistic lesion mask as follows
+layer to calculate a probabilistic lesion mask
 \begin{equation}
 y^{(0)}_1 = \sigm\Bigg(\sum_{j=1}\Big(w^{(1)}_{\text{d},1j}\circledast
 y^{(1)}_j +
-w^{(1)}_{\text{s},1j}\circledast x^{(1)}_j\Big) + c^{(0)}_1\Bigg)
+w^{(1)}_{\text{s},1j}\circledast x^{(1)}_j\Big) + c^{(0)}_1\Bigg),
 \end{equation}
 where $\sigm(z)$ denotes the sigmoid function defined as $\sigm(z) = (1 +
 \exp(-z))^{-1}, z \in \R$. To obtain a binary lesion mask from the probabilistic
 output of our model, we chose a fixed threshold such that the mean Dice
-similarity coefficient is maximized on the training set.
+similarity coefficient \cite{dice1945measures} is maximized on the training set
+and use the same threshold for the evaluation on the test set.
 
 \begin{comment}
 The set of possible segmentation functions is modeled by the convolutional
@@ -137,10 +139,11 @@ maximized on the training set.
 % \end{itemize}
 
 \subsection{Gradient Calculation}
+
 The parameters of the model can be efficiently learned by minimizing the error
-$E$ on the training set, which requires the calculation of the gradient of $E$
-with respect to the model parameters. Typically, neural networks are trained by
-minimizing the sum of squared differences (SSD)
+$E$ on the training set \cite{LeCun1998}, which requires the calculation of the
+gradient of $E$ with respect to the model parameters. Typically, neural networks
+are trained by minimizing the sum of squared differences (SSD)
 \begin{equation}
 % Error function
 E = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
@@ -159,38 +162,40 @@ calculated using the delta rule and are given by
 \delta^{(l-1)}_{\text{d},i} * \tilde{y}^{(l)}_j, &
 % Deconvolutional bias
 \frac{\partial E}{\partial c^{(l)}_i} &= \sum_{\vect{p}}
-\delta^{(l)}_{\text{d},i}(\vect{p}) \\
+\delta^{(l)}_{\text{d},i}(\vect{p}), \\
 \label{eq:dEs}
 % Shortcut filters
 \frac{\partial E}{\partial w^{(l)}_{\text{s},ij}}
- &= \delta^{(l-1)}_{\text{d},i} * \tilde{x}^{(l)}_j \\
+ &= \delta^{(l-1)}_{\text{d},i} * \tilde{x}^{(l)}_j, \\
  \label{eq:dEc}
 % Convolutional filters
 \frac{\partial E}{\partial w^{(l)}_{\text{c},ij}} 
-&= x^{(l-1)}_i * \tilde{\delta}^{(l)}_{\text{c},j},&
+&= x^{(l-1)}_i * \tilde{\delta}^{(l)}_{\text{c},j},\text{ and}&
 % Convolutional bias
 \frac{\partial E}{\partial b^{(l)}_i} &= \sum_{\vect{p}}
-\delta^{(l)}_{\text{c},i}(\vect{p})
+\delta^{(l)}_{\text{c},i}(\vect{p}).
 \end{align}
-The deltas of the first layer can be calculated with
+For the first layer, $\delta^{(0)}_{\text{d},1}$ can be calculated by
 \begin{equation}
 % Delta update
-\delta^{(0)}_{\text{d},1} = \big(y^{(0)}_1 -S\big)y^{(0)}_1\big(1-y^{(0)}_1\big)
+\delta^{(0)}_{\text{d},1} = \big(y^{(0)}_1
+-S\big)y^{(0)}_1\big(1-y^{(0)}_1\big).
 \label{eq:delta0}
 \end{equation}
-The derivatives of the error with respect to the other layers can be calculated
-by applying the chain rule of partial derivatives and are given by
+The derivatives of the error with respect to the parameters of the other layers
+can be calculated by applying the chain rule of partial derivatives, which
+yields to
 \begin{align}
 \label{eq:deltad}
 % Delta update of deconvolutional layer
 \delta^{(l)}_{\text{d},j} &=
 \big(\tilde{w}^{(l)}_{\text{d},ij}*\delta^{(l-1)}_{\text{d},i}\big)\I\big(y^{(l)}_j
-> 0\big)\\
+> 0\big),\\
 \label{eq:deltac}
 % Delta update of convolutional layer
 \delta^{(l)}_{\text{c},i} &=
 \big(w^{(l+1)}_{\text{c},ij}\circledast\delta^{(l+1)}_{\text{c},j}\big)\I\big(x^{(l)}_i
-> 0\big)
+> 0\big),
 \end{align}
 where $l$ is the index of a deconvolutional layer, and convolutional layer,
 respectively, $\delta^{(L)}_{\text{c},i} = \delta^{(L)}_{\text{d},j}$, and
@@ -204,11 +209,11 @@ calculated by
 \delta^{(l)}_{\text{c},j} =
 \big(\delta^{(l)}_{\text{c},j}{}'+
 \tilde{w}^{(l)}_{\text{s},ij}*\delta^{(l-1)}_{\text{d},i}\big)\I\big(x^{(l)}_j
-> 0\big)
+> 0\big),
 \label{eq:deltas}
 \end{equation}
-where $\delta^{(l)}_{\text{c},j}{}'$ is the activation before taking the
-shortcut into account.
+where $\delta^{(l)}_{\text{c},j}{}'$ denotes the activation of unit
+$\delta^{(l)}_{\text{c},j}$ before taking the shortcut connection into account.
 
 % Introduce new objective function and it's gradient
 
@@ -228,7 +233,7 @@ y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
 \\
  + (1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
-\textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
+\textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}.
 \end{multline}
 We formulate the sensitivity and specificity errors as squared errors in order
 to yield smooth gradients, which makes the optimization more robust. The
@@ -253,7 +258,7 @@ r)(\sum_{\vect{p}}(1 - S(\vect{p})))^{-1}$, we can rewrite $E$ as
 % &+\frac{1}{2}\sum_{\vect{p}}\Big(S(\vect{p})-y^{(0)}_1(\vect{p})\Big)^2
 % \beta(1-S(\vect{p}))\\
 E=& \frac{1}{2}\sum_{\vect{p}}\big(\alpha S(\vect{p}) +
-\beta(1-S(\vect{p}))\big)\Big(S(\vect{p})-y^{(0)}_1(\vect{p})\Big)^2
+\beta(1-S(\vect{p}))\big)\Big(S(\vect{p})-y^{(0)}_1(\vect{p})\Big)^2.
 \end{align}
 %
 Our objective function is similar to the SSD, with an additional multiplicative
@@ -263,7 +268,7 @@ be derived analogously to the SSD case, and the new factor is simply carried
 over:
 \begin{equation} 
 \delta^{(0)}_{\text{d},1} = \big(\alpha S + \beta (1 - S)\big)\big(y^{(0)}_1 -
-S\big) y^{(0)}_1 \big(1 - y^{(0)}_1\big)
+S\big) y^{(0)}_1 \big(1 - y^{(0)}_1\big).
 \end{equation}
 
 % The update for $\delta^{(0)}_{\text{d},1}$ can be derived analogously to the SSD
@@ -278,19 +283,20 @@ S\big) y^{(0)}_1 \big(1 - y^{(0)}_1\big)
 \subsection{Training}
 % Initialize training
 
-At the beginning of the training procedure, we have to set the model parameters
-to some initial values, which are then fine-tuning during training. The choice
-of the initial parameters can have a big impact on the learned model. There are
-two ways to initialize a new model: a) using random values drawn from some
-random distribution, or b) using pre-training. Pre-training can be performed
-layer by layer using a stack of convolutional restricted Boltzmann machines
-(convRBMs) (see Figure~\ref{fig:network}), thereby avoiding the potential
-problem and diminishing or exploding gradients [??]. The first convRBM is
-trained on the input images without the need for labeled data. Subsequent
-convRBMs are trained on the hidden activations of the previous convRBM. After
-all convRBMs have been trained, the model parameters of, e.g., the first
-convolutional and last deconvolutional layer of the CEN can be initialized as
-follows
+At the beginning of the training procedure, the model parameters need to be
+initialized, where the choice of the initial parameters can have a big impact on
+the learned model. In our experiments, we found that initializing the model
+using pre-training \cite{Hinton2006} was required in order to be able to
+fine-tune the model without getting stuck in an early local minimum.
+Pre-training can be performed layer by layer \cite{Hinton2006b} using a stack of
+convolutional restricted Boltzmann machines (convRBMs)
+\cite{lee2009convolutional} (see Fig.~\ref{fig:network}), thereby avoiding the
+potential problem of vanishing or exploding gradients
+\cite{hochreiter1991untersuchungen}. The first convRBM is trained on the input
+images without ground truth segmentations. Subsequent convRBMs are trained on
+the hidden activations of the previous convRBM. After all convRBMs have been
+trained, the model parameters of, e.g., the first convolutional and last
+deconvolutional layer of the CEN can be initialized as follows
 \begin{align}
 w_{\text{c}}^{(1)} &= \hat{w}^{(1)}, &
 w_{\text{d}}^{(1)} &= 0.5\hat{w}^{(1)}, &
@@ -300,30 +306,40 @@ c^{(0)} &= \hat{c}^{(1)},
 \end{align}
 where $\hat{w}^{(1)}$ are the filter weights, $\hat{b}^{(1)}$ are the hidden
 bias terms, and $\hat{c}^{(1)}$ are the visible bias terms of the first convRBM,
-respectively. Alternatively, the bias terms can be initialized with zero and the
-filter weights are initialized using random values that are drawn from a
-distribution such that the variance of the activations of the layer units
-remains roughly the same throughout all layers. This can be achieved by drawing
-samples from the normal distribution $\mathcal{N}(0, \sigma)$, where $\sigma =
-\sqrt{2/N}$, and $N$ denotes the number of incoming connections for one unit.
-The influence of the initialization strategy on the learned model is analyzed in
-Section~??.
+respectively.
+% Alternatively, the bias terms can be initialized with zero and the
+% filter weights are initialized using random values that are drawn from a
+% distribution such that the variance of the activations of the layer units
+% remains roughly the same throughout all layers. This can be achieved by drawing
+% samples from the normal distribution $\mathcal{N}(0, \sigma)$, where $\sigma =
+% \sqrt{2/N}$, and $N$ denotes the number of incoming connections for one unit.
+% The influence of the initialization strategy on the learned model is analyzed in
+% Section~??.
 
 A major challenge for gradient-based optimization methods is the choice of an
-appropriate learning rate. Classic stochastic gradient descent [??] uses a fixed
-or decaying learning, which is the same for all parameters of the model. However,
-the partial derivatives of parameters of different layers can vary substantially
-in magnitude, which might require different learning rates for the parameters of
-different layers. Many methods have been proposed to automatically chose an
-individual learning rate for each parameter of the model. Most methods (e.g.,
-AdaGrad [??], AdaDelta [??], RMSprop [??], and Adam [??]) collect information
-about the variance of the partial derivatives over multiple iterations and use
-this information to set an appropriate learning rate. Second-order methods, like
-Hessian-free optimization [??], do not require a learning rate. Instead, a step
-towards the minimum of a quadratic approximation of the error function (or a
-semi positive definite approximation thereof) is performed in each iteration.
-Calculation of one update is much more costly for second-order methods, but it
-also performs much more progress and navigates valleys of ``pathological
-curvature'' more efficiently, which reduces the number of epochs required to
-train the model. For more details about the aforementioned methods, the reader
-is referred to the relevant papers.
+appropriate learning rate. Classic stochastic gradient descent \cite{LeCun1998}
+uses a fixed or decaying learning rate, which is the same for all parameters of
+the model. However, the partial derivatives of parameters of different layers
+can vary substantially in magnitude, which might require the use of different
+learning rates for the parameters of different layers. In recent years, there
+has been an increased interest in developing methods for automatically choosing
+the learning rate. Most methods (e.g., AdaGrad \cite{duchi2011adaptive},
+AdaDelta \cite{zeiler2012adadelta}, RMSprop \cite{dauphin2015rmsprop}, and Adam
+\cite{kingma2014adam}) collect different statistics of the partial derivatives
+over multiple iterations and use this information to set an adaptive learning
+rate for each parameter. This is especially important for the training of deep
+networks, were the optimal learning rates differ greatly for each layer. In our
+experiments, networks obtained by training with AdaDelta, RMSprop, and Adam
+performed comparably well. Because we found that AdaDelta was the most robust
+method to the choice of hyperparameters, we have used AdaDelta in all other
+experiments.
+
+% Second-order methods, like
+% Hessian-free optimization [??], do not require a learning rate. Instead, a step
+% towards the minimum of a quadratic approximation of the error function (or a
+% semi positive definite approximation thereof) is performed in each iteration.
+% Calculation of one update is much more costly for second-order methods, but it
+% also performs much more progress and navigates valleys of ``pathological
+% curvature'' more efficiently, which reduces the number of epochs required to
+% train the model. For more details about the aforementioned methods, the reader
+% is referred to the relevant papers.
