@@ -76,19 +76,19 @@ limits the maximum size of the receptive field.
 % allows errors to be propagated through the shortcut connections, which in tern
 % allows the learning of low-level features that are tuned for segmentation.
 
-We propose a new convolutional network architecture with 7-layers that combines
-the advantages of a 3-layer CEN and an 11-layer u-net. Our network is divided
-into two pathways, a convolutional pathway, which consists of alternating
-convolutional and pooling layers and learns increasingly more abstract and
-robust features, and a deconvolutional pathway, which consists of alternating
-deconvolutional and unpooling layers and predicts the final segmentation. In
-order for the segmentation to be driven by both low-level and high-level
-features, we introduce shortcut connections between layers of the two pathways,
-similar to the u-net architecture. In contrast to the u-net architecture, our
-network predicts segmentations that have the same resolution as the input images
-and therefore does not require special handling of the border of the image. We
-have evaluated the segmentation performance of our method on a large data set
-from an MS clinical trial and compared our results with Lesion-TOADS
+We propose a new convolutional network architecture that combines the
+advantages of a 3-layer CEN and an 11-layer u-net. Our network is divided into two
+pathways, a convolutional pathway, which consists of alternating convolutional
+and pooling layers and learns increasingly more abstract and robust features,
+and a deconvolutional pathway, which consists of alternating deconvolutional and
+unpooling layers and predicts the final segmentation. In order for the
+segmentation to be driven by both low-level and high-level features, we
+introduce shortcut connections between layers of the two pathways, similar to
+the u-net architecture. In contrast to the u-net architecture, our network
+predicts segmentations that have the same resolution as the input images and
+therefore does not require special handling of the border of the image. We have
+evaluated the segmentation performance of our method on a large data set from an
+MS clinical trial and compared our results with Lesion-TOADS
 \cite{shiee2010topology}, a widely used freely available method for fully
 automatic lesion segmentation. Our results show that the CEN approach is able to
 segment MS lesions more accurately than Lesions-TOADS, and that our new CEN

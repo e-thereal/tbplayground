@@ -6,34 +6,43 @@
 % automatic learning of features that are tuned for a given combination of image
 % types and a segmentation task with very unbalanced classes. 
 
-We have extended our previous approach by adding more layers and shortcut
-connections. Evaluated it on a large data set and showed that CEN improves
-over Lesion-TOADS. Also showed that the extensions further improve segmentation
-accuracy.
+We have presented a new method for the automatic segmentation of MS lesions
+based on multi-layer convolutional encoder networks with shortcut connections.
+The joint training of the feature extraction and prediction pathways allows for
+the automatic learning of features at different scales that are tuned for a
+given combination of image types and segmentation task. We have evaluated our
+method on a large data set from an MS clinical trial showing that our method is
+able to segment MS lesions more accurately than Lesion-TOADS, a widely used and
+freely available method for the automatic segmentation of MS lesions. Our method
+produces fewer false positives than Lesion-TOADS especially for low lesion loads
+where the lesion size is also small.
 
-We have evaluated our method on a large data set from an MS clinical trial
-showing that our method presents a significant improvement in accuracy over
-Lesion-TOADS, a widely used and freely available method for the automatic
-segmentation of MS lesions. Our method produces much fewer false positives than
-Lesion-TOADS especially when the lesion load is low. If the size of the lesion
-extends beyond the size of the receptive field of our network, we can not
-accurately detect lesion features. This problem can be partially alleviated by
-increasing the depth of the network. Increasing the depth allows the network to
-capture appearance features on different scales, which results in a moderate
-increase in segmentation accuracy for low lesion loads and a significant
-increase in accuracy for very high lesion loads. While some improvements could
-have been made by increasing the depth of the network from three layers to seven
-layers, very large lesions still pose a major challenge. For future work, we are
-planning to experiment with even deeper layers. Increasing the depth of the
-network will allow the network to learn features on an even greater range of
-different scales, which we expect will significantly improve the network's
-ability to segment even very large lesions. In contrast to other network
-architectures, the size of the output segmentation is equal to the size of the
-input images and therefore independent of the size of the receptive field. This
-allows us to design networks that are able to learn features that cover large
-parts of the image, or even global features that cover the entire image. Such
-features would be able to learn lesion distributions that would act as an
-automatically learned prior for lesion segmentation.
+% Talk about advantages of the new architecture over the old one.
+
+If the size of the lesion extends beyond the size of the receptive field of our
+network, we can not accurately detect lesion features. This problem can be
+partially alleviated by increasing the depth of the network. Increasing the
+depth allows the network to capture appearance features on different scales,
+which results in a moderate increase in segmentation accuracy for low lesion
+loads and a significant increase in accuracy for very high lesion loads. While
+some improvements could have been made by increasing the depth of the network
+from three layers to seven layers, very large lesions still pose a major
+challenge. For future work, we are planning to experiment with even deeper
+layers. Increasing the depth of the network will allow the network to learn
+features on an even greater range of different scales, which we expect will
+significantly improve the network's ability to segment even very large lesions.
+In contrast to other network architectures, the size of the output segmentation
+is equal to the size of the input images and therefore independent of the size
+of the receptive field. This allows us to design networks that are able to learn
+features that cover large parts of the image, or even global features that cover
+the entire image. Such features would be able to learn lesion distributions that
+would act as an automatically learned prior for lesion segmentation.
+
+% Extensions: global features, prior knowledge, different segmentation tasks
+
+We have presented a very flexible segmentation framework that can be easily
+extended. Depth for global features, include
+prior knowledge as channels, apply to different segmentation tasks.
 
 A different direction for future work is to incorporate prior knowledge into the
 segmentation. We would like to investigate the use of prior tissue
@@ -43,17 +52,3 @@ guidance for the lesion segmentation process. However, the usefulness of this
 approach depends greatly on the quality of the provided tissue classification.
 In the presents of lesions, the tissue classification might fail, which in turn
 will introduce confounding information into the segmentation process.
-
-We are also interested in the application of this method in other areas.
-Although we have only shown the appropriateness for lesion segmentation, the
-method does not make any assumptions inherit to lesion segmentation. We believe
-that this method can also be readily applied to a variate of medical
-segmentation problems, provided that a representative data set is available. It
-could potentially be used for whole brain parcelletation without the need of an
-anatomical atlas. Low-level features will provide useful to carry out an initial
-tissue classification, while high-level and global features can guide the
-segmentation into different sections of the brain. A method bases on
-convolutional encoder networks would be able to perform brain parcelation
-without the need for registration. It removes the need for a representative
-atlas, which can be difficult to obtain for brain under the influence of
-pathology.
