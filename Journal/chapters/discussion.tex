@@ -19,8 +19,8 @@ low lesion loads where the lesion size is also small.
 
 The most challenging type of lesions to segment for our method are very large
 lesions, which can extend beyond the receptive field of a particular voxel. This
-reduces the network's ability to identify appearance features that are required
-for the accurate segmentation of lesions. For future work, we are planning to
+reduces the network's ability to extract appearance features that would help
+the identification of lesion voxels. For future work, we are planning to
 investigate the use of deeper networks. Increasing the depth would allow the
 network to learn features on a wider range of scales, which we expect will
 significantly improve the network's ability to segment even very large lesions.
@@ -29,7 +29,8 @@ of the output segmentation of a CEN is independent of the size of the receptive
 field, which allows us to design networks that are able to learn features that cover
 large parts of the image, or even global features that cover the entire image.
 Such features would be able to estimate the global distribution of lesions and
-could act as an automatically learned lesion prior.
+could act as an automatically learned lesion prior, further improving the
+robustness of our method.
 
 % Extensions: global features, prior knowledge, different segmentation tasks
 
@@ -37,11 +38,27 @@ could act as an automatically learned lesion prior.
 % extended. Depth for global features, include
 % prior knowledge as channels, apply to different segmentation tasks.
 
-Another direction for future work is to incorporate prior knowledge directly
-into the segmentation pipeline. We would like to investigate the use of prior
-tissue classifications into the learning process. A tissue classification maps can be
-incorporate as additional channels to the input images and provide meaningful
-guidance for the lesion segmentation process. However, the usefulness of this
-approach depends greatly on the quality of the provided tissue classification.
-In the presents of lesions, the tissue classification might fail, which in turn
-will introduce confounding information into the segmentation process.
+We have presented a very flexible segmentation framework that can be easily
+extended. One such extension could be to incorporate prior knowledge about the
+tissue type of each voxel into the segmentation procedure. Therefore, each image
+needs to be segmented into cerebrospinal fluid, gray matter, and white matter as
+part of the pre-processing pipeline. The probabilities of each tissue class can
+then be added as an additional channel to the input units of the CEN, which
+allows the CEN to take advantage of intensity information from different
+modalities and prior knowledge about the tissue class to carry out the
+segmentation.
+%
+%For example, we have observed the presence of false positives in
+%the region of the ventricles in some rare cases. Knowledge about the extend of
+%the vectricles can help to reduce this type of misclassification.
+%
+However, the benefit from using a prior tissue classification depends on the
+accuracy of the segmentation algorithm. In the presence of lesions, a
+segmentation method that was designed for healthy tissue might misclassify
+regions affected by lesions, which in turn could confound the segmentation. In
+addition, our method can be applied to other segmentation tasks. Although we
+have only focused on the segmentation of MS lesions in this paper, our method
+does not make any assumptions specific to MS lesion segmentation. The features
+required to carry out the segmentation are solely learned from training data,
+which allows our method to be used to segment different types of pathology or to
+perform structural segmentation when a suitable training set is available.
