@@ -45,8 +45,8 @@ $\vect{p} \in \N^3$ are the coordinates of a particular voxel. The convolutional
 layers automatically learn a feature hierarchy from the input images. A
 convolutional layer is a deterministic function of the following form
 \begin{equation}
-x^{(l)}_j = \max \Bigg(0, \sum_{i=1}\tilde{w}^{(l)}_{\text{c},ij}*x^{(l-1)}_i +
-b^{(l)}_j\Bigg),
+x^{(l)}_j = \max \Bigg(0, \sum_{i=1}^C\tilde{w}^{(l)}_{\text{c},ij}*x^{(l-1)}_i
++ b^{(l)}_j\Bigg),
 \end{equation}
 where $l$ is the index of a convolutional layer, $x^{(l)}_j$, $j \in [1,F]$,
 denotes the feature map corresponding to the trainable convolution filter
@@ -57,8 +57,8 @@ by an average pooling layer \cite{scherer2010evaluation} that halves the number
 of units in each dimension by calculating the average of each block of
 \num{2x2x2} units per channel.
 
-The deconvolutional pathway consists of alternating unpooling layers and
-deconvolutional layers with optional shortcut connections to the corresponding
+The deconvolutional pathway consists of alternating deconvolutional and
+unpooling layers with shortcut connections to the corresponding
 convolutional layers. The first deconvolutional layer uses the extracted
 features of the convolutional pathway to calculate abstract segmentation
 features
@@ -70,7 +70,7 @@ where $y^{(L)} = x^{(L)}$, $L$ denotes the number of layers of the convolutional
 pathway, $w^{(L)}_{\text{d},ij}$ and $c^{(L-1)}_i$ are trainable parameters of
 the deconvolutional layer, and $\circledast$ denotes full convolution. Subsequent
 deconvolutional layers use the activations of the previous layer
-and corresponding convolutional layer to calculate less abstract segmentation
+and corresponding convolutional layer to calculate more localized segmentation
 features
 % \begin{multline}
 % y^{(l)}_i = \max\Bigg(0, \sum_{j=1}\Big(w^{(l+1)}_{\text{d},ij}\circledast
@@ -84,12 +84,12 @@ y^{(l)}_i = \max\Bigg(0,
 + \sum_{j=1} w^{(l+1)}_{\text{s},ij}\circledast x^{(l+1)}_j +
 c^{(l)}_i\Bigg),
 \end{multline}
-where $l$ is the index of a deconvolutional layer with shortcuts, and
-$w^{(l+1)}_{\text{s},ij}$ are the filter kernels connecting the activations of
-the convolutional pathway with the activations of the deconvolutional pathway.
-The last deconvolutional layer integrates the low-level features extracted by
-the first convolutional layer with the high-level features from the previous
-layer to calculate a probabilistic lesion mask
+where $l$ is the index of a deconvolutional layer with shortcut, and
+$w^{(l+1)}_{\text{s},ij}$ are the shortcut filter kernels connecting the
+activations of the convolutional pathway with the activations of the
+deconvolutional pathway. The last deconvolutional layer integrates the low-level
+features extracted by the first convolutional layer with the high-level features
+from the previous layer to calculate a probabilistic lesion mask
 \begin{equation}
 y^{(0)}_1 = \sigm\Bigg(\sum_{j=1}\Big(w^{(1)}_{\text{d},1j}\circledast
 y^{(1)}_j +
@@ -141,9 +141,9 @@ maximized on the training set.
 \subsection{Gradient Calculation}
 
 The parameters of the model can be efficiently learned by minimizing the error
-$E$ on the training set \cite{LeCun1998}, which requires the calculation of the
-gradient of $E$ with respect to the model parameters. Typically, neural networks
-are trained by minimizing the sum of squared differences (SSD)
+$E$ on the training set, which requires the calculation of the gradient of $E$
+with respect to the model parameters \cite{LeCun1998}. Typically, neural
+networks are trained by minimizing the sum of squared differences (SSD)
 \begin{equation}
 % Error function
 E = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
@@ -197,10 +197,10 @@ yields to
 \big(w^{(l+1)}_{\text{c},ij}\circledast\delta^{(l+1)}_{\text{c},j}\big)\I\big(x^{(l)}_i
 > 0\big),
 \end{align}
-where $l$ is the index of a deconvolutional layer, and convolutional layer,
-respectively, $\delta^{(L)}_{\text{c},i} = \delta^{(L)}_{\text{d},j}$, and
-$\I(z)$ denotes the indicator function defined as $1$ if the predicate $z$ is
-true and $0$ otherwise. If a layer participates in a shortcut connection,
+where $l$ is the index of a deconvolutional or convolutional layer,
+$\delta^{(L)}_{\text{c},i} = \delta^{(L)}_{\text{d},j}$, and $\I(z)$ denotes the
+indicator function defined as $1$ if the predicate $z$ is true and $0$
+otherwise. If a layer participates in a shortcut connection,
 $\delta^{(l)}_{\text{c},j}$ needs to be adjusted by propagating the error back
 through the shortcut connection. In this case, $\delta^{(l)}_{\text{c},j}$ is
 calculated by
@@ -220,13 +220,13 @@ $\delta^{(l)}_{\text{c},j}$ before taking the shortcut connection into account.
 The sum of squared differences is a good measure of classification accuracy, if
 the two classes are fairly balanced. However, if one class contains vastly more
 samples, as is the case for lesion segmentation, the error measure is dominated
-by the majority class and consequently, the neural network would learn to
-completely ignore the minority class. To overcome this problem, we use a
-combination of sensitivity and specificity, which can be used together to
-measure classification performance even for vastly unbalanced problems. More
-precisely, the final error measure is a weighted sum of the mean squared
-difference of the lesion voxels (sensitivity) and non-lesion voxels
-(specificity), reformulated to be error terms:
+by the majority class and consequently, the neural network would learn to ignore
+the minority class. To overcome this problem, we use a combination of
+sensitivity and specificity, which can be used together to measure
+classification performance even for vastly unbalanced problems. More precisely,
+the final error measure is a weighted sum of the mean squared difference of the
+lesion voxels (sensitivity) and non-lesion voxels (specificity), reformulated to
+be error terms:
 \begin{multline} 
 E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
@@ -241,7 +241,7 @@ sensitivity ratio $r$ can be used to assign different weights to the two terms.
 Due to the large number of non-lesion voxels, weighting the specificity error
 higher is important, but the algorithm is stable with respect to changes in $r$,
 which largely affects the threshold used to binarize the probabilistic output.
-In all our experiments, a sensitivity ratio between $0.10$ and $0.01$ yields
+In all our experiments, a sensitivity ratio between $0.10$ and $0.01$ yielded
 very similar results.
 
 To train our model, we must compute the derivatives of the modified objective
@@ -284,19 +284,19 @@ S\big) y^{(0)}_1 \big(1 - y^{(0)}_1\big).
 % Initialize training
 
 At the beginning of the training procedure, the model parameters need to be
-initialized, where the choice of the initial parameters can have a big impact on
+initialized and the choice of the initial parameters can have a big impact on
 the learned model. In our experiments, we found that initializing the model
-using pre-training \cite{Hinton2006} was required in order to be able to
-fine-tune the model without getting stuck in an early local minimum.
-Pre-training can be performed layer by layer \cite{Hinton2006b} using a stack of
-convolutional restricted Boltzmann machines (convRBMs)
-\cite{lee2009convolutional} (see Fig.~\ref{fig:network}), thereby avoiding the
-potential problem of vanishing or exploding gradients
+using pre-training \cite{Hinton2006} on the input images was required in order
+to be able to fine-tune the model using the ground truth segmentations without
+getting stuck in an early local minimum. Pre-training can be performed layer by
+layer \cite{Hinton2006b} using a stack of convolutional restricted Boltzmann
+machines (convRBMs) \cite{lee2009convolutional} (see Fig.~\ref{fig:network}),
+thereby avoiding the potential problem of vanishing or exploding gradients
 \cite{hochreiter1991untersuchungen}. The first convRBM is trained on the input
-images without ground truth segmentations. Subsequent convRBMs are trained on
-the hidden activations of the previous convRBM. After all convRBMs have been
-trained, the model parameters of, e.g., the first convolutional and last
-deconvolutional layer of the CEN can be initialized as follows
+images, while subsequent convRBMs are trained on the hidden activations of the
+previous convRBM. After all convRBMs have been trained, the model parameters of
+the CEN can be initialized as follows (showing first convolutional and last
+deconvolutional layers only, see Fig.~\ref{fig:network})
 \begin{align}
 w_{\text{c}}^{(1)} &= \hat{w}^{(1)}, &
 w_{\text{d}}^{(1)} &= 0.5\hat{w}^{(1)}, &
@@ -305,8 +305,7 @@ b^{(1)} &= \hat{b}^{(1)}, &
 c^{(0)} &= \hat{c}^{(1)},
 \end{align}
 where $\hat{w}^{(1)}$ are the filter weights, $\hat{b}^{(1)}$ are the hidden
-bias terms, and $\hat{c}^{(1)}$ are the visible bias terms of the first convRBM,
-respectively.
+bias terms, and $\hat{c}^{(1)}$ are the visible bias terms of the first convRBM.
 % Alternatively, the bias terms can be initialized with zero and the
 % filter weights are initialized using random values that are drawn from a
 % distribution such that the variance of the activations of the layer units
@@ -320,19 +319,18 @@ A major challenge for gradient-based optimization methods is the choice of an
 appropriate learning rate. Classic stochastic gradient descent \cite{LeCun1998}
 uses a fixed or decaying learning rate, which is the same for all parameters of
 the model. However, the partial derivatives of parameters of different layers
-can vary substantially in magnitude, which might require the use of different
-learning rates for the parameters of different layers. In recent years, there
-has been an increased interest in developing methods for automatically choosing
-the learning rate. Most methods (e.g., AdaGrad \cite{duchi2011adaptive},
-AdaDelta \cite{zeiler2012adadelta}, RMSprop \cite{dauphin2015rmsprop}, and Adam
-\cite{kingma2014adam}) collect different statistics of the partial derivatives
-over multiple iterations and use this information to set an adaptive learning
-rate for each parameter. This is especially important for the training of deep
-networks, were the optimal learning rates differ greatly for each layer. In our
-experiments, networks obtained by training with AdaDelta, RMSprop, and Adam
-performed comparably well. Because we found that AdaDelta was the most robust
-method to the choice of hyperparameters, we have used AdaDelta in all other
-experiments.
+can vary substantially in magnitude, which can require different learning rates.
+In recent years, there has been an increasing interest in developing methods for
+automatically choosing independent learning rates. Most methods (e.g., AdaGrad
+\cite{duchi2011adaptive}, AdaDelta \cite{zeiler2012adadelta}, RMSprop
+\cite{dauphin2015rmsprop}, and Adam \cite{kingma2014adam}) collect different
+statistics of the partial derivatives over multiple iterations and use this
+information to set an adaptive learning rate for each parameter. This is
+especially important for the training of deep networks, where the optimal
+learning rates often differ greatly for each layer. In our experiments, networks
+obtained by training with AdaDelta, RMSprop, and Adam performed comparably well,
+but AdaDelta was the most robust to the choice of hyperparameters, so we used
+AdaDelta for all results reported.
 
 % Second-order methods, like
 % Hessian-free optimization [??], do not require a learning rate. Instead, a step

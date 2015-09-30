@@ -7,80 +7,82 @@
 
 %\subsection{Data Sets and Pre-processing}
 
-The method was evaluation on a large data set from a multi-center MS clinical
-trial that was acquired from 67 different scanning sites. The data set consists
-of 377 pairs of FLAIR and T1-weighted MRIs from 195 subjects with a resolution
-of \num{256x256x60} voxels and a voxel size of
+We evaluated the proposed method on a large data set from a multi-center MS
+clinical trial. The data set, acquired from 67 different scanning sites,
+consists of 377 pairs of FLAIR and T1-weighted MRIs from 195 subjects with a
+resolution of \num{256x256x60} voxels and a voxel size of
 \SI{0.936x0.936x3.000}{\milli\metre}. All images were skull-stripped using the
 brain extraction tool (BET) \cite{jenkinson2005bet2}, followed by an intensity
-normalization to the interval $[0,1]$, and a 6 degrees of freedom intra-subject
+normalization to the interval $[0,1]$, and a 6 degrees-of-freedom intra-subject
 registration. To speed-up the training, all images were cropped to a
-\num{164x206x52} voxels region of interest with the brain roughly centered. We
+\num{164x206x52} voxel region-of-interest with the brain roughly centered. We
 used 300 image pairs for pre-training and fine-tuning, and the remaining 77
-image pairs for the evaluation. Pre-training and fine-tuning was performed using
-a highly optimized GPU-accelerated implementation of 3D convRBMs and CENs that
-was develop in-house \cite{brosch2014efficient}. Each model was trained using
-500 epochs.
-Pre-training and fine-tuning of a 7-layer CEN with shortcut connections took
-approximately 27 hours and 37 hours, respectively, on a single GeForce GTX 780
-graphics card. However, once the network is trained, new image pairs can be
+image pairs for evaluation. Pre-training and fine-tuning were performed using a
+highly optimized GPU-accelerated implementation of 3D convRBMs and CENs that was
+developed in-house \cite{brosch2014efficient}. Each model was trained using 500
+epochs. Pre-training and fine-tuning of a 7-layer CEN with a shortcut connection
+took approximately 27 hours and 37 hours, respectively, on a single GeForce GTX
+780 graphics card. However, once the network is trained, new image pairs can be
 segmented in less than one second. We compared our results to the lesion masks
 produced by Lesion-TOADS \cite{shiee2010topology}, a widely used freely
 available tool for the fully automatic segmentation of MS lesions.
 
 \subsection{Measures of Segmentation Accuracy}
 
-We have used three different metrics to measure segmentation accuracy. The
+We have used three different measures to evaluate segmentation accuracy. The
 primary measure of accuracy that we employ is the Dice similarity coefficient
 (DSC) \cite{dice1945measures}, which computes a normalized overlap value between
-the produced and ground truth segmentation. Is is defined as
+the produced and ground truth segmentations, and is defined as
 \begin{equation}
 \text{DSC} = \frac{2 \times \text{TP}}{2 \times \text{TP} + \text{FP} +
 \text{FN}},
 \end{equation}
 where TP, FP, and FN denote the number of true positives, false positives, and
 false negatives, respectively. A value of \SI{100}{\percent} indicates a perfect
-overlap of the produced segmentation and the ground truth. The DSC incorporates
-measures of over- and undersegmentation into a single metric, which makes it a
-suitable measure to compare overall segmentation accuracy. In addition, we have
-used the true positive rate (TPR) and the positive predictive value (PPV) to
-provide further information on specific aspects of segmentation performance. The
-TPR is used to measure the fraction of the regions classified as lesion by the
-ground truth that were also identified as lesions by an automatic method. It is
-defined as
+overlap of the produced segmentation and the ground truth.
+% The DSC incorporates measures of over- and undersegmentation into a single
+% metric, which makes it a suitable measure to compare overall segmentation
+% accuracy.
+In addition, we have used the true positive rate (TPR) and the positive
+predictive value (PPV) to provide further information on specific aspects of
+segmentation performance. The TPR is used to measure the fraction of the lesion
+regions in the ground truth that are correctly identified by
+an automatic method. It is defined as
 \begin{equation}
 \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}},
 \end{equation}
-where a value of \SI{100}{\percent} indicates that all true lesion voxels were
-automatically identified. The PPV is used to determine the extent of the regions
-falsely classified as lesion by an automatic method. It is defined as the amount
-of true lesion voxels out of all identified lesion voxels
+
+where a value of \SI{100}{\percent} indicates that all true lesion voxels are
+correctly identified. The PPV is used to determine the extent of the regions
+falsely classified as lesion by an automatic method. It is defined as the
+fraction of true lesion voxels out of all identified lesion voxels
+
 \begin{equation}
 \text{PPV} = \frac{\text{TP}}{\text{TP} + \text{FP}},
 \end{equation}
-where a value of \SI{100}{\percent} indicates that all voxels that were
-automatically classified as lesion voxels are indeed lesion voxels as defined
-by the ground truth.
+where a value of \SI{100}{\percent} indicates that all voxels that are
+classified as lesion voxels are indeed lesion voxels as defined by the ground
+truth.
 
 \subsection{Comparison of Network Architectures}
 
-In the first experiment, we have compared the segmentation performance of three
-different network architectures with each other and with Lesion-TOADS.
-Therefore, we trained a 3-layer CEN and two 7-layer CENs with and one without
-shortcut connections on the 300 training pairs. The parameters of the used
-networks are given in Table~\ref{tab:arch3} and Table~\ref{tab:arch7}. A
-comparison of the segmentation accuracy of the trained networks and Lesion-TOADS
-is summarized in Table~\ref{tab:results1}. All CEN architectures performed
-significantly better than Lesion-TOADS in terms of the overall segmentation
+To determine the effect of network architecture, we compared the segmentation
+performance of three different networks with each other and with Lesion-TOADS.
+Specifically, we trained a 3-layer CEN and two 7-layer CENs, one with a shortcut
+connection and one without, on the 300 training pairs. The parameters of the
+networks are given in Table~\ref{tab:arch3} and Table~\ref{tab:arch7}.
+A comparison of the segmentation accuracy of the trained networks and
+Lesion-TOADS is summarized in Table~\ref{tab:results1}. All CEN architectures
+performed significantly better than Lesion-TOADS in overall segmentation
 accuracy, where the improvements of the mean DSC scores range from 9\,pts for
 the 3-layer CEN to 14\,pts for the 7-layer CEN with shortcut connections. The
 improved segmentation performance is mostly due to a reduction of the false
-positives. Lesion-TOADS achieved a mean PPV of only \SI{39.86}{\percent}, where
-the best performing CEN architecture achieved a mean PPV of
-\SI{66.58}{\percent}---an improvement of 27\,pts. The mean TPRs were roughly the
-same ($\text{TPR}\approx \SI{50}{\percent}$) for all methods except for the
-7-layer CEN with shortcuts, which performed slightly better than the other
-methods with a mean TPR of \SI{52.75}{\percent}.
+positives. Lesion-TOADS achieved a mean PPV of only \SI{39.86}{\percent},
+whereas the CEN with shortcut achieved a mean PPV of \SI{66.58}{\percent}---an
+improvement of 27\,pts. The mean TPRs were roughly the same (slightly less than
+\SI{50}{\percent}) for all methods except for the 7-layer CEN with shortcut,
+which performed slightly better than the other methods with a mean TPR of
+\SI{52.75}{\percent}.
 
 Furthermore, the first experiment showed that increasing the depth of the CEN
 and adding shortcut connections improves the segmentation accuracy. Increasing
