@@ -10,14 +10,24 @@ their importance for assessing disease progression and treatment effect.
 However, lesions vary greatly in size, shape, intensity and location, which
 makes their automatic and accurate segmentation challenging.
 
+% TODO: generative model was dictionary learning and sparse coding. Might extend
+% clustering a little bit if need be.
+
+% TODO: Add Lesion-TOADS summary
+
+% TODO: state briefly what the problems with unsupervised methods are that would
+% motivate use of supervised. Features are not specific to the problem. Features
+% describe the majority of the image information and might not be representitive
+% of small pathology like MS lesion that only compromise less than 1 percent of
+% the image voxels.
+
 Many automatic methods have been proposed for the segmentation of MS
 \mbox{lesions} over the last two decades \cite{garcia2013review}, which can be
 classified into unsupervised and supervised methods. Unsupervised methods do not
 require a labeled data set for training. Instead, lesions are identified as an
-outlier class using, e.g., clustering methods \cite{souplet2008} or dictionary
-learning and sparse coding to model healthy tissue \cite{weiss2013}. Current
-supervised approaches typically start with a large set of features, either
-predefined by the user \cite{geremia2010} or gathered in a feature extraction
+outlier class using, e.g., clustering methods \cite{souplet2008} or generative
+models \cite{weiss2013}. Current supervised approaches typically start with a
+large set of features, either predefined by the user \cite{geremia2010} or gathered in a feature extraction
 step such as by deep learning\cite{yoo2014}, which is followed by a separate
 training step with labeled data to determine which set of features are the most
 important for segmentation in the particular domain.
@@ -34,6 +44,8 @@ be regarded as performing the classification, which allows the learning of
 features that are specifically tuned to the segmentation task. However, the time
 required to train patch-based methods can make the approach infeasible when the
 size and number of patches are large.
+
+% TODO: can I add numerical values to it? Mostly my personal experience.
 
 Recently, different CNN architectures
 \cite{ronneberger2015,brosch2015,kang2014fully} have been proposed that are able
@@ -91,6 +103,8 @@ handling of the border regions is still required.
 % high-level features. In addition, the formalization of shortcut connections
 % allows errors to be propagated through the shortcut connections, which in tern
 % allows the learning of low-level features that are tuned for segmentation.
+
+% Mention that we compared different architectures
 
 We propose a new convolutional network architecture that combines the advantages
 of a CEN \cite{brosch2015} and a u-net \cite{ronneberger2015}. Our network is

@@ -39,8 +39,8 @@ robustness of our method.
 % prior knowledge as channels, apply to different segmentation tasks.
 
 We have presented a very flexible segmentation framework that can be easily
-extended. One such extension could be to incorporate prior knowledge about the
-tissue type of each voxel into the segmentation procedure. Therefore, each image
+extended to further improve its segmentation accuracy. One such extension could
+be to incorporate prior knowledge about the tissue type of each voxel into the segmentation procedure. Therefore, each image
 needs to be segmented into cerebrospinal fluid, gray matter, and white matter as
 part of the pre-processing pipeline. The probabilities of each tissue class can
 then be added as an additional channel to the input units of the CEN, which
@@ -55,10 +55,10 @@ segmentation.
 However, the benefit from using a prior tissue classification depends on the
 accuracy of the segmentation algorithm. In the presence of lesions, a
 segmentation method that was designed for healthy tissue might misclassify
-regions affected by lesions, which in turn could confound the segmentation. In
-addition, our method can be applied to other segmentation tasks. Although we
-have only focused on the segmentation of MS lesions in this paper, our method
-does not make any assumptions specific to MS lesion segmentation. The features
-required to carry out the segmentation are solely learned from training data,
-which allows our method to be used to segment different types of pathology or to
-perform structural segmentation when a suitable training set is available.
+regions affected by lesions, which in turn could confound the segmentation
+process. In addition, our method can be applied to other segmentation tasks.
+Although we have only focused on the segmentation of MS lesions in this paper,
+our method does not make any assumptions specific to MS lesion segmentation. The
+features required to carry out the segmentation are solely learned from training
+data, which allows our method to be used to segment different types of pathology
+or to perform structural segmentation when a suitable training set is available.

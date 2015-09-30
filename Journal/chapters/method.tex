@@ -1,6 +1,8 @@
 \section{Methods}
 \label{sec:method}
 
+% TODO: One shortcut that contains multiple connections
+
 \begin{figure*}[tb]
 \centering
 \input{tikzfigures/encoder_L2}
@@ -8,11 +10,12 @@
 % shortcut networks. Also need a figure to compare the different shortcut
 % connections (top-down and bottom-up).}
 
-\caption{Pre-training and fine-tuning of a 7-layer convolutional encoder network
-with shortcuts. Pre-training is performed on the input images using a stack of
-convolutional RBMs. The pre-trained weights and bias terms are used to initialize
-a convolutional encoder network, which is fine-tuned on pairs of input images,
-$x^{(0)}$, and segmentations, $y^{(0)}$.}
+\caption{Pre-training and fine-tuning of the 7-layer convolutional encoder
+network with shortcut that we used for our experiments. Pre-training is
+performed on the input images using a stack of convolutional RBMs. The
+pre-trained weights and bias terms are used to initialize a convolutional
+encoder network, which is fine-tuned on pairs of input images, $x^{(0)}$, and
+segmentations, $y^{(0)}$.}
 
 \label{fig:network}
 \end{figure*}
@@ -33,17 +36,20 @@ segmentations and predicted segmentations.
 
 \subsection{Model Architecture}
 
-The set of possible segmentation functions is modeled by the convolutional
-encoder network (CEN) illustrated in Fig.~\ref{fig:network}. A CEN is a type of
-convolutional neural network (CNN) \cite{LeCun1998} that is divided into two
-pathways, the convolutional pathway and the deconvolutional \cite{zeiler2011}
-pathway. The convolutional pathway consists of alternating convolutional and
-pooling layers. The input layer of the convolutional pathway is composed of the
-image voxels $x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$ indexes the
-modality or input channel, $C$ is the number of modalities or channels, and
-$\vect{p} \in \N^3$ are the coordinates of a particular voxel. The convolutional
-layers automatically learn a feature hierarchy from the input images. A
-convolutional layer is a deterministic function of the following form
+% TODO: say that we have compared different model architectures, probably in the
+% introduction
+
+The set of possible segmentation functions, $\mathcal{S}$, is modeled by the
+convolutional encoder network (CEN) illustrated in Fig.~\ref{fig:network}. A CEN
+is a type of convolutional neural network (CNN) \cite{LeCun1998} that is divided
+into two pathways, the convolutional pathway and the deconvolutional
+\cite{zeiler2011} pathway. The convolutional pathway consists of alternating
+convolutional and pooling layers. The input layer of the convolutional pathway
+is composed of the image voxels $x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$
+indexes the modality or input channel, $C$ is the number of modalities or
+channels, and $\vect{p} \in \N^3$ are the coordinates of a particular voxel. The
+convolutional layers automatically learn a feature hierarchy from the input
+images. A convolutional layer is a deterministic function of the following form
 \begin{equation}
 x^{(l)}_j = \max \Bigg(0, \sum_{i=1}^C\tilde{w}^{(l)}_{\text{c},ij}*x^{(l-1)}_i
 + b^{(l)}_j\Bigg),
@@ -99,7 +105,7 @@ where $\sigm(z)$ denotes the sigmoid function defined as $\sigm(z) = (1 +
 \exp(-z))^{-1}, z \in \R$. To obtain a binary lesion mask from the probabilistic
 output of our model, we chose a fixed threshold such that the mean Dice
 similarity coefficient \cite{dice1945measures} is maximized on the training set
-and use the same threshold for the evaluation on the test set.
+and used the same threshold for the evaluation on the test set.
 
 \begin{comment}
 The set of possible segmentation functions is modeled by the convolutional
@@ -239,10 +245,10 @@ We formulate the sensitivity and specificity errors as squared errors in order
 to yield smooth gradients, which makes the optimization more robust. The
 sensitivity ratio $r$ can be used to assign different weights to the two terms.
 Due to the large number of non-lesion voxels, weighting the specificity error
-higher is important, but the algorithm is stable with respect to changes in $r$,
-which largely affects the threshold used to binarize the probabilistic output.
-In all our experiments, a sensitivity ratio between $0.10$ and $0.01$ yielded
-very similar results.
+higher is important, but based on preliminarily experimental results, the
+algorithm is stable with respect to changes in $r$, which largely affects the
+threshold used to binarize the probabilistic output. In all our experiments, a
+sensitivity ratio between $0.10$ and $0.01$ yielded very similar results.
 
 To train our model, we must compute the derivatives of the modified objective
 function with respect to the model parameters. Equations
@@ -285,8 +291,8 @@ S\big) y^{(0)}_1 \big(1 - y^{(0)}_1\big).
 
 At the beginning of the training procedure, the model parameters need to be
 initialized and the choice of the initial parameters can have a big impact on
-the learned model. In our experiments, we found that initializing the model
-using pre-training \cite{Hinton2006} on the input images was required in order
+the learned model \cite{sutskever2013importance}. In our experiments, we found
+that initializing the model using pre-training \cite{Hinton2006} on the input images was required in order
 to be able to fine-tune the model using the ground truth segmentations without
 getting stuck in an early local minimum. Pre-training can be performed layer by
 layer \cite{Hinton2006b} using a stack of convolutional restricted Boltzmann
@@ -295,8 +301,8 @@ thereby avoiding the potential problem of vanishing or exploding gradients
 \cite{hochreiter1991untersuchungen}. The first convRBM is trained on the input
 images, while subsequent convRBMs are trained on the hidden activations of the
 previous convRBM. After all convRBMs have been trained, the model parameters of
-the CEN can be initialized as follows (showing first convolutional and last
-deconvolutional layers only, see Fig.~\ref{fig:network})
+the CEN can be initialized as follows (showing the first convolutional and
+the last deconvolutional layers only, see Fig.~\ref{fig:network})
 \begin{align}
 w_{\text{c}}^{(1)} &= \hat{w}^{(1)}, &
 w_{\text{d}}^{(1)} &= 0.5\hat{w}^{(1)}, &
@@ -327,10 +333,10 @@ automatically choosing independent learning rates. Most methods (e.g., AdaGrad
 statistics of the partial derivatives over multiple iterations and use this
 information to set an adaptive learning rate for each parameter. This is
 especially important for the training of deep networks, where the optimal
-learning rates often differ greatly for each layer. In our experiments, networks
-obtained by training with AdaDelta, RMSprop, and Adam performed comparably well,
-but AdaDelta was the most robust to the choice of hyperparameters, so we used
-AdaDelta for all results reported.
+learning rates often differ greatly for each layer. In our initial experiments,
+networks obtained by training with AdaDelta, RMSprop, and Adam performed
+comparably well, but AdaDelta was the most robust to the choice of
+hyperparameters, so we used AdaDelta for all results reported.
 
 % Second-order methods, like
 % Hessian-free optimization [??], do not require a learning rate. Instead, a step
