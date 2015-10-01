@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Mon Sep 28 17:36:32 PDT 2015
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=TMI_coverletter.tex
+outputFile=TMI_coverletter.pdf
+langSpell=en
+markDer=true
+srcDir=

@@ -1,0 +1,247 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Long Lined Cover Letter
+% LaTeX Template
+% Version 1.0 (1/6/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Matthew J. Miller
+% http://www.matthewjmiller.net/howtos/customized-cover-letter-scripts/
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+% PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+%dateno
+\documentclass[10pt,stdletter,dateleft,sigleft,orderfromtodate]{newlfm} % Extra
+% options:
+% 'sigleft' for a left-aligned signature, 'stdletternofrom' to remove the from address, 'letterpaper' for US letter paper - consult the newlfm class manual for more options
+
+%\textheightsize{655pt}
+\textheightsize{935pt}
+\setlength{\skip\footins}{2em}
+
+\usepackage{tikz,comment}
+
+\usepackage{epstopdf}
+
+\usepackage{charter} % Use the Charter font for the document text
+
+\newsavebox{\Luiuc}\sbox{\Luiuc}{\parbox[b]{2.25in}{\vspace{0.5in}
+\includegraphics[width=1.2\linewidth]{ubcsignature.eps}}} % Company/institution
+% logo at the top left of the page
+\makeletterhead{Uiuc}{\Lheader{\usebox{\Luiuc}}}
+
+\newlfmP{sigsize=50pt} % Slightly decrease the height of the signature field
+\newlfmP{addrfromphone} % Print a phone number under the sender's address
+\newlfmP{addrfromemail} % Print an email address under the sender's address
+\PhrPhone{Phone} % Customize the "Telephone" text
+\PhrEmail{Email} % Customize the "E-mail" text
+
+\lthUiuc % Print the company/institution logo
+
+\makeatletter
+\setlength\@Hrw{0pt}
+\setlength\@Frw{0pt}
+\makeatother
+
+%----------------------------------------------------------------------------------------
+% YOUR NAME AND CONTACT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\namefrom{
+\tikz \node[above=0.75cm,overlay,xshift=1.75cm,inner sep=0pt] {%
+\includegraphics[width=3.5cm]{sig2}%
+};%
+Tom Brosch\\
+PhD Candidate, Biomedical Engineering \\
+%Department of Electrical and Computer Engineering\\
+The University of British Columbia
+} % Name
+
+
+\addrfrom{
+Tom Brosch\\
+UBC MS/MRI Research Group\\
+Djavad Mowafaghian Centre for Brain Health\\
+2215 Wesbrook Mall, 3rd Floor, Room 3450-B\\
+Vancouver, BC, Canada V6T 2B5
+}
+\phonefrom{(604)\,446-2704} % Phone number
+\emailfrom{tombr@msmri.medicine.ubc.ca} % Email address
+
+%\psitem{Test}
+
+
+%----------------------------------------------------------------------------------------
+% ADDRESSEE AND GREETING/CLOSING
+%----------------------------------------------------------------------------------------
+
+\greetto{Dear Editor of IEEE Transactions on Medical Imaging,} % Greeting text
+\closeline{Yours sincerely,} % Closing text
+
+%\nameto{Mrs. Jane Smith} % Addressee of the letter above the to address
+
+% \addrto{
+% Recruitment Officer \\ % To address
+% The Corporation \\
+% 123 Pleasant Lane \\
+% City, State 12345
+% }
+
+%----------------------------------------------------------------------------------------
+
+\hyphenation{con-vo-lu-tion}
+
+\begin{document}
+\begin{newlfm}
+
+%----------------------------------------------------------------------------------------
+% LETTER CONTENT
+%----------------------------------------------------------------------------------------
+
+%\raggedright
+
+\begin{comment}
+
+We hereby submit the revised version of the manuscript \emph{NECO-03-14-2099R1}.
+To address the reviewers' comments, we have revised the manuscript as follows:
+\begin{itemize}
+  
+  \item We clarified that, for training algorithms using batches of images, the
+  additional memory required for storing the visible and hidden units is
+  dependent on the batch size.
+        
+  \item  We reworded our conclusion of Section 4.2 as suggested by the
+  reviewer to clarify that the additional memory required for storing the
+  filters in the frequency domain is compensated for by considering only one
+  image at a time rather than batches.
+  
+%   \item To further set this submission apart from our previous
+%   publication\footnote{Tom Brosch and Roger Tam. Manifold learning of brain MRIs
+%   by deep learning. In \emph{Medical Image Computing and Computer-Assisted
+%   Intervention}, pages 633--640. Springer, 2013.}, we added Section 2.4, which
+%   gives full details about the GPU implementation of our training algorithm.
+%   In particular, this section describes how the operations required for training
+%   can be spread over a large number of threads in order to fully utilize the
+%   GPU. In addition, we show how the training of a strided convolutional DBN can
+%   be distributed over multiple GPUs, which facilitates the training of networks
+%   that would be too large to train on a single graphics card.
+%   
+%   \item Both reviewers asked about an estimation of the memory requirements of
+%   our method and how the memory requirements compare with alternative training
+%   algorithms. This question is addressed in the second part of Section 2.4.
+%   We estimated the required memory of the key variables that are needed
+%   by all training algorithms and compared the memory requirements of our method
+%   with Krizhevsky et al.'s spatial domain and Mathieu et al.'s FFT-based
+%   methods. We demonstrate mathematically that our approach requires less memory
+%   for storing the key variables than the other two methods.
+%   
+%   \item Reviewer 1 asked to clarify the advantages of strided convolutions over
+%   stride-1 convolutions. We have added a summary of the advantages of
+%   strided convolutions in the introduction section. We also briefly remind the
+%   reader of the advantages of strided convolutions at the beginning of Section
+%   2.2. 
+%   
+% %   \item To further explain the relationship between strided and stride 1 convolutions, we emphasize the importance of
+% %   expressing strided convolutions in terms of stride 1 convolutions in order to
+% %   enable the efficient training of sconvDBNs in the frequency domain.
+%   
+%   \item Reviewer 1 asked why the performance gains are higher for larger
+%   strides. We clarified that for a stride of 1, the impact of the convolution
+%   implementation on the total running time is relatively low, because the
+%   computational bottleneck is the inference and sampling of the hidden units.
+%   With larger strides, the number of hidden units decreases, which increases the
+%   impact of fast convolutions in the frequency domain.
+\end{itemize}
+
+Thank you for your time in processing the revised manuscript and we hope that
+you will find this revision acceptable for publication.
+
+% Thank you for your time in processing the revised manuscript and we look
+% forward to feedback from you and the reviewers.
+\end{comment}
+ 
+We hereby submit the manuscript entitled ``Deep 3D Convolutional Encoder
+Networks with Shortcuts for Multiscale Feature Integration with Application to
+Multiple Sclerosis Lesion Segmentation'' by Tom Brosch and Roger Tam as an
+original research paper to the special issue on Deep Learning. We confirm that
+this manuscript has not been published elsewhere and is not under consideration
+by another journal.
+
+This work is original research that substantially extends our previous
+conference paper on segmenting multiple sclerosis (MS) lesions in magnetic
+resonance images (MRIs)\footnote{Tom Brosch et al.. Deep convolutional encoder
+networks for multiple sclerosis lesion segmentation. In \emph{A. Frangi et al
+(eds.): MICCAI 2015, Part III, LNCS vol. 9351}, pages 3--11, Springer, 2015.}.
+The accurate segmentation of MS lesions is a prerequisite for deriving imaging
+biomarkers, such as lesion load and lesion count, that have established their
+importance for assessing disease progression and treatment effect. However,
+lesions vary greatly in size, shape, intensity and location, which makes their
+automatic and accurate segmentation challenging. We present a novel segmentation
+method that can automatically learn features that are robust to the large
+variability of MS lesions from training data. We have substantially extended our
+previous method to allow for the automatic learning of features on different
+scales in order to capture a broader spectrum of MS lesions. To allow for a
+direct comparison with Lesion-TOADS, an established method for the fully
+automatic segmentation of MS lesions, we have evaluated our method on a new data
+set containing pairs of T1-weighted and FLAIR MRIs, which are the image
+modalities that are required by Lesion-TOADS. Our evaluation shows that our new
+approach significantly improves lesion segmentation accuracy over Lesions-TOADS.
+In addition, we show that the extensions to our previous work significantly
+improve accuracy, especially for large lesions, which are the most challenging
+type of lesions for our method.
+
+% This work is original research that proposes and evaluates a highly efficient
+% training algorithm for convolutional deep belief networks. Deep learning has
+% traditionally been computationally expensive and although significant
+% improvements have been made with the introduction of greedy layer-wise training
+% methods and the use of computationally powerful graphics hardware, training deep
+% networks on high-resolution 2D and 3D images remains challenging. In this paper,
+% we address the problem of efficient training of convolutional deep belief
+% networks by learning the weights in the frequency domain, which eliminates the
+% time-consuming calculation of convolutions. We have evaluated the running time
+% improvements using two standard benchmark datasets, showing a speed-up of up to
+% 8 times on 2D images and up to 200 times on 3D volumes. Deep learning has shown
+% great potential for a variety of classification problems. Our training algorithm
+% will expand its application to larger training sets of high-resolution
+% 2D and 3D images, such as those used for medical image analysis.
+
+Thank you for your time in processing this manuscript and we look forward to
+feedback from you and the reviewers.
+
+% PARAGRAPH ONE: State the reason for the letter, name the position or type of
+% work you are applying for and identify the source from which you learned of
+ % the opening (i.e. career development center, newspaper, employment service,
+ % personal contact).
+
+% PARAGRAPH TWO: Indicate why you are interested in the position, the company,
+% its products, services - above all, stress what you can do for the employer.
+ % If you are a recent graduate, explain how your academic background makes you
+ % a qualified candidate for the position. If you have practical work
+ % experience, point out specific achievements or unique qualifications. Try not
+ % to repeat the same information the reader will find in the resume. Refer the
+ % reader to the enclosed resume or application which summarizes your
+ % qualifications, training, and experiences. The purpose of this section is to
+ % strengthen your resume by providing details which bring your experiences to
+ % life.
+ 
+%PARAGRAPH THREE: Request a personal interview and indicate your flexibility as
+% to the time and place. Repeat your phone number in the letter and offer
+ % assistance to help in a speedy response. For example, state that you will be in the city where the company is located on a certain date and would like to set up an interview. Alternatively, state that you will call on a certain date to set up an interview. End the letter by thanking the employer for taking time to consider your credentials.
+
+%----------------------------------------------------------------------------------------
+
+% [1] Tom Brosch and Roger Tam. Manifold learning of brain MRIs by deep learning.
+% In \emph{Medical Image Computing and Computer-Assisted Intervention}, pages
+% 633--640. Springer, 2013.
+
+\end{newlfm}
+\end{document}
