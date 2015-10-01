@@ -10,30 +10,32 @@ their importance for assessing disease progression and treatment effect.
 However, lesions vary greatly in size, shape, intensity and location, which
 makes their automatic and accurate segmentation challenging.
 
-% TODO: generative model was dictionary learning and sparse coding. Might extend
+% Generative model was dictionary learning and sparse coding. Might extend
 % clustering a little bit if need be.
-
-% TODO: Add Lesion-TOADS summary
 
 % TODO: state briefly what the problems with unsupervised methods are that would
 % motivate use of supervised. Features are not specific to the problem. Features
 % describe the majority of the image information and might not be representitive
 % of small pathology like MS lesion that only compromise less than 1 percent of
-% the image voxels.
+% the image voxels. But this is unsupervised feature learning.
 
 Many automatic methods have been proposed for the segmentation of MS
 \mbox{lesions} over the last two decades \cite{garcia2013review}, which can be
 classified into unsupervised and supervised methods. Unsupervised methods do not
 require a labeled data set for training. Instead, lesions are identified as an
-outlier class using, e.g., clustering methods \cite{souplet2008} or generative
-models \cite{weiss2013}. Current supervised approaches typically start with a
-large set of features, either predefined by the user \cite{geremia2010} or gathered in a feature extraction
-step such as by deep learning\cite{yoo2014}, which is followed by a separate
-training step with labeled data to determine which set of features are the most
-important for segmentation in the particular domain.
-% For example, Yoo et al. \cite{yoo2014} proposed performing unsupervised learning
-% of domain-specific features from image patches from unlabelled data using deep
-% learning.
+outlier class using, e.g., clustering methods
+\cite{souplet2008,shiee2010topology} or generative models \cite{weiss2013}. In
+addition to modelling MS lesions as a separate cluster, Lesion-TOADS
+\cite{shiee2010topology} employs a topological and a statistical atlas to
+produce a topology-preserving segmentation. Current supervised approaches
+typically start with a large set of features, either predefined by the user
+\cite{geremia2010} or gathered in a feature extraction step such as by deep
+learning\cite{yoo2014}, which is followed by a separate training step with
+labeled data to determine which set of features are the most important for
+segmentation in the particular domain.
+% For example, Yoo et al. \cite{yoo2014} proposed performing unsupervised
+% learning of domain-specific features from image patches from unlabelled data
+% using deep learning.
 A recent breakthrough for automatic segmentation using deep learning comes from
 the domain of cell membrane segmentation, in which Ciresan et al.
 \cite{Ciresan2012} proposed to classify the centers of image patches directly
@@ -116,12 +118,14 @@ between layers of the two pathways. In contrast to the u-net, our network uses
 deconvolution instead of upsampling in the expanding pathway and predicts
 segmentations that have the same resolution as the input images and therefore
 does not require special handling of the border regions. We have evaluated our
-method on a large data set from an MS clinical trial and compared our results
-with Lesion-TOADS \cite{shiee2010topology}, a widely used freely available
-method for fully automatic lesion segmentation. Our results show that the CEN
-approach is able to segment MS lesions more accurately than Lesions-TOADS, and
-that our extended CEN architecture further improves segmentation accuracy
-compared to our recently proposed 3-layer CEN.
+method on a large data set from an MS clinical trial, with a comparison of
+network architectures of different depths and with and without shortcuts. The
+results show that increasing depth from three to seven layers improves
+performance, and adding shortcut connections further improves accuracy.
+Overall, our method demonstrates consistently strong segmentation performance
+across a wide range of lesion loads, and in a direct comparison outperforms
+Lesion-TOADS \cite{shiee2010topology}, a widely used and freely available
+automatic MS lesion segmentation method.
 
 % There has been a lot of interest in recent years in the machine learning
 % community to develop better training methods for CNNs. However, training CNNs

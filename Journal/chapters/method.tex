@@ -1,8 +1,6 @@
 \section{Methods}
 \label{sec:method}
 
-% TODO: One shortcut that contains multiple connections
-
 \begin{figure*}[tb]
 \centering
 \input{tikzfigures/encoder_L2}
@@ -36,20 +34,18 @@ segmentations and predicted segmentations.
 
 \subsection{Model Architecture}
 
-% TODO: say that we have compared different model architectures, probably in the
-% introduction
-
 The set of possible segmentation functions, $\mathcal{S}$, is modeled by the
-convolutional encoder network (CEN) illustrated in Fig.~\ref{fig:network}. A CEN
-is a type of convolutional neural network (CNN) \cite{LeCun1998} that is divided
-into two pathways, the convolutional pathway and the deconvolutional
-\cite{zeiler2011} pathway. The convolutional pathway consists of alternating
-convolutional and pooling layers. The input layer of the convolutional pathway
-is composed of the image voxels $x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$
-indexes the modality or input channel, $C$ is the number of modalities or
-channels, and $\vect{p} \in \N^3$ are the coordinates of a particular voxel. The
-convolutional layers automatically learn a feature hierarchy from the input
-images. A convolutional layer is a deterministic function of the following form
+convolutional encoder network with shortcut connections (CEN-s) illustrated in
+Fig.~\ref{fig:network}. A CEN-s is a type of convolutional neural network (CNN)
+\cite{LeCun1998} that is divided into two interconnected pathways, the
+convolutional pathway and the deconvolutional \cite{zeiler2011} pathway. The
+convolutional pathway consists of alternating convolutional and pooling layers.
+The input layer of the convolutional pathway is composed of the image voxels
+$x^{(0)}_i(\vect{p})$, $i \in [1, C]$, where $i$ indexes the modality or input
+channel, $C$ is the number of modalities or channels, and $\vect{p} \in \N^3$
+are the coordinates of a particular voxel. The convolutional layers
+automatically learn a feature hierarchy from the input images. A convolutional
+layer is a deterministic function of the following form
 \begin{equation}
 x^{(l)}_j = \max \Bigg(0, \sum_{i=1}^C\tilde{w}^{(l)}_{\text{c},ij}*x^{(l-1)}_i
 + b^{(l)}_j\Bigg),
@@ -206,9 +202,9 @@ yields to
 where $l$ is the index of a deconvolutional or convolutional layer,
 $\delta^{(L)}_{\text{c},i} = \delta^{(L)}_{\text{d},j}$, and $\I(z)$ denotes the
 indicator function defined as $1$ if the predicate $z$ is true and $0$
-otherwise. If a layer participates in a shortcut connection,
+otherwise. If a layer connected through a shortcut,
 $\delta^{(l)}_{\text{c},j}$ needs to be adjusted by propagating the error back
-through the shortcut connection. In this case, $\delta^{(l)}_{\text{c},j}$ is
+through the shortcut connections. In this case, $\delta^{(l)}_{\text{c},j}$ is
 calculated by
 \begin{equation}
 % Delta update convolutional with shortcut
@@ -301,7 +297,7 @@ thereby avoiding the potential problem of vanishing or exploding gradients
 \cite{hochreiter1991untersuchungen}. The first convRBM is trained on the input
 images, while subsequent convRBMs are trained on the hidden activations of the
 previous convRBM. After all convRBMs have been trained, the model parameters of
-the CEN can be initialized as follows (showing the first convolutional and
+the CEN-s can be initialized as follows (showing the first convolutional and
 the last deconvolutional layers only, see Fig.~\ref{fig:network})
 \begin{align}
 w_{\text{c}}^{(1)} &= \hat{w}^{(1)}, &

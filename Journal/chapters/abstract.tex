@@ -1,30 +1,46 @@
 \begin{abstract}
 
-% TODO: mention that we compared different architectures
 % TODO: Distinguish from the work of other's more
 
-We propose a novel segmentation approach based on deep multi-layer convolutional
-encoder networks with shortcut connections and apply it to the segmentation of
-multiple sclerosis (MS) lesions in magnetic resonance images. Our model is a
-neural network that consists of two interconnected pathways, a convolutional
-pathway, which consists of alternating convolutional and pooling layers and
-learns increasingly more abstract and robust image features, and a
-deconvolutional pathway, which consists of alternating deconvolutional and
-unpooling layers and predicts the final segmentation. The joint training of the
-feature extraction and prediction pathways allows for the automatic learning of
-features at different scales that are optimized for accuracy for any given
-combination of image types and segmentation task. In contrast to previously used
-patch-based feature learning approaches and similar to recently proposed neural
-network architectures, our model learns features from entire images instead of
-from patches, which eliminates patch selection and redundant calculations at the
-overlap of neighboring patches and thereby speeds up the training. However,
-unlike previous such approaches, our method predicts segmentations of the same
-resolution and size as the input images, which makes it more accurate and
-eliminates the need for special border handling. We have evaluated our method on
-a large data set from an MS clinical trial showing that our method is able to
-segment MS lesions more accurately than our previously proposed 3-layer network
-and Lesion-TOADS, a widely used and freely available method for the automatic
-segmentation of MS lesions.
+We propose a novel segmentation approach based on deep 3D convolutional encoder
+networks with shortcut connections and apply it to the segmentation of multiple
+sclerosis (MS) lesions in magnetic resonance images. Our model is a neural
+network that consists of two interconnected pathways, a convolutional pathway,
+which learns increasingly more abstract and robust image features, and a
+deconvolutional pathway, which predicts the final segmentation. The joint
+training of the feature extraction and prediction pathways allows for the
+automatic learning of features at different scales that are optimized for
+accuracy for any given combination of image types and segmentation task. In
+addition, shortcut connections between the two pathways allow high- and
+low-level features to be integrated, and enable segmentation of lesions across a
+wide range of sizes.
+% The convolutional encoder network approach learns features on entire images
+% and predicts segmentations of the same resolution and size as the input
+% images, and therefore does not require the redundant computations of
+% patch-based methods, where patches typically need to overlap, nor the special
+% border handling of other convolutional network methods.
+% In contrast to previously used patch-based feature learning approaches and
+% similar to recently proposed neural network architectures, our model learns
+% features from entire images instead of from patches, which eliminates patch
+% selection and redundant calculations at the overlap of neighboring patches and
+% thereby speeds up the training. However, unlike previous such approaches, our
+% method predicts segmentations of the same resolution and size as the input
+% images, which makes it more accurate and eliminates the need for special
+% border handling.
+We have evaluated our method on a large data set from an MS clinical trial, with
+a comparison of network architectures of different depths and with and without
+shortcuts. The results show that increasing depth from three to seven layers
+improves performance, and adding shortcut connections further improves accuracy.
+Overall, our method demonstrates consistently strong segmentation performance
+across a wide range of lesion loads, and in a direct comparison outperforms
+Lesion-TOADS, a widely used and freely available automatic MS lesion
+segmentation method. We found the main limitation of our model to be the
+underestimation of very large lesions, but from our depth comparison we expect
+that this problem could be solved in future work by adding more network layers.
+
+% showing that our method is able to segment MS lesions more accurately than our
+% previously proposed 3-layer network and Lesion-TOADS, a widely used and freely
+% available method for the automatic segmentation of MS lesions.
 
 %In addition, our network also uses a new objective function
 %that works well for segmenting underrepresented classes, such as MS lesions.

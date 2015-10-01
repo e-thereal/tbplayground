@@ -53,7 +53,7 @@
 % http://www.michaelshell.org/tex/testflow/
 
 
-
+%\pdfminorversion=4
 \documentclass[10pt,journal]{IEEEtran}
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
@@ -347,10 +347,23 @@
 % (Unless specifically asked to do so by the journal or conference you plan
 % to submit to, of course. )
 
+%\usepackage{balance}
+
 \usepackage{tikz}
 \usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,3d,positioning,shapes.geometric,matrix}
 \pgfdeclarelayer{background}
 \pgfsetlayers{background,main}
+
+\immediate\pdfobj stream attr{/N 3}  file{sRGB.icm}
+\pdfcatalog{%
+/OutputIntents [ <<
+/Type /OutputIntent
+/S/GTS_PDFA1
+/DestOutputProfile \the\pdflastobj\space 0 R
+/OutputConditionIdentifier (sRGB IEC61966-2.1)
+/Info(sRGB IEC61966-2.1)
+>> ]
+}
 
 \usepackage[range-phrase = --]{siunitx}
 \usepackage{booktabs,amssymb,dsfont,etoolbox,multirow,calc,printlen}
@@ -391,8 +404,8 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Supervised Multiscale Feature Learning using 3D Convolutional Encoder
-Networks for Multiple Sclerosis Lesion Segmentation}
+\title{Deep 3D Convolutional Encoder Networks with Shortcuts for Multiscale
+Feature Integration with Application to Multiple Sclerosis Lesion Segmentation}
 %
 %
 % author names and IEEE memberships
@@ -407,19 +420,32 @@ Networks for Multiple Sclerosis Lesion Segmentation}
 \author{%
 % Tom~Brosch,~\IEEEmembership{Member,~IEEE,}
 % and~Roger~Tam,~\IEEEmembership{Fellow,~OSA,}%
-Tom~Brosch and~Roger~Tam%
+Tom~Brosch, Lisa Y.W. Tang, Youngjin~Yoo, David~K.B.~Li, Anthony~Traboulsee,
+and~Roger~Tam%
 %
-\thanks{T. Brosch is with the Multiple Sclerosis/Magnetic Resonance Imaging
-Research Group, Division of Neurology, The University of British Columbia,
+\thanks{T. Brosch and Y. Yoo are with the Multiple Sclerosis/Magnetic Resonance
+Imaging Research Group, Division of Neurology, The University of British Columbia,
 Vancouver, BC V6T 2B5, Canada, and also with the Department of
 Electrical and Computer Engineering, The University of British Columbia,
-Vancouver, BC V6T 1Z4, Canada (e-mail: tombr@msmri.medicine.ubc.ca)}%
+Vancouver, BC V6T 1Z4, Canada (e-mail: \url{brosch.tom@gmail.com},
+\url{youngjin@msmri.medicine.ubc.ca})}%
 %
-\thanks{R. Tam is with the Multiple Sclerosis/Magnetic Resonance Imaging
-Research Group, Division of Neurology, The University of British Columbia,
+\thanks{L.Y.W. Tang and A. Traboulsee are with the Multiple Sclerosis/Magnetic
+Resonance Imaging Research Group, Division of Neurology, The University of
+British Columbia, Vancouver, BC V6T 2B5, Canada (e-mail: \url{lisat@sfu.cu},
+\url{t.traboulsee@ubc.ca})}%
+%
+\thanks{D.K.B. Li and R. Tam are with the Multiple Sclerosis/Magnetic Resonance
+Imaging Research Group, Division of Neurology, The University of British Columbia,
 Vancouver, BC V6T 2B5, Canada, and also with the Department of Radiology, The
 University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail:
-roger.tam@ubc.ca)}%
+\url{david.li@ubc.ca}, \url{roger.tam@ubc.ca})}%
+%
+% \thanks{A. Traboulsee is with the Multiple Sclerosis/Magnetic Resonance Imaging
+% Research Group, Division of Neurology, The University of British Columbia,
+% Vancouver, BC V6T 2B5, Canada, and also with the Division of Neurology, The
+% University of British Columbia, Vancouver, BC V6T 2B5, Canada (e-mail:
+% \url{t.traboulsee@ubc.ca})}%
 %  \thanks{J. Doe and J. Doe are with Anonymous University.}% 
 % \thanks{Manuscript received April 19, 2005; revised September 17, 2014.}
 }
@@ -645,7 +671,7 @@ roger.tam@ubc.ca)}%
 % number - used to balance the columns on the last page
 % adjust value as needed - may need to be readjusted if
 % the document is modified later
-%\IEEEtriggeratref{8}
+\IEEEtriggeratref{21}
 % The "triggered" command can be changed if desired:
 %\IEEEtriggercmd{\enlargethispage{-5in}}
 
@@ -670,7 +696,7 @@ roger.tam@ubc.ca)}%
 %   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 % 
 % \end{thebibliography}
-
+%\balance
 \bibliographystyle{plain}
 \bibliography{bib}
 
@@ -712,12 +738,13 @@ Roger Tam is just and awesome supervisor. 'Nough said.
 % are being equalized.
 
 \vfill
+\end{comment}
 
 % Can be used to pull up biographies so that the bottom of the last one
 % is flush with the other column.
-%\enlargethispage{-5in}
+%\vfill
+%\enlargethispage*{-1in}
 
-\end{comment}
 
 % that's all folks
 \end{document}
