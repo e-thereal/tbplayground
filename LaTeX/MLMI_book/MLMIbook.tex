@@ -2,7 +2,7 @@
 %%There is just one section and two subsections.
 \documentclass{report}
 
-\usepackage{todonotes, amsmath}
+\input{preamble}
 
 \begin{document}
 
@@ -24,47 +24,143 @@ like neural networks, how these models can be adapted for unsupervised learning,
 e.g., stacked auto encoders, and scaled to larger images using convolutional
 neural networks.
 
-Distinction between supervised and unsupervised models is lose. Primarily
+The distinction between supervised and unsupervised models is lose. Primarily
 unsupervised models can also be used for supervised tasks like classification,
-while supervised models can be used for unsupervised feature learning, be
+while supervised models can be used for unsupervised feature learning, by
 reformulating the unsupervised problem to a supervised problem. Examples will be
 given below.
 
 \subsection{Deep Graphical Models}
 
-Unsupervised models are mostly used for the automatic learning of features from
-an image domain. They are particularly interesting for medical image analysis as
-they can be trained without the need of labelled data (e.g., segmented images,
-images with patient data), which can be difficult to obtain. In this chapter, we
-will first introduce the restricted Boltzmann machines, which are the building
-blocks of the later described deep belief networks and deep Boltzmann machines.
+Unsupervised models are mostly used for the automatic learning of features of an
+image domain from a representative data set. They are particularly interesting
+for medical image analysis as they can be trained without the need of labelled
+data (e.g., segmented images, images with patient data), which can be difficult
+to obtain. In this chapter, we will first introduce the restricted Boltzmann
+machines, which are the building blocks of the later described deep belief
+networks.
 
 \subsubsection{Restricted Boltzmann Machines}
 
 A restricted Boltzmann machine is a probabilistic graphical models defined by a
 bipartite graph as shown in Figure~\ref{fig:rbm}. The units of the RBM are
-divided into visible units and hidden units. There are no direct connections
-between the visible units. Moreover, the relationships between the visible units
-are model in terms of features represented by the hidden units. The RBM defined
-the joint probability of visible and hidden units in terms of the energy $E$ and
-is given by:
-\begin{align} 
-p &= \text{e}^{-E} \\
-E &= \sum Wvh + \sum b + \sum c
+binary random variables. They are divided into visible units $\vect{v}$ and
+hidden units $\vect{h}$. There are no direct connections between units of the
+visible or hidden layer. The RBM defines the joint probability of visible and
+hidden units in terms of the energy $E$ which is given by:
+\begin{align}
+p(\vect{v}, \vect{h} \given \boldsymbol{\theta}) &=
+\frac{1}{Z(\boldsymbol{\theta})}e^{-E(\vect{v}, \vect{h} \given
+\boldsymbol{\theta})} \\
+\intertext{with}
+-E(\vect{v}, \vect{h}\given \boldsymbol{\theta}) &= \sum_{i, j}v_i w_{ij} h_j +
+\sum_i b_i v_i + \sum_j c_j h_j \\
+&= \vect{v}^\textup{T}\vect{W}\vect{h} + \vect{b}^\textup{T}\vect{v} +
+\vect{c}^\textup{T}\vect{h}
 \end{align}
-
-Reiterate the inference and training method from my proposal. Can be used for
-classification as well, by modelling the joint probability of inputs and
-outputs.
-
-\begin{figure} 
-\missingfigure{RBM graph}
-\caption{RBM graph labelled with everything. Might take it from my proposal.}
+and $\thetas = \{\vect{W}, \vect{b}, \vect{c}\}$.
+\begin{figure}
+\centering
+\input{figures/rbmoverview}
+\caption{Graph representation of an RBM with 3 hidden and 5 visible units.
+  An RBM is used to model the joint probability of input, output and hidden units.
+  Output units are optional. Edges between vertices denote conditional
+  dependence between the according random variables.}
 \label{fig:rbm}
 \end{figure}
 
+\paragraph{Inference}
+Inference is the basis for most calculations of an RBM (e.g. training, sampling,
+encoding, decoding, \dots). Since the hidden units are conditionally independent
+given the visible units and vice versa, inference can be calculate efficiently
+in an RBM. The posteriors are given by:
+\begin{align}
+%p(h_j = 1 \given \vect{v}, \thetas) &= \sigm(\Delta E_j)\\
+%p(v_i = 1 \given \vect{h}, \thetas) &= \sigm(\Delta E_i)\\
+%\intertext{with $\sigm(x) = (1+e^{-x})^{-1}$ is the sigmoid function and}
+%\Delta E_j & := E(h_j = 0) - E(h_j = 1) \\
+%\Delta E_i & := E(v_i = 0) - E(v_i = 1) \\
+%\intertext{Plugging in the energy function of a binary RBM yields}
+\label{eq:hgivenv}
+p(h_j = 1 \given \vect{v}, \thetas) &= \sigm(\vect{w}_{\cdot,j}^\text{T}\vect{v}
++ c_j)\\
+\label{eq:vgivenh}
+p(v_i = 1 \given \vect{h}, \thetas) &= \sigm(\vect{w}_{i,
+\cdot}^\text{T}\vect{h} + b_i)
+\end{align}
+where $\sigm(x)$ is the sigmoid function defined as $\sigm(x) = (1+
+\exp(-x))^{-1}, x \in \R$.
+
+\paragraph{Sampling}
+Important expectations used for classification, $\E[\vect{y} \given
+\vect{x}, \thetas]$, or training, $\E[\vect{v}\vect{h}^\text{T}\given
+\thetas]$, can not be calculated directly. In this case, they need to be
+approximated by the average of samples drawn from the according models. Sampling
+from the posteriors forms the basis for generating samples from other models.
+The posteriors can be sampled using \ref{eq:hgivenv} and \ref{eq:vgivenh},
+respectively:
+\begin{align}
+h_j &= \I(y_j < \E[h_j \given \vect{v}, \thetas]) & \text{with $y_j \sim
+\text{U}(0,1)$}\\
+v_i &= \I(x_i < \E[v_i \given \vect{h}, \thetas]) & \text{with $x_i \sim
+\text{U}(0,1)$}
+\end{align}
+where $z \sim \text{U}(0,1)$ denotes a sample from the uniform distribution in
+the interval $[0,1]$ and $\I$~is the indicator function, which is defined as $1$ if
+the argument is true and $0$ otherwise.
+
+A sample from the joint probability, $p(\vect{v}, \vect{h} \given \thetas)$, can
+be drawn using block Gibbs sampling. For this purpose, $\vect{v}$ is initialized
+with random values at the beginning. Then, the two posteriors $p(\vect{h}
+\given \vect{v}, \thetas)$ and $p(\vect{v} \given \vect{h}, \thetas)$ are
+sampled alternately. If this chain is run for sufficiently many iterations,
+samples drawn from the posteriors are distributed according to $p(\vect{v},
+\vect{h} \given \thetas)$.
+
+\paragraph{Learning}
+
+RBMs can be trained using maximum likelihood estimation (MLE). The gradient of
+the log likelihood function is given by:
+\begin{equation}
+\nabla_{\thetas} \log p(\mathcal{D} \given \thetas) =
+\frac{1}{N} \sum_{n = 1}^N
+\E[\vect{v}\vect{h}^\text{T} \given \vect{v}_n, \thetas]
+-\E[\vect{v}\vect{h}^\text{T} \given \thetas]
+\end{equation}
+The first expectation can be estimated using a mean field approximation:
+\begin{align}
+\E[\vect{v}\vect{h}^\text{T} \given \vect{v}_n, \thetas] &\approx
+\E[\vect{v} \given \vect{v}_n, \thetas]
+\E[\vect{h}^\text{T} \given \vect{v}_n, \thetas] \\
+&=\vect{v}_n\E[\vect{h}^\text{T} \given \vect{v}_n, \thetas]
+\end{align}
+The second expectation needs to be estimated using a Monte Carlo approximation:
+\begin{equation}
+\E[\vect{v}\vect{h}^\text{T} \given \thetas] \approx
+\frac{1}{S}\sum_{s=1}^{S}\vect{v}_s\vect{h}_s^\text{T}
+\end{equation}
+where $S$ is the number of samples, and $\vect{v}_s$ and $\vect{h}_s$ are
+samples drawn from $p(\vect{v}\given \thetas)$ and $p(\vect{h}\given \thetas)$,
+respectively. If the Gibbs sampler is initialized at a data point from the
+training set and only $1$ Monte Carlo sample is used to approximate the second
+expectation, the learning rule is also known as contrastive divergence (CD)
+\cite{Hinton2002}. To speed up learning, the data set is divided into small
+subsets called mini batches and a gradient step is performed for each mini
+batch. To avoid confusion with a gradient step, the term ``iteration'' is
+generally avoided and the term ``epoch'' is used instead to indicate a sweep
+through the entire data set. Additional tricks to monitor and speed up the
+training of an RBM were summarized by Hinton et al. \cite{Hinton_2010}.
+
 \paragraph{Gaussian--Bernoulli RBM} To model real-valued inputs like the
-intensities of medical images.
+intensities of medical images. This changes the joint probability to:
+\begin{equation} 
+E = bla
+\end{equation}
+If the visible units are zero mean and unit variance, inference goes like this:
+\begin{align} 
+\E[v] &= bla \\
+\E[h] &= bla
+\end{align}
 
 \paragraph{Rectified linear units} Hidden state is only binary in an RBM. Encode
 signal strength by repetition of the same unit with different bias. It can be
@@ -75,10 +171,10 @@ units and have shown to improve classification performance.
 \paragraph{Convolutional RBMs} To scale to larger images, can use weight sharing
 and limited receptive field. Can be expressed as a convolution. Greatly reduces
 the number of trainable weights, employs translational equivariance. Allows RBMs
-to be trained an high-resolution images.
+to be trained on high-resolution images.
 
 Training can be further optimized by training in the frequency domain as has
-been done by some people: ICLR paper, our neural computation paper, facebook fft
+been done by some people: ICLR paper, our neural computation paper, fbfft
 paper.
 
 \subsubsection{Deep Belief Networks}
@@ -98,12 +194,12 @@ Different pathways that are then later joint.
 A special case of multi-modal feature learning, where the output labels are
 modelled as an additional modality.
 
-\subsubsection{Deep Boltzmann Machine}
-
-Similar to DBN but connections are undirected. Inference of one layer requires
-the unit activation of the previous and following layer. Inference need to be
-performed using Gibbs sampling. Can be pre-trained using RBMs using
-weight-doubling and fine-tuned using persistent contrastive divergence.
+% \subsubsection{Deep Boltzmann Machine}
+% 
+% Similar to DBN but connections are undirected. Inference of one layer requires
+% the unit activation of the previous and following layer. Inference need to be
+% performed using Gibbs sampling. Can be pre-trained using RBMs using
+% weight-doubling and fine-tuned using persistent contrastive divergence.
 
 \subsection{Deep Neural Networks}
 
@@ -124,7 +220,7 @@ stochastic gradient descent (SGD). The gradient can be calculated as follows:
 \item Calculate derivative of total activation using chain rule
 \item Proceed to lower layers using the chain rule
 \end{itemize}
-This procedure is often called backpropagation.
+This procedure is called backpropagation.
 
 \subsubsection{Convolutional Neural Networks}
 
@@ -136,7 +232,7 @@ back-propagation.
 
 \subsubsection{Training}
 
-Training algorithms can be roughly catagorized into algorithms that use second
+Training algorithms can be roughly categorized into algorithms that use second
 order information and algorithms that only use first-order information.
 
 Vanilla stochastic gradient descent is prone to oscillation. This can be limited
@@ -155,11 +251,13 @@ There are also a lot of methods that leverage second order information, e.g.,
 Hessian-free optimization used information from the Hessian without ever
 calculating the full Hessian in order to better navigate pathological curvature.
 Recenter, it was hypothesised that characteristic points that were believed to
-be local minima are infact saddle points. To escape saddle-points and to improve
-optimization, Bengio et al. have developed the so-called saddle-free Newton's
-method that uses second order information to quickly escape saddle points.
+be local minima are in fact saddle points. To escape saddle points and to
+improve optimization, Bengio et al. have developed the so-called saddle-free
+Newton's method that uses second order information to quickly escape saddle
+points.
 
-\subsubsection{Stacked Auto-Encoders}
+\subsubsection{Neural Networks for Unsupervised Feature Learning: Stacked
+Auto-Encoders}
 
 Neural networks can be used for feature learning even when no labels are
 present. This can be done by using auto-encoder networks. An autoencoder is a

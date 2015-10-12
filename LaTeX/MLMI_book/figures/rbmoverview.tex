@@ -1,0 +1,51 @@
+\tikzexternal{rbmoverview}
+
+\begin{tikzpicture}
+
+\tikzstyle{gnode}=[shape=circle,draw=black,font=\sffamily]
+
+\foreach \x in {1,...,3} {
+  \node[gnode] (h\x) at (2*\x-4, 0) {$h_\x$};
+}
+\foreach \y in {1,...,5} {
+  \node[gnode] (v\y) at (1.5*\y-4.5, -2) {$v_\y$};
+}
+\foreach \x in {1,...,3} {
+  \foreach \y in {1,...,5} {
+      \draw (h\x)--(v\y);
+  }
+}
+
+\node[pin=120:$w_{11}$] at ($(v1)!.5!(h1)$) {};
+
+\coordinate (rh) at (4,0);
+\coordinate (rv) at (4,-2);
+
+\node[fit=(v1)(v5)(rv),inner sep=0pt] (visibles) {};
+\node[fit=(h1)(rh), inner sep=0pt] (hiddens) {};
+\node[fit=(v1)(v3), inner xsep=0pt] (inputs) {};
+\node[fit=(v4)(v5), inner xsep=0pt] (outputs) {};
+
+\begin{scope}[decoration=brace]
+
+\draw[decorate] ($(visibles.north east)-(0,2pt)$)--node[right=4pt]{Visible
+units $\vect{v}$}
+(visibles.south east);
+
+\draw[decorate] (hiddens.north  east)--
+node[right=4pt,align=center]{Hidden units $\vect{h}$}
+($(hiddens.south east)+(0,2pt)$);
+
+\draw[decorate] ($(hiddens.south east)-(0,2pt)$)
+--node[right=4pt,align=left] {Weights $\vect{W}$ between\\ visibles and
+hiddens} ($(visibles.north east)+(0,2pt)$);
+
+\draw[decorate] (inputs.south east)--
+node[below=4pt] {Input units: $\vect{x}$}
+(inputs.south west);
+\draw[decorate] (outputs.south east)--
+node[below=4pt] {Output units: $\vect{y}$}
+(outputs.south west);
+\end{scope}
+
+\end{tikzpicture}

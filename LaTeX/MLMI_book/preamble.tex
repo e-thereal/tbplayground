@@ -1,0 +1,44 @@
+\usepackage{todonotes}
+
+% Math markup
+\usepackage{amsmath,dsfont,amsbsy}
+
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\Q}{\ensuremath{\mathds{Q}}}
+\newcommand{\N}{\ensuremath{\mathds{N}}}
+\newcommand{\I}{\ensuremath{\mathds{I}}}
+\newcommand{\E}{\ensuremath{\mathds{E}}}
+\newcommand{\Z}{\ensuremath{\mathds{Z}}}
+\newcommand{\D}{\ensuremath{\mathds{D}}}
+\newcommand{\W}{\ensuremath{\mathds{W}}}
+\newcommand{\B}{\ensuremath{\mathds{B}}}
+\newcommand{\Sn}{\ensuremath{\mathds{S}}}
+
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\thetas}{\boldsymbol{\theta}}
+\newcommand{\data}{\mathcal{D}}
+\newcommand{\given}{\mid}
+
+\DeclareMathOperator{\sigm}{sigm}
+
+\mathchardef\ordinarycolon\mathcode`\:
+\mathcode`\:=\string"8000
+\begingroup \catcode`\:=\active
+  \gdef:{\mathrel{\mathop\ordinarycolon}}
+\endgroup
+
+% Tikz
+
+\usepackage{tikz}
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,positioning,shapes.geometric}
+\tikzstyle{every node}+=[font=\sffamily\small]
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=tikzfigures/temp/] % activate
+%\tikzset{external/export=false}
+\newcommand{\tikzexternal}[2][false]{%
+%\tikzset{external/export=true, external/remake next=#1}%
+%\tikzsetnextfilename{#2}%
+}
