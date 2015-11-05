@@ -1,0 +1,450 @@
+\chapter{Background}
+
+Background chapter on deep learning methods. Start with general introduction. I
+want to talk about some deep learning methods. Main goal is learning a feature
+hierarchy. Models are often biologically inspired. Neuroplasticity strong
+motivator for learning. Start with either unsupervised or supervised models.
+Explain what it means and why it is important. Unsupervised no need for labels,
+which can be difficult to obtain. Supervised tuned to task. Can perform better
+when enough labels are available. Requires careful regularization or lots of
+data because more prone to overfitting.
+
+% Reduce overlap with introduction)
+
+% RBMs, DBNs, convRBMs, convDBNs for manifold learning and NN and CNN for lesion
+% segmentation.
+
+\section{Learning from Labeled Data}
+
+% If I put this first, I can argue with inspiration from biological models
+% first.
+
+\subsection{Neural Networks}
+
+A dense neural network is a deterministic function that maps input data to the
+desired outputs through the successive application of multiple nonlinear
+mappings of the following form
+\begin{align}
+\vect{z}_l &= \vect{W}_l\vect{x}_{l-1} + \vect{b}_l, \\
+\vect{x}_l &= f_l(\vect{z}_l),
+\end{align}
+where $\vect{x}_0$ denotes the input of the neural network, $\vect{x}_L$ denotes
+the output, $L$ is the number of computational layers, $f_l$ are transfer
+functions, $\vect{W}_l$ are weight matrices, and $\vect{b}_l$ are bias terms.
+Popular choices for the transfer function are the sigmoid function $f(x) =
+\sigm(x)$ and the rectified linear function $f(x) = \max(0, x)$. The same
+transfer function is typically used for all layers except for the output layer.
+The choice of the output transfer function depends on the learning task. For
+classification, a 1-of-$n$ encoding of the output class is usually used in
+combination with the softmax transfer function defined as
+\begin{equation}
+\text{softmax}(\vect{z})_i = \frac{\exp(z_i)}{\sum_{j=1}^n \exp(z_j)},
+\end{equation}
+where $\vect{z}$ denotes an $n$-dimensional output vector.
+
+Given a training set $\data = \{(\vect{x}_0^{(i)}, \vect{y}^{(i)})\given i
+\in [1, N] \}$, a neural network is trained by minimizing the error
+between the predicted outputs $\vect{x}_L^{(i)}$ and the given labels
+$\vect{y}^{(i)}$
+\begin{equation}
+\hat{\thetas} = \arg\min_{\thetas} \sum_{i = 1}^N E\Big(\vect{x}_L^{(i)},
+\vect{y}^{(i)}\Big),
+\end{equation}
+where $\thetas$ denotes the trainable parameters of the neural network. Typical
+choices for the error function are the sum of squared differences (SSD), and
+cross-entropy.
+The minimization problem can be solved using stochastic gradient descent (SGD)
+\citep{Rumelhart1986,polyak1992}, which requires the calculation of the gradient
+of the error function with respect to the model parameters. The gradient can be
+calculated by backpropagation \citep{werbos1974} as follows
+\begin{align}
+\deltas_L &= \nabla_{\vect{x}_L}E \cdot f_L'(\vect{z}_L), \\
+\deltas_l &= (\vect{W}_{l+1}^\text{T}\deltas_{l+1}) \cdot
+f_l'(\vect{z}_l) & \text{for $l < L$,}\\
+\nabla_{\vect{W}_l}E &= \deltas_l\vect{x}_{l-1}^\text{T}, \\
+\nabla_{\vect{b}_l}E &= \deltas_l,
+\end{align}
+where $\nabla_{\vect{x}_L}E$ denotes the gradient of the error function with
+respect to the predicted output and $\cdot$ denotes element-wise multiplication.
+
+\subsection{Convolutional Neural Networks}
+
+The structure of CNNs is inspired by the complex arrangement of simple and
+complex cells found in the visual cortex \citep{hubel1962,hubel1968}. Simple
+cells are only connected to a small sub-region of the previous layer and need to
+be tiled to cover the entire visual field. In a CNN (see \ref{fig:cnn}),
+simple cells are represented by convolutional layers, which exhibit a similar mechanism of local
+connectivity and weight sharing. Complex cells combine the activation of simple
+cells to add robustness to small translations. These cells are represented in
+the form of pooling layers similar to the pooling layers found in convDBNs.
+After several alternating convolutional and pooling layers, the activations of
+the last convolutional layer are fed into one or more dense layers to
+carry out the final classification.
+
+\begin{figure}
+\centering
+\input{tikzfigures/cnn}
+\caption{Convolutional neural network with two convolutional layers, one pooling
+layer and one dense layer. The activations of the last layer is the output of
+the network.}
+\label{fig:cnn}
+\end{figure}
+
+For multimodal 3D volumes, the neurons of convolutional and pooling layers are
+arranged in a 4D lattice, where the first three dimensions correspond to the
+dimensions of the input volume, and the forth dimension indexes
+the input modality or channel. The activations of the output of a
+convolutional layer are calculated by
+\begin{equation}
+x^{(l)}_j = f\Bigg(\sum_{i=1}^C\tilde{w}^{(l)}_{ij}*x^{(l-1)}_i
++ b^{(l)}_j\Bigg),
+\end{equation}
+where $l$ is the index of a convolutional layer, $x^{(l)}_j$ denotes the
+$j$th channel of the output volume, $w^{(l)}_{ij}$ is a 3D filter
+kernel connecting the $i$th channel of the input volume to the $j$th channel
+of the output volume, and $b_j^{(l)}$ denotes the bias term of the $j$th output
+channel. CNNs can be trained using stochastic gradient descent, where the
+gradient can be derived analogously to dense neural networks and calculated using
+backpropagation \citep{lecun1989,LeCun1998}. 
+
+A major challenge for gradient-based optimization methods is the choice of an
+appropriate learning rate. Classic stochastic gradient descent \citep{LeCun1998}
+uses a fixed or decaying learning rate, which is the same for all parameters of
+the model. However, the partial derivatives of parameters of different layers
+can vary substantially in magnitude, which can require different learning rates.
+In recent years, there has been an increasing interest in developing methods for
+automatically choosing independent learning rates. Most methods (e.g., AdaGrad
+\citep{duchi2011}, AdaDelta \citep{zeiler2012}, RMSprop \citep{dauphin2015}, and
+Adam \citep{kingma2014}) collect different statistics of the partial derivatives
+over multiple iterations and use this information to set an adaptive learning
+rate for each parameter. This is especially important for the training of deep
+networks, where the optimal learning rates often differ greatly for each layer.
+
+% TODO: Also strided convolutional neural networks.
+
+\subsection{Training and pre-training}
+
+Problem with learning rate and stuff. Can be pre-trained.
+
+\section{Learning from Unlabeled Data}
+
+% More statistical learning and finding patterns of similarity.
+
+One of the most important applications of deep learning is to learn a feature
+hierarchy from unlabeled images. The key to learning such a hierarchy is the
+ability of deep models to be trained layer by layer, where each layer acts as a
+nonlinear feature extractor. Various methods have been proposed for feature
+extraction from unlabeled images. In this section, we will first introduce the
+restricted Boltzmann machines (RBMs) \citep{freund1992,hinton2010}, which are the
+building blocks of deep belief networks (DBNs) \citep{Hinton2006b}, followed by
+a short introduction to alternative feature extractors such as stacked denoising
+autoencoders (SDAEs) \citep{vincent2010}.
+
+% TODO: comparison to supervised methods similar to the introduction of the
+% supervised methods section.
+
+\subsection{From Restricted Boltzmann Machines to Deep Belief Networks}
+
+% TODO: Illustrate with toy example.
+
+An RBM is a probabilistic graphical models defined by a bipartite graph as shown
+in Fig.~\ref{fig:rbm}. The units of the RBM are divided into two layers, one of
+visible units $\vect{v}$ and the other of hidden units $\vect{h}$. There are no
+direct connections between units within either layer. An RBM defines the joint
+probability of visible and hidden units in terms of the energy $E$
+\begin{align}
+p(\vect{v}, \vect{h} \given \thetas) &=
+\frac{1}{Z(\thetas)}e^{-E(\vect{v}, \vect{h} \given \thetas)}. \\
+\intertext{When the visible and hidden units are binary, the energy is defined
+as} 
+-E(\vect{v}, \vect{h}\given \thetas) &= \sum_{i, j}v_i w_{ij} h_j +
+\sum_i b_i v_i + \sum_j c_j h_j \\
+&= \vect{v}^\textup{T}\vect{W}\vect{h} + \vect{b}^\textup{T}\vect{v} +
+\vect{c}^\textup{T}\vect{h}
+\end{align}
+where $Z(\thetas)$ is a normalization constant, $\vect{W}$ denotes the weight
+matrix that connects the visible units with the hidden units, $\vect{b}$ is a
+vector containing the visible bias terms, $\vect{c}$ is a vector containing the
+hidden bias terms, and $\thetas = \{\vect{W}, \vect{b}, \vect{c}\}$ are the
+trainable parameters of the RBM.
+
+\begin{figure}
+\centering
+\input{tikzfigures/rbm}
+\caption{Graph representation of an RBM with 3 hidden and 5 visible units.
+  An RBM models the joint probability of visible and hidden units. Edges between
+  vertices denote conditional dependence between the corresponding random
+  variables.}
+\label{fig:rbm}
+\end{figure}
+
+\paragraph{Inference}
+The hidden units represent patterns of similarity that can be observed in groups
+of images. Once an RBM is trained, the features of a previously unseen image can
+be extracted by calculating the expectation of the hidden units. The posterior
+distribution of the hidden units given the visible units can be calculated by
+\begin{equation}
+\label{eq:dhgivenv}
+p(h_j = 1 \given \vect{v}, \thetas) = \sigm(\vect{w}_{\cdot,j}^\text{T}\vect{v}
++ c_j),
+\end{equation}
+where $\vect{w}_{\cdot,j}$ denotes the $j$th column vector of $\vect{W}$, and
+$\sigm(x)$ is the sigmoid function defined as $\sigm(x) = (1+ \exp(-x))^{-1}, x
+\in \R$. An RBM is a generative model, which allows for the reconstruction of
+an input signal given its features. This is achieved by calculating the expectation
+of the visible units given the hidden units. The posterior distribution $p(v_i =
+1 \given \vect{h}, \thetas)$ can be calculated by
+\begin{equation}
+\label{eq:dvgivenh}
+p(v_i = 1 \given \vect{h}, \thetas) = \sigm(\vect{w}_{i,
+\cdot}^\text{T}\vect{h} + b_i),
+\end{equation}
+where $\vect{w}_{i,\cdot}$ denotes the $i$th row vector of $\vect{W}$.
+Reconstructing the visible units can be used to visualize the learned features.
+To visualize the features associated with a particular hidden unit, all other
+hidden units are set to zero and the expectation of the visible units is
+calculated, which represents the pattern that causes a particular hidden
+unit to be activated.
+
+\paragraph{Training}
+
+% \begin{itemize}
+%   \item There are different training methods for RBMs.
+%   \item Will focus on constrastive divergence.
+%   \item Alternatives are stochastic bla with a reference
+%   \item RBMs are trained using maximum likelihood estimation (MLE)
+% \end{itemize}
+
+RBMs can be trained by maximizing the likelihood or, more commonly, the log
+likelihood of the training data, $\data = \{\vect{v}_n \given n \in [1, N] \}$,
+which is called maximum likelihood estimation (MLE). The gradient of the log
+likelihood function with respect to the weights, $\vect{W}$, is given by
+\begin{equation}
+\label{eq:mle}
+\nabla_{\vect{W}} \log p(\mathcal{D} \given \thetas) =
+\frac{1}{N} \sum_{n = 1}^N
+\E[\vect{v}\vect{h}^\text{T} \given \vect{v}_n, \thetas]
+-\E[\vect{v}\vect{h}^\text{T} \given \thetas].
+\end{equation}
+The first expectation can be estimated using a mean field approximation:
+\begin{align}
+\E[\vect{v}\vect{h}^\text{T} \given \vect{v}_n, \thetas] &\approx
+\E[\vect{v} \given \vect{v}_n, \thetas]
+\E[\vect{h}^\text{T} \given \vect{v}_n, \thetas], \\
+&=\vect{v}_n\E[\vect{h}^\text{T} \given \vect{v}_n, \thetas].
+\end{align}
+The second expectation is typically estimated using a Monte Carlo
+approximation
+\begin{equation}
+\E[\vect{v}\vect{h}^\text{T} \given \thetas] \approx
+\frac{1}{S}\sum_{s=1}^{S}\vect{v}_s\vect{h}_s^\text{T},
+\end{equation}
+where $S$ is the number of generated samples, and $\vect{v}_s$ and $\vect{h}_s$
+are samples drawn from $p(\vect{v}\given \thetas)$ and $p(\vect{h}\given
+\thetas)$, respectively. Samples from an RBM can be generated efficiently using
+block Gibbs sampling, in which the visible and hidden units are initialized
+with random values and alternately sampled given the previous state using
+\begin{align}
+h_j &= \I(y_j < p(h_j = 1 \given \vect{v}, \thetas)) & \text{with $y_j \sim
+\text{U}(0,1)$}\\
+v_i &= \I(x_i < p(v_i \given \vect{h}, \thetas)) & \text{with $x_i \sim
+\text{U}(0,1)$}
+\end{align}
+where $z \sim \text{U}(0,1)$ denotes a sample drawn from the uniform
+distribution in the interval $[0,1]$ and $\I$~is the indicator function, which
+is defined as $1$ if the argument is true and $0$ otherwise. After several
+iterations, a sample generated by the Gibbs chain is distributed according to
+$p(\vect{vh}\given \thetas)$.
+
+If the Gibbs sampler is initialized at a data point from the training set and
+only $1$ Monte Carlo sample is used to approximate the second expectation in
+\eqref{eq:mle}, the learning algorithm is called contrastive divergence (CD)
+\citep{hinton2002}. Alternatively, persistent CD (PCD) \citep{tieleman2008} uses
+several separate Gibbs chains to generate data independent samples from the
+model, which results in a better approximation of the gradient of the log
+likelihood than CD. To speed up the training, the dataset is usually divided
+into small subsets called mini-batches and a gradient step is performed for each
+mini-batch. To avoid confusion with a gradient step, the term ``iteration'' is
+generally avoided and the term ``epoch'' is used instead to indicate a sweep
+through the entire dataset. Additional tricks to monitor and speed up the
+training of an RBM can be found in Hinton's RBM training guide
+\citep{hinton2010a}.
+
+\paragraph{Deep belief networks}
+
+A single RBM can be regarded as a nonlinear feature extractor. To learn a
+hierarchical set of features, multiple RBMs are stacked and trained layer by
+layer, where the first RBM is trained on the input data and subsequent RBMs are
+trained on the hidden unit's activations computed from the previous RBM. The
+stacking of RBMs can be repeated to initialize DBNs of any depth.
+
+\paragraph{Alternative unit types}
+
+To model real-valued inputs like the intensities of some medical images, the
+binary visible units of an RBM are replaced with Gaussian visible units, which
+leads to the following energy function
+\begin{equation} 
+-E(\vect{v}, \vect{h}\given \boldsymbol{\theta}) = \sum_{i,
+j}\frac{v_i}{\sigma_i} w_{ij} h_j + \sum_i \frac{(v_i - b_i)^2}{2\sigma_i^2} +
+\sum_j c_j h_j,
+\end{equation}
+where the mean of the $i$th visible unit is encoded in the bias term $b_i$,
+and its standard deviation is given by $\sigma_i$. Although approaches have been
+proposed to learn the standard deviation \citep{cho2011}, the
+training data is often simply standardized to have zero mean and unit variance,
+which yields to the following simplification for the inference of the visible
+and hidden units:
+\begin{align} 
+\label{eq:ghgivenv}
+\E[h_j \given \vect{v}, \thetas] &=
+\sigm(\vect{w}_{\cdot,j}^\text{T}\vect{v} + c_j),\\
+\label{eq:gvgivenh}
+\E[v_i \given \vect{h}, \thetas] &= \vect{w}_{i,\cdot}^\text{T}\vect{h} +
+b_i.
+\end{align}
+
+A binary hidden unit can only encode two states. In order to increase the
+expressive power of the hidden units, Nair et al. proposed using noisy rectified
+linear units (NReLU) \citep{nair2010} as the hidden units, and showed that this
+can improve the learning performance of RBMs. The signal of an NReLU is the sum
+of an infinite number of binary units all of which having the same weights but
+different bias terms. In the special case where the offsets of their bias
+terms are set to $-0.5, -1.5, \dotsc$, the sum of their probabilities and
+therefore the expectation of an NReLU is extremely close to having a closed form:
+\begin{align}
+\E[h_j \given \vect{v}, \thetas] &=
+\sum_{i=1}^\infty \sigm(\vect{w}_{\cdot,j}^\text{T}\vect{v} + c_j - i + 0.5),\\
+&\approx \log(1+\exp(\vect{w}_{\cdot,j}^\text{T}\vect{v} + c_j)).
+\end{align}
+However, sampling of this type of unit involves the repeated calculation of the
+sigmoid function, which can be time-consuming. If a sample is not constrained
+to being an integer, a fast approximation can be calculated with
+\begin{align} 
+h_j &\sim \max(0, \mu_j + \Norm(0, \sigm(\mu_j))), \\
+\mu_j &= \vect{w}_{\cdot,j}^\text{T}\vect{v} + c_j,
+\end{align}
+where $\Norm(0, \sigma^2)$ denotes Gaussian noise.
+
+\subsection{Convolutional Models}
+
+A potential drawback of DBNs is that the learned features are location
+dependent. Hence, features that can occur at many different locations in an
+image, such as edges and corners, have to be relearned for every possible
+location, which dramatically increases the number of features required to
+capture the content of large images. To increase the translational invariance of
+the learned features, Lee et al. introduced the convolutional deep belief
+network (convDBN) \citep{lee2009,lee2011}. In a convDBN, the units of one layer
+are only connected to the units of a sub-region of the previous layer, where
+each unit shares the same weights with all other units of the same layer. This
+greatly reduces the number of trainable weights, which reduces the risk of
+overfitting, reduces the memory required to store the model parameters, speeds
+up the training, and thereby facilitates the application to high-resolution
+images.
+
+We assume the input images to be square 2D images, but the model generalizes
+with little modification to non-square images of higher dimensions.
+
+A convDBN consists of alternating convolutional and pooling layers, which are
+followed by one or more dense layers. Each convolutional layer of the model can
+be trained in a greedy layerwise fashion by treating it as a convolutional
+restricted Boltzmann machine (convRBM). The energy of a convRBM is defined as
+\begin{align} 
+E(\vect{v},\vect{h}) 
+% &= -\sum_{i=0}^{N_\text{c}-1} \sum_{j=0}^{N_\text{k}-1}
+% \sum_{x,y=0}^{N_\text{h}-1} \sum_{u,v=0}^{N_\text{w}-1} h_{xy}^jw_{uv}^{ij}v_{x+u, y+v}^i
+% - \sum_{i=0}^{N_\text{c}-1}b_i\!\sum_{x,y = 0}^{N_\text{v}-1}\!v_{xy}^i
+% - \sum_{j=0}^{N_\text{k}-1}c_j\!\sum_{x,y = 0}^{N_\text{h}-1}\!h_{xy}^j \\
+&= -\sum_{i=1}^{N_\text{c}} \sum_{j=1}^{N_\text{k}} \vect{h}^{(j)}
+\bullet (\tilde{\vect{w}}^{(ij)} * \vect{v}^{(i)}) -
+\sum_{i=1}^{N_\text{c}}b_i\sum_{x,y = 1}^{N_\text{v}}\!v_{xy}^{(i)} -
+\sum_{j=1}^{N_\text{k}}c_j\sum_{x,y = 1}^{N_\text{h}}\!h_{xy}^{(j)}.
+\end{align}
+The key terms and notation are defined in Table~\ref{tab:notation}. At the first
+layer, the number of channels $N_\text{c}$ is equal to the number of input
+modalities. For subsequent layers, $N_\text{c}$ is equal to the number of
+filters of the previous layer.
+
+\begin{table} 
+\caption{Key variables and notation. For notational simplicity,
+we assume the input images to be square 2D images.}
+\label{tab:notation}
+\begin{center}
+\begin{tabular}{@{}cL{10cm}@{}}
+\toprule
+Symbol & Description \\
+\cmidrule(r){1-1}\cmidrule(l){2-2}
+$\vect{v}^{(i)}$ & $i$th input channel \\
+$\vect{h}^{(j)}$ & $j$th output channel or feature map \\
+$\vect{w}^{(ij)}$ & weights of filter kernels connecting visible units
+$\vect{v}^{(i)}$ to hidden units $\vect{h}^{(j)}$ \\
+$b_i$ & bias terms of visible units \\
+$c_j$ & bias terms of hidden units \\
+$N_\text{c}$ & number of channels of the visible units \\
+$N_\text{v}^2$ & number of visible units per channel \\
+$N_\text{k}$ & number of filters and feature maps \\
+$N_\text{h}^2$ & number of hidden units per feature map \\
+%$N_\text{w}^2$ & number of weights per filter kernel \\
+$\bullet$ & element-wise product followed by summation \\
+$*$ & valid convolution \\
+$\circledast$ & full convolution \\
+$\tilde{\vect{w}}^{(ij)}$ & horizontally and vertically flipped version of
+$\vect{w}^{(ij)}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+The posterior distributions $p(\vect{h} \given \vect{v})$ and $p(\vect{v} \given
+\vect{h})$ can be derived from the energy equation and are given by
+\begin{align}
+p(h_{xy}^{(j)} = 1 \given \vect{v}) &= \sigm\Big(\sum_{i=0}^{N_\text{c}-1}
+(\tilde{\vect{w}}^{(ij)}*\vect{v}^{(i)})_{xy} + c_j\Big), \\ 
+p(v_{xy}^{(i)} = 1 \given \vect{h}) &= \sigm\Big(\sum_{j=0}^{N_\text{k}-1}
+(\vect{w}^{(ij)} \circledast \vect{h}^{(j)})_{xy} + b_i\Big).
+\end{align}
+To train a convRBM on a set of images $\data = \{\vect{v}_n \given n \in
+[1,N]\}$, the weights and bias terms can be learned by CD. During each iteration
+of the algorithm, the gradient of each parameter is estimated and a gradient
+step with a fixed learning rate is applied. The gradient of the filter weights
+can be approximated by
+\begin{equation}
+\Delta \vect{w}^{(ij)} \approx
+\frac{1}{N}(\vect{v}^{(i)}_n*\tilde{\vect{h}}^{(j)}_n -
+\vect{v}'^{(i)}_n*\tilde{\vect{h}}_n'^{(j)}),
+\label{eq:convgra}
+\end{equation}
+where $\vect{h}_n^{(j)}$ and $\vect{h}'^{(j)}_n$ are samples drawn from
+$p(\vect{h}^{(j)} \given \vect{v}_n)$ and $p(\vect{h}^{(j)} \given
+\vect{v}'_n)$, and $\vect{v}'^{(i)}_n = \E[\vect{v}^{(i)} \given \vect{h}_n]$.
+
+Different types of operations \citep{scherer2010} have been
+proposed for the pooling layers, with the common goal of creating a more compact
+representation of the input data. The most commonly used type of pooling is
+max-pooling. Therefore, the input to the pooling layer is divided into small
+blocks and only the maximum value of each block as passed on to the next layer,
+which makes the representation of the input invariant to small
+translations in addition to reducing its dimensionality.
+
+\subsection{Strided Convolutional Models}
+
+% Why strided! Less memory, faster, no pooling required. Better correspondence
+% to dense DBNs. Draw from the journal paper.
+
+Strided convolutions are a type of convolution that shifts the filter kernel as
+a sliding window with a step size or stride $s > 1$, stopping at only $N_\text{v}
+/ s$ positions. This reduces the number of hidden units per channel to
+$N_\text{h} = N_\text{v} / s$, hence significantly reducing training times and
+memory required for storing the hidden units during training. The energy of a
+strided convolutional RBM (sconvRBM) is defined as
+\begin{equation} 
+E(\vect{v},\vect{h}) = 
+-\sum_{i=0}^{N_\text{c}-1}\sum_{j=0}^{N_\text{k}-1}\sum_{x,y=0}^{N_\text{h}-1}
+\sum_{u,v=-\lfloor N_\text{w}/2\rfloor}^{\lfloor(N_\text{w}-1)/2\rfloor}
+\hspace{-1.2em}h_{xy}^jw_{uv}^{ij}v_{sx+u, sy + v}^i -
+\sum_{i=0}^{N_\text{c}-1}b_i\!\sum_{x,y = 0}^{N_\text{v}-1}\!v_{xy}^i -
+\sum_{j=0}^{N_\text{k}-1}c_j\!\sum_{x,y = 0}^{N_\text{h}-1}\!h_{xy}^j
+\end{equation}  
+
+\subsection{Alternative Feature Learning Approaches}
+
+Stacked auto encoders and denoising autoencoders without math. Independent
+component analysis and independent subspace analysis. Need to read about this.

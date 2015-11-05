@@ -1,0 +1,204 @@
+\begin{tikzpicture}[node distance=0.9cm and 4.5cm]
+
+\tikzstyle{every node}+=[font=\scriptsize\sffamily]
+\tikzstyle{label}=[font=\footnotesize\sffamily]
+\tikzstyle{lines}=[dashed,opacity=0]
+\tikzstyle{mymatrix}=[%
+  matrix of nodes,%
+  inner sep=0pt,
+  nodes={inner sep=2pt},
+  %draw,%
+  left delimiter  = (,%
+  right delimiter = )%
+]
+
+\tikzstyle{every pin}+=[inner sep=2pt,align=center,pin
+distance=0.1cm,font=\footnotesize\sffamily]
+
+% \matrix [mymatrix] (image) {
+% |[red]|4  & |[green]|5  & |[red]|1  & |[green]|2  & |[red]|1  & |[green]|2  \\
+% |[blue]|4 & |[yellow]|2 & |[blue]|5 & |[yellow]|1 & |[blue]|1 & |[yellow]|2 \\
+% |[red]|4  & |[green]|5  & |[red]|1  & |[green]|2  & |[red]|1  & |[green]|2  \\
+% |[blue]|4 & |[yellow]|2 & |[blue]|5 & |[yellow]|1 & |[blue]|1 & |[yellow]|2 \\
+% |[red]|4  & |[green]|5  & |[red]|1  & |[green]|2  & |[red]|1  & |[green]|2  \\
+% |[blue]|4 & |[yellow]|2 & |[blue]|5 & |[yellow]|1 & |[blue]|1 & |[yellow]|2 \\
+% };
+
+\matrix [mymatrix] (image) {
+4 & 2 & 1 & 8 & 2 & 7 \\
+4 & 2 & 3 & 4 & 3 & 1 \\
+3 & 4 & 5 & 5 & 1 & 2 \\
+7 & 5 & 1 & 2 & 2 & 3 \\
+2 & 1 & 2 & 2 & 7 & 5 \\
+6 & 9 & 5 & 4 & 6 & 6 \\
+};
+
+\matrix [mymatrix, below=of image] (kernel) {
+0.1 & -0.1 & 0.3 & 0.4 \\
+0.2 & -0.3 & 0.1 & 0.1 \\
+-0.4 & 0.2 & 0.2 & -0.3 \\
+0.5 & -0.2 & -0.2 & 0.4 \\
+};
+
+\matrix [mymatrix, below=of kernel,thick] (map) {
+%\matrix [mymatrix, above=of image,thick] (map) {
+|[red]|\bfseries 6.8 & |[blue]|\bfseries 2  \\
+\bfseries 4.6 &  \bfseries 3.6 \\
+};
+
+\node[fit=(image-1-1)(image-4-4), xshift=-0.5pt, yshift=-0.5pt, draw=red,inner
+sep=0,thick] (window1) {};
+
+\node[fit=(image-1-3)(image-4-6), xshift=0.5pt, yshift=0.5pt, draw=blue,inner
+sep=0,thick,pin=45:{Sliding filter\\ window}] (window2) {};
+
+\draw[decorate,decoration={brace,raise=1pt}] (window1.north
+west|-window2.north west)--node[above=3pt,fill=white,fill opacity=0.5,text
+opacity=1,font=\small]{$s$}(window2.north west);
+
+\begin{pgfonlayer}{background}
+\foreach \x in {1,3,5} {
+  \foreach \y in {1,3,5}
+    \node[fit=(image-\x-\y),inner sep=0, fill=red!15] {};
+  \foreach \y in {2,4,6}
+    \node[fit=(image-\x-\y),inner sep=0, fill=green!15] {};
+}
+\foreach \x in {2,4,6} {
+  \foreach \y in {1,3,5}
+    \node[fit=(image-\x-\y),inner sep=0, fill=blue!15] {};
+  \foreach \y in {2,4,6}
+    \node[fit=(image-\x-\y),inner sep=0, fill=yellow!30] {};
+}
+\foreach \x in {1,3} {
+  \foreach \y in {1,3}
+    \node[fit=(kernel-\x-\y),inner sep=0, fill=red!15] {};
+  \foreach \y in {2,4}
+    \node[fit=(kernel-\x-\y),inner sep=0, fill=green!15] {};
+}
+\foreach \x in {2,4} {
+  \foreach \y in {1,3}
+    \node[fit=(kernel-\x-\y),inner sep=0, fill=blue!15] {};
+  \foreach \y in {2,4}
+    \node[fit=(kernel-\x-\y),inner sep=0, fill=yellow!30] {};
+}
+\end{pgfonlayer}
+
+\node[align=center] at ($(image.south)!0.5!(kernel.north)$) {\footnotesize $*$\\
+(with a step size of $s$)};
+
+%\node at ($(image.north)!0.5!(map.south)$) {$=$};
+\node[label] at ($(kernel)!0.65!(map)$) {$=$};
+
+\begin{scope}[on grid,node distance=2cm and 1.95cm] 
+\matrix [mymatrix, right=3.8cm of image,fill=red!15] (image1) {
+4 & 1 & 2 \\
+3 & 5 & 1 \\
+2 & 2 & 7 \\
+};
+
+\matrix [mymatrix, right=of image1,fill=green!15] (image2) {
+2 & 8 & 7 \\
+4 & 5 & 2 \\
+1 & 2 & 5 \\
+};
+
+\matrix [mymatrix, right=of image2,fill=blue!15] (image3) {
+4 & 3 & 3 \\
+7 & 1 & 2 \\
+6 & 5 & 6 \\
+};
+
+\matrix [mymatrix, right=of image3,fill=yellow!30] (image4) {
+2 & 4 & 1 \\
+5 & 2 & 3 \\
+9 & 4 & 6 \\
+};
+
+\matrix [mymatrix, right=3.8cm of kernel,fill=red!15] (kernel1) {
+0.1 & 0.3 \\
+-0.4 & 0.2 \\
+};
+
+\matrix [mymatrix, right=of kernel1,fill=green!15] (kernel2) {
+-0.1 & 0.4 \\
+0.2 & -0.3 \\
+};
+
+\matrix [mymatrix, right=of kernel2,fill=blue!15] (kernel3) {
+0.2 & 0.1 \\
+0.5 & -0.2 \\
+};
+
+\matrix [mymatrix, right=of kernel3,fill=yellow!30] (kernel4) {
+-0.3 & 0.1 \\
+-0.2 & 0.4 \\
+};
+
+\matrix [mymatrix, right=3.8cm of map] (map1) {
+\textcolor{red}{0.5} & \textcolor{blue}{-1.1}  \\
+1.4 & 1.4 \\
+};
+\matrix [mymatrix, right=of map1] (map2) {
+\textcolor{red}{2.3} & \textcolor{blue}{2.4}  \\
+1.2 & -0.8   \\
+};
+\matrix [mymatrix, right=of map2] (map3) {
+\textcolor{red}{4.4} & \textcolor{blue}{1}  \\
+3.5 & 1.7  \\
+};
+\matrix [mymatrix, right=of map3] (map4) {
+\textcolor{red}{-0.4} & \textcolor{blue}{-0.3}  \\
+-1.5 & 1.3 \\
+};
+\matrix [mymatrix, right=of map4, thick] (map5) {
+|[red]|\textbf{6.8} & |[blue]|\textbf{2}  \\
+\textbf{4.6} & \textbf{3.6}   \\
+};
+
+\foreach \x in {1,...,4} {
+  \node[fit=(image\x-1-1)(image\x-2-2), draw=red,inner sep=0,thick,
+  xshift=-0.5pt, yshift=-0.5pt] {};
+  
+  \node[fit=(image\x-1-2)(image\x-2-3), draw=blue,inner sep=0,thick,
+  xshift=0.5pt, yshift=0.5pt] {};
+  \node[label] at ($(image\x.south)!0.5!(kernel\x.north)$) {$*$};
+  %\node at ($(image\x.north)!0.5!(map\x.south)$) {$=$};
+  \node[label] at ($(kernel\x)!0.65!(map\x)$) {$=$};
+}
+
+\node at ($(map1.east)!0.5!(map2.west)$) {$+$};
+\node at ($(map2.east)!0.5!(map3.west)$) {$+$};
+\node at ($(map3.east)!0.5!(map4.west)$) {$+$};
+\node at ($(map4.east)!0.5!(map5.west)$) {$=$};
+
+\node[left=1.85cm of image,rotate=90,label] {Image
+$\vect{v}^0$};
+\node[left=1.85cm of kernel,rotate=90,align=center,label]
+{Filter $\vect{w}^{0,j}$};
+\node[left=1.85cm of map,rotate=90,align=center,label] (maplabel)
+{Feature};
+\node[right=1em of maplabel,rotate=90,label] {map $\vect{h}^j$};
+
+\draw[->,shorten <=10pt, shorten >=10pt] (image)--
+node[above,label]{Rearrange}node[below,label]{pixels}(image1);
+
+\draw[->,shorten <=10pt, shorten >=10pt] (kernel)--
+node[above,label]{Rearrange}node[below,label]{pixels}(kernel1);
+
+\foreach\x in {1,...,4} {
+\draw[decorate,decoration={brace,raise=2pt}]
+(image\x.south east)--node[below=4pt,label]
+{$\vect{V}^{\pgfmathparse{int(\x-1)}\pgfmathresult{}}$} (image\x.south west);
+
+\draw[decorate,decoration={brace,raise=2pt}]
+(kernel\x.south east)--node[below=4pt,label]
+{$\vect{W}^{\pgfmathparse{int(\x-1)}\pgfmathresult,j}$} (kernel\x.south west);
+}
+
+\draw[decorate,decoration={brace,raise=2pt}]
+(map5.south east)--node[below=4pt,label]
+{$\vect{h}^{j}$} (map5.south west);
+
+\end{scope}
+
+\end{tikzpicture}

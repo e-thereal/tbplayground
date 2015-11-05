@@ -1,0 +1,296 @@
+\usepackage{ifthen}
+
+% Charater sets, fonts and basics
+\usepackage{fixltx2e}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[english]{babel}
+\usepackage[english=british]{csquotes}
+
+%\usepackage{lmodern}
+\usepackage[sc, osf]{mathpazo}
+\renewcommand*\sfdefault{uop}
+\usepackage[scaled=.9]{luximono}
+\linespread{1.10}
+\usepackage{microtype}
+\makeatletter
+\def\MT@register@subst@font{\MT@exp@one@n\MT@in@clist\font@name\MT@font@list
+   \ifMT@inlist@\else\xdef\MT@font@list{\MT@font@list\font@name,}\fi}
+\makeatother 
+
+% Math stuff
+%\usepackage{dsfont,amsmath,amssymb,latexsym,soul}
+\usepackage{amsmath,mathtools}
+\usepackage{amsbsy,dsfont,soul,calc}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sigm}{sigm}
+\DeclareMathOperator{\fft}{fft}
+\DeclareMathOperator{\ifft}{ifft}
+\sodef\so{}{.14em}{.4em plus.1em minus .1em}{.4em plus.1em minus .1em}
+
+\usepackage[autokw]{svn-multi}
+\svnid{$Id: preamble.tex 41 2012-08-01 17:29:41Z tbrosch $}
+
+% Tikz
+\usepackage{atbegshi}
+\usepackage{tikz}
+\usetikzlibrary{intersections,decorations.pathreplacing,fit,calc,positioning,shapes.geometric,matrix}
+\tikzstyle{every node}+=[font=\sffamily\small]
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=tikzfigures/temp/] % activate
+%\tikzset{external/export=false}
+\newcommand{\tikzexternal}[2][false]{%
+%\tikzset{external/export=true, external/remake next=#1}%
+%\tikzsetnextfilename{#2}%
+}
+
+% Special Table hacks
+\usepackage{array,booktabs,dcolumn,rotating,multirow,etoolbox}
+
+\robustify\bfseries % requires etoolbox
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\newcolumntype{d}[1]{%
+>{\DC@{.}{.}{#1}}l<{\DC@end}%
+}
+
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+%\usepackage[sf,SF]{subfigure}
+\usepackage[font={sf,small},labelfont=md,subrefformat=parens]{subfig}
+
+% Units
+\usepackage{xfrac}
+\usepackage[alsoload=binary]{siunitx}
+\sisetup{
+  seperr,
+  %repeatunits=false,
+  product-units = single,
+  trapambigerr=false,
+  trapambigrange=false,
+  %tophrase={{ bis }},
+  valuemode=math,
+  unitmode=math,
+  quotient-mode=fraction,
+  fraction-function=\sfrac
+}
+
+\usepackage{tocstyle}
+\newtocstyle[KOMAlike][leaders]{thesis}{
+  %\settocfeature[-1]{dothook}{\bfseries}
+  %\settocfeature[0]{dothook}{\bfseries}
+}
+\usetocstyle{thesis}
+
+% Enumerates
+\usepackage{paralist}
+
+\usepackage{varioref}
+\usepackage[
+    pdftex,
+	pdfpagemode=UseOutlines,
+	pdfdisplaydoctitle=true,
+	pdflang=en,
+	pagebackref,
+	bookmarksopen=true,
+	bookmarksopenlevel={1}
+]{hyperref}
+
+% % Change Layout of Backref
+\renewcommand*{\backref}[1]{%
+  % default interface
+  % #1: backref list
+  %
+  % We want to use the alternative interface,
+  % therefore the definition is empty here.
+}%
+\renewcommand*{\backrefalt}[4]{%
+  % alternative interface
+  % #1: number of distinct back references
+  % #2: backref list with distinct entries
+  % #3: number of back references including duplicates
+  % #4: backref list including duplicates
+  \ifnum#1=0%
+  \footnotesize\sffamily\color{red!50!gray}(not cited)%
+  \else%
+  \ifnum#1=1%
+  \footnotesize\sffamily\color{gray}(cited on page~#2)%
+  \else%
+  \footnotesize\sffamily\color{gray}(cited on pages~#2)%
+  \fi%
+  \fi%
+}
+
+% Extraabstand fuer Fussnoten
+\setlength{\skip\footins}{2em}
+
+% Handle floats right
+%\usepackage[above,below]{placeins}
+%\usepackage{placeins}
+
+\usepackage[version=3]{mhchem}
+
+%\bibliographystyle{plain}
+\usepackage{bibgerm}
+\usepackage[sort]{natbib}
+\bibliographystyle{gerapali}
+%\bibliographystyle{gerplain}
+
+% Listings
+\usepackage{listings}
+
+% Color definition
+% Define special colors
+\definecolor{listcomment}{rgb}{0.325,0.761,0.259}
+\definecolor{listkeyword}{rgb}{0.243,0.306,0.408}
+\definecolor{listnumbers}{gray}{0.65}
+\definecolor{listlightgray}{gray}{0.955}
+\definecolor{shadecolor}{named}{listlightgray}
+\definecolor{stringcolor}{rgb}{0.341,0.243,0.416}
+
+% Setup the listings environment
+\lstset{
+  frame = tb,
+  framerule = 0.25pt,
+  float,
+  backgroundcolor={\color{listlightgray}},
+  basicstyle = {\ttfamily\footnotesize},
+  keywordstyle = {\ttfamily\color{listkeyword}\textbf},
+  identifierstyle = {\ttfamily},
+  commentstyle = {\ttfamily\color{listcomment}\textit},
+  stringstyle = {\ttfamily\color{stringcolor}},
+  showstringspaces = false,
+  showtabs = false,
+  numbers = left,
+  numbersep = 6pt,
+  numberstyle={\ttfamily\color{listnumbers}},
+  tabsize = 2,
+  language=C++,
+  floatplacement=tb
+  captionpos=b,
+  escapeinside={<@}{@>},
+  abovecaptionskip=7pt,
+  morekeywords={__global__, __host__, __device__, uint, texture, float4, fmatrix4}
+}
+
+\usepackage[vlined,linesnumbered]{algorithm2e}
+\SetNlSty{}{}{}
+\SetArgSty{}
+\DontPrintSemicolon
+
+\usepackage[acronym,nonumberlist,toc,nomain]{glossaries}
+\renewcommand*{\glspostdescription}{}
+\setlength{\glsdescwidth}{0.7\textwidth}
+\glossarystyle{super}
+\renewcommand*{\glsgroupskip}{}
+
+\AtBeginDocument{\labelformat{lstlisting}{Listing #1}}
+\AtBeginDocument{\labelformat{chapter}{Chap\mbox{ter #1}}}
+\AtBeginDocument{\labelformat{section}{Sec\mbox{tion #1}}}
+\AtBeginDocument{\labelformat{subsection}{Sec\mbox{tion #1}}}
+\AtBeginDocument{\labelformat{equation}{(#1)}}
+\AtBeginDocument{\labelformat{table}{T\mbox{able #1}}}
+\AtBeginDocument{\labelformat{figure}{F\mbox{igure #1}}}
+\AtBeginDocument{\labelformat{Definition}{D\mbox{efinition #1}}}
+%\AtBeginDocument{\labelformat{Satz}{Satz~#1}}
+%\AtBeginDocument{\labelformat{Beispiel}{Beispiel~#1}}
+%\AtBeginDocument{\labelformat{Beweis}{Beweis~#1}}
+
+% Headings and footer
+\usepackage{scrpage2}
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ohead{\headmark}
+\ofoot[\pagemark]{\pagemark}
+
+\setheadsepline{.4pt}
+\addtokomafont{pageheadfoot}{\normalfont\sffamily\small}
+\addtokomafont{caption}{\sffamily\small}
+\addtokomafont{captionlabel}{\sffamily\bfseries\small}
+\addtokomafont{pagefoot}{\normalsize}
+%\addtokomafont{chapter}{\glsresetall}
+%\addtokomafont{page}{\normalsize}
+%\automark[subsection]{section}
+\automark{chapter}
+
+%\addtokomafont{section}{
+%{\tikzset{external/export=false}\tikz \fill[left color=primary-4,right color=white] (0,0) rectangle (\textwidth,1pt);}\\*}
+\addtokomafont{dictumtext}{\normalfont\itshape}
+\addtokomafont{dictumauthor}{\normalfont}
+
+%\newcommand{\intro}[1]{\paragraph{Introduction}{\itshape #1}}
+\newcommand{\intro}[1]{\noindent {\itshape #1}}
+\newcommand{\question}[1]{\paragraph{Question}{\itshape #1}}
+\newcommand{\answer}{\paragraph{Answer}}
+
+\newcommand{\qa}[1]{\question{#1}\answer}
+
+
+\usepackage[textwidth=3.3cm, textsize=footnotesize,
+colorinlistoftodos, shadow]{todonotes}
+\usepackage{textcomp,xspace}
+\usepackage{dsfont,amsmath,amssymb,amsbsy}
+\usepackage{setspace,comment}
+
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\Q}{\ensuremath{\mathds{Q}}}
+\newcommand{\N}{\ensuremath{\mathds{N}}}
+\newcommand{\I}{\ensuremath{\mathds{I}}}
+\newcommand{\E}{\ensuremath{\mathds{E}}}
+\newcommand{\Z}{\ensuremath{\mathds{Z}}}
+\newcommand{\D}{\ensuremath{\mathds{D}}}
+\newcommand{\W}{\ensuremath{\mathds{W}}}
+\newcommand{\B}{\ensuremath{\mathds{B}}}
+\newcommand{\Sn}{\ensuremath{\mathds{S}}}
+
+\newcommand{\thetas}{\boldsymbol{\theta}}
+\newcommand{\deltas}{\boldsymbol{\delta}}
+\newcommand{\data}{\mathcal{D}}
+\newcommand{\Norm}{\ensuremath{\mathcal{N}}}
+\newcommand{\given}{\mid}
+
+% Define a counter for the inserted todonotes.
+\newcounter{todoListItems}
+\newcommand{\todoTrans}[2][ ]{%
+	% Increment counter
+	\addtocounter{todoListItems}{1}%
+	\todo[%
+		caption={\protect\hypertarget{todo\thetodoListItems}{}#2},
+		#1]
+	{
+		\sffamily #2 \hfill
+		\hyperlink{todo\thetodoListItems}{$\uparrow$}
+	}
+}
+
+\newcommand{\addref}{\todoTrans[color=blue!40]{Needs reference.}\xspace}
+\newcommand{\addcontent}[1]{\todoTrans[color=green!40, inline]{#1}\xspace}
+\newcommand{\rewrite}[1]{\todoTrans[color=red!40]{#1}\xspace}
+\newcommand{\clarify}[1]{\todoTrans[color=orange!40]{#1}\xspace}
+\newcommand{\thoughts}[1]{\todoTrans[color=orange!40,
+inline]{\textbf{Thoughts:} #1}\xspace}
+
+
+\mathchardef\ordinarycolon\mathcode`\:
+\mathcode`\:=\string"8000
+\begingroup \catcode`\:=\active
+  \gdef:{\mathrel{\mathop\ordinarycolon}}
+\endgroup
+
+\usepackage{datetime}
+
+\newdateformat{thesisdate}{%
+\monthname[\THEMONTH] \THEYEAR}
+
+% Schuster jungen und hurenkinder
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+
+\newcommand{\vs}{\emph{vs}\xspace}
