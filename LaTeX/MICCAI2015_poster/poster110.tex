@@ -13,7 +13,7 @@ fontscale=0.32
 
 \usepackage{marvosym,url,siunitx,paralist}
 \usepackage{amsmath,amssymb,booktabs,dsfont,comment,epstopdf,multirow}
-\usepackage{etoolbox}
+\usepackage{etoolbox,tabularx}
 \robustify\bfseries % requires etoolbox
 \newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
 
@@ -102,7 +102,7 @@ fontscale=0.32
 }
 %%% Eye Catcher %%%
 {
-\includegraphics[width=0.17\textwidth]{images/Logo_MICCAI15}
+\includegraphics[width=0.155\textwidth]{images/Logo_MICCAI15}
 }
 %%% Title %%%
 {
@@ -125,7 +125,8 @@ Roger Tam\inst{2,4}\\[0.65ex]
 \normalsize \inst{1}Department of Electrical and Computer Engineering,
 UBC\quad \inst{2}Department of Radiology, UBC\\[0.65ex]
 \inst{3}Division of Neurology, UBC\quad
-\inst{4}MS/MRI Research Group, University of British Columbia, Vancouver, Canada
+\inst{4}MS/MRI Research Group, The University of British Columbia, Vancouver,
+Canada
 %\\[0.65ex]
 }
 %%% Logo %%%
@@ -134,7 +135,7 @@ UBC\quad \inst{2}Department of Radiology, UBC\\[0.65ex]
 \\
 \includegraphics[height=0.08\textwidth]{images/s4b282c}\\
 \addlinespace
-\includegraphics[height=0.04\textwidth]{images/msmri_simple}
+\includegraphics[height=0.038\textwidth]{images/msmri_simple}
 \end{tabular}
 }
 
@@ -165,8 +166,7 @@ progression and treatment effect.
 % intensity and location, which makes their automatic and accurate segmentation
 % challenging.
 \item We propose a new method for segmenting MS lesions that processes entire
-MRI volumes through a neural network
-%with a novel objective function
+MRI volumes through a neural network with a novel objective function
 to automatically learn features tuned for lesion segmentation. 
 \end{compactitem}
 \end{headerblock}
@@ -223,6 +223,7 @@ I_\text{T2})$, to corresponding lesion masks $S$.
 \item Given a training set $(I_n,S_n)$, finding $s$ is modeled as an
 optimization problem of the following form
 \begin{equation}
+\nonumber
 \hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n))
 \label{eq:segprob}
 \end{equation}
@@ -235,9 +236,11 @@ error measure.
 \item The set of possible segmentation functions, $\mathcal{S}$, is modeled by
 the following 3-layer convolutional encoder network:
 \end{compactitem}
+\vspace{0.5em}
 \begin{center}
 \input{figures/encoder2}
 \end{center}
+\vspace{0em}
 % %\end{headerblock}
 % 
 % %\begin{headerblock}{Method (continued)}{row=0, column=1,name=method}
@@ -248,17 +251,18 @@ modalities.
 each voxel location.
 \item The deconvolutional layer uses the extracted features to predict a lesion
 mask and thereby classify each voxel of the image in a single operation.
-\item The error measure, $E$, is a weighted sum of the mean squared
-difference of the lesion voxels (sensitivity) and non-lesion voxels
-(specificity), reformulated to be error terms.
+\item The error measure, $E$, is a weighted sum of the mean of squared
+differences of the lesion voxels (sensitivity) and non-lesion voxels
+(specificity), reformulated to be error terms:
+\end{compactitem}
 \begin{equation}
+\nonumber
 E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
 +(1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 \end{equation}
-\end{compactitem}
 % % \begin{multline}
 % % E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
 % % y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}\\
@@ -267,7 +271,7 @@ y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 % % y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 % % \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}
 % % \end{multline}
-\vspace{1.5em}
+\vspace{0em}
 \end{headerblock}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,24 +282,27 @@ y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 
 \minisection{Evaluation on Public Data}
 \begin{compactdesc}
-\item[Dataset] FLAIR, T1-, and T2-weighted MRIs of the
+\item[Data set] FLAIR, T1-, and T2-weighted MRIs of the
 20 publicly available labeled cases from the MS lesion segmentation challenge
-2008 \cite{styner20083d}.
+2008 [1].
 \item[Pre-processing] Downsampled from the original isotropic voxel
 size of \SI{0.5}{\cubic\milli\metre} to an isotropic voxel size of
-\SI{1.0}{\cubic\milli\metre}
+\SI{1.0}{\cubic\milli\metre}.
 \end{compactdesc}
 \begin{compactitem}
-\item Example segmentations of our method for three different subjects.
+% TODO space
+\item Example segmentations of our method for three different subjects are
+shown below.
 \item Our method performed well and consistently despite the
 large contrast differences seen between the first two rows.
 \item In the third row, our method also segmented regions that have similar
 contrast, although these regions had not been identified as lesions by the
-manual rater.
+manual rater, which highlights the difficulty in distinguishing focal
+lesions from diffuse damage, even for experts.
 \end{compactitem}
 
 % \vspace{0.5em}
-\def\MRIwidth{0.13\textwidth}
+\def\MRIwidth{0.11\textwidth}
 \begin{center}
 \begin{tikzpicture}[every node/.append style={font=\footnotesize}]
 \tikzstyle{leftlabel}=[rotate=90, align=center,above]
@@ -328,8 +335,8 @@ sep=1.5pt}] {
 
 %\begin{headerblock}{Evaluation (continued)}{row=0, column=2, name=evaluation}
 \begin{compactitem}
-\item Comparison of our method with state-of-the-art lesion segmentation
-methods in terms of mean TPR, PPV, and DSC.
+\item As shown in the table below, our method compares favorably with the best
+methods reported on the MS lesion segmentation challenge 2008 data set.
 \end{compactitem}
 \begin{center}
 \def\tabspace{12pt}
@@ -341,9 +348,9 @@ methods in terms of mean TPR, PPV, and DSC.
 \toprule
 Method & {TPR} & {PPV} & {DSC} \\ 
 \midrule
-Souplet et al. [1] & 20.65 & 30.00 & {---} \\ 
-Weiss et al. [2] & 33.00 & 36.85 & 29.05 \\ 
-Geremia et al. [3] & 39.85 & 40.35 & {---}  \\
+Souplet et al. [2] & 20.65 & 30.00 & {---} \\ 
+Weiss et al. [3] & 33.00 & 36.85 & 29.05 \\ 
+Geremia et al. [4] & 39.85 & 40.35 & {---}  \\
 Our method & 39.71 & 41.38 & 35.52 \\
 \bottomrule
 \end{tabular}
@@ -352,8 +359,8 @@ Our method & 39.71 & 41.38 & 35.52 \\
 \minisection{Evaluation on a Large Data Set from an MS Clinical Trial}
 
 \begin{compactdesc}
-\item[Dataset] The T2- and PD-weighted MRIs of 500 subjects acquired from 45
-different scanning were sites split equally into training and test sets.
+\item[Data set] The T2- and PD-weighted MRIs of 500 subjects acquired from 45
+different scanning sites were split equally into training and test sets.
 \item[Pre-processing] Rigid intra-subject registration, brain extraction,
 intensity normalization, and background cropping.
 %(\SI{0.937x0.937x3.000}{\milli\metre})  
@@ -361,11 +368,13 @@ intensity normalization, and background cropping.
 \begin{compactitem}
 \item Comparison of DSC scores calculated on the training and test sets for
 varying numbers of training samples.
-\item Approximately 100 samples are required to train the model without
+\item Approx. 100 samples were required to train the model without
 overfitting.
+%\item Segmentation performance can be greatly improved by having a
+%representative data set.
 \end{compactitem}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{figures/train_count}
+\includegraphics[width=0.85\textwidth]{figures/train_count}
 \end{center}
 \end{headerblock}
 
@@ -417,17 +426,22 @@ Engineering Research Council of Canada and the Milan and Maureen Ilich Foundatio
 
 \begin{headerblock}{References}{%below=evaluation,
 column=2,span=2,above=bottom}
-\small
-\begin{compactenum}[{[1]}]
-\item[{[1]}] Souplet et al., ``An automatic segmentation
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}l@{\hspace{4pt}}X@{}}
+{[1]} & Styner et al., ``3D segmentation in the clinic: A grand challenge
+II: MS lesion segmentation'' In: MIDAS Journal - MICCAI 2008 Workshop, pp. 1--6
+\\
+{[2]} & Souplet et al., ``An automatic segmentation
 of T2-FLAIR multiple sclerosis lesions.'' In: MIDAS Journal -- MICCAI 2008
-Workshop (2008)
-\item[{[2]}] Weiss et al., ``Multiple sclerosis lesion segmentation using
-dictionary learning and sparse coding.'' In: MICCAI 2013, Part I. LNCS, vol. 8149, pp. 735--742.
-\item[{[3]}] Geremia et al., ``Spatial decision forests for MS lesion
-segmentation in multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol. 6361, pp.
-111--118.
-\end{compactenum}
+Workshop (2008) \\
+{[3]} & Weiss et al., ``Multiple sclerosis lesion segmentation using
+dictionary learning and sparse coding.'' In: MICCAI 2013, Part I. LNCS, vol.
+8149, pp. 735--742. \\
+{[4]} & Geremia et al., ``Spatial decision forests for MS lesion
+segmentation in multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol.
+6361, pp. 111--118.
+\end{tabularx}
+
 % [1] Souplet et al., ``An automatic segmentation
 % of T2-FLAIR multiple sclerosis lesions.'' In: MIDAS Journal -- MICCAI 2008
 % Workshop (2008)
@@ -439,18 +453,6 @@ segmentation in multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol. 6
 % multi-channel MR images.'' In: MICCAI 2010, Part I. LNCS, vol. 6361, pp.
 % 111--118.
 \end{headerblock}
-
-% TODO: add references
-% TODO: Put a picture of me on the poster so people can find me at the
-% conference if I'm not at my poster
-
-% \headerbox{Contact}{name=contact,below=acknowledge}{
-% Please contact us via e-mail:
-% \begin{compactitem}
-%   \item Tom Brosch: \texttt{tombr@msmri.medicine.ubc.ca}
-%   \item Roger Tam: \texttt{roger.tam@ubc.ca}
-% \end{compactitem}
-% }
 
 \end{poster}
 

@@ -39,8 +39,8 @@ coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
 }
 
 \node[xshift=-0.7cm, yshift=10pt, left] (flair) at (A3) {$I_\text{FLAIR}$};
-\node[xshift=-0.7cm, yshift=3pt, left] (t1w) at (A2) {$I_\text{T1}$}; 
-\node[xshift=-0.7cm, yshift=-3pt, left] (t2w) at (A1) {$I_\text{T2}$};
+\node[xshift=-0.7cm, yshift=3pt, left] (t1w) at (A2) {$I_\text{T1w}$}; 
+\node[xshift=-0.7cm, yshift=-3pt, left] (t2w) at (A1) {$I_\text{T2w}$};
 % \node[xshift=-0.7cm, yshift=-10pt, left] (prior) at (A0) {$I_\text{prior}$};
 
 \draw[pinline, shorten >=4pt] (flair) -- (A3);
@@ -48,8 +48,8 @@ coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
 \draw[pinline, shorten >=4pt] (t2w) -- (A1);
 % \draw[pinline, shorten >=4pt] (prior) -- (A0);
 
-% \draw[decorate,decoration={brace,raise=15pt,mirror}] (C1) --
-% node[right=20pt] {$x^{(1)}_i$} (C3);
+\draw[decorate,decoration={brace,raise=15pt,mirror}] (C1) --
+node[right=20pt] {$x^{(1)}_i$} (C3);
 
 \node[xshift=0.5cm, right] (weights) at (c3) {$w^{(1)}_{ij}$};
 \draw[pinline, shorten >=4pt] (weights) -- (c3);
@@ -79,8 +79,8 @@ coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
 \end{scope}
 }
 
-% \draw[decorate,decoration={brace,raise=15pt,mirror}] (G0-|C1) --
-% node[right=20pt] {$x^{(2)}_j = y^{(1)}_j$} (G7-|C1);
+\draw[decorate,decoration={brace,raise=15pt,mirror}] (G0-|C1) --
+node[right=20pt] {$x^{(2)}_j = y^{(1)}_j$} (G7-|C1);
 
 \node[xshift=0.5cm, yshift=-1pt, right] (weights2) at (g7) {$w^{(2)}_{j}$};
 \draw[pinline, shorten >=4pt] (weights2) -- (g7);
@@ -98,13 +98,19 @@ coordinate (B\x) -- (2,2) coordinate (C\x) -- (-2,2) -- cycle;
 \node[xshift=-0.7cm, left] (lesion) at (A) {$S$};
 \draw[pinline, shorten >=4pt] (lesion) -- (A);
 
-% \node[xshift=0.7cm, right] (y2) at (C) {$y^{(2)}$};
-% \draw[pinline, shorten <=4pt] (C) -- (y2);
+\node[xshift=0.7cm, right] (y2) at (C) {$y^{(2)}$};
+\draw[pinline, shorten <=4pt] (C) -- (y2);
 
-\draw[decorate,decoration={brace,raise=15pt,mirror}] (B1-|C) --
-node[right=20pt] {Convolutional\\ layer} (G7-|C1);
+% \draw[decorate,decoration={brace,raise=15pt,mirror}] (B1-|C) --
+% node[right=20pt] {Convolutional\\ layer} (G7-|C1);
+% 
+% \draw[decorate,decoration={brace,raise=35pt,mirror}] (G0-|C1) --
+% node[right=40pt] {Deconvolutional\\ layer} (C);
 
-\draw[decorate,decoration={brace,raise=35pt,mirror}] (G0-|C1) --
-node[right=40pt] {Deconvolutional\\ layer} (C);
+\draw[decorate,decoration={brace,raise=75pt,mirror}] (B1-|C) --
+node[right=80pt] {Convolutional\\ network} (G7-|C1);
+
+\draw[decorate,decoration={brace,raise=95pt,mirror}] (G0-|C1) --
+node[right=100pt] {Deconvolutional\\ network} (C);
 
 \end{tikzpicture}
