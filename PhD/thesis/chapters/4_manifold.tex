@@ -203,7 +203,7 @@ set. The generalizability was measured as the average root mean squared error
 (RMSE) between an image and its reconstruction, normalized by the intensity
 range of the input image. The specificity was measured by calculating the
 average RMSE between images randomly generated from the manifold model and the
-most similar images from the training set. Figure~\ref{fig:genspe}(a) shows a
+most similar images from the training set. \ref{fig:genspe} shows a
 comparison of the reconstruction errors between the training and test sets, and
 the specificity at different layers of the DBN. The similarity of the
 reconstruction errors between the training and test images indicates that no
@@ -219,27 +219,30 @@ be both specific and generalizable.
 
 \begin{figure}[tb]
 \centering
-\subfloat[Generalizability vs. specificity]{
   \input{figures/MICCAI2013_genspe}
-}\qquad \quad\quad 
-\subfloat[Generated images]{
-  \includegraphics[width=0.3\textwidth, trim=0 -4em 0 0]
-  {figures/MICCAI2013_sampled2d}
-} 
 
-\caption{(a) The similarity of the reconstruction errors between the training
-and test images indicates that no overfitting occurs. The opposite slopes of the
-reconstruction errors and error of generated images (specificity error)
+\caption[Generalizability vs. specificity of a DBN for different numbers of
+layers]{Generalizability vs. specificity of a DBN for different numbers of
+layers. The similarity of the reconstruction errors between the training and
+test images indicates that no overfitting occurs. The opposite slopes of the reconstruction errors and error of generated images (specificity error)
 indicates a trade-off between generalizability vs. specificity in the earlier
 phases of training, but the low errors at Layer 5 indicate that the method is
-both generalizable and specific.
-(b) Axial slices from generated volumes from the manifold. An increase of the
-first and second manifold dimension visually correlates with an increase in
-brain and ventricle size, respectively.}
+both generalizable and specific.}
 \label{fig:genspe}
 \end{figure}
 
-Figure~\ref{fig:genspe}(b) shows axial slices of 16 volumes sampled at the
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.3\textwidth, trim=0 -4em 0 0]
+  {figures/MICCAI2013_sampled2d}
+
+\caption[Axial slices from generated volumes from the manifold]{Axial slices
+from generated volumes from the manifold. An increase of the first and second manifold dimension visually correlates with an increase in
+brain and ventricle size, respectively.}
+\label{fig:generated}
+\end{figure}
+
+Figure~\ref{fig:generated} shows axial slices of 16 volumes sampled at the
 grid points of a 2D regular grid in manifold space. Volumes sampled along the
 first manifold dimension (from left to right) appear to increase in brain size,
 and the images sampled along the second manifold dimension (from bottom to top)
@@ -254,8 +257,9 @@ potentially of practical use in differentiating between AD and normal.
 
 \begin{figure}[tb] \centering
 \includegraphics[width=0.75\textwidth]{figures/MICCAI2013_scatter3}
-\caption{Axial slices of volumes from the training set plotted against their
-manifold coordinates. The brains with larger ventricles, indicative of atrophy,
+\caption[Axial slices of volumes from the training set plotted against their
+manifold coordinates]{Axial slices of volumes from the training set plotted
+against their manifold coordinates. The brains with larger ventricles, indicative of atrophy,
 are mostly at the top, which is also where most of the AD patients are.}
 \label{fig:scatter}
 \end{figure}
@@ -277,8 +281,9 @@ brain images for classification and prediction of disease status.
 \begin{table}[tb]
 \small
 \centering
-\caption{Pearson correlation $r$ of demographic and clinical parameters with
-manifold coordinates ($x_1$, $x_2$). The stronger correlation in each column is
+\caption[Pearson correlation of demographic and clinical parameters with
+manifold coordinates]{Pearson correlation $r$ of demographic and
+clinical parameters with manifold coordinates ($x_1$, $x_2$). The stronger correlation in each column is
 highlighted in bold.}
 \sisetup{
   round-mode = places,
@@ -553,8 +558,9 @@ lesions in the entire white matter.
 \draw[->] (manifold.south west)--node[below=4pt,inner sep=0] {$J_x$} (manifold.south east);
 
 \end{tikzpicture}
-} \caption{Slices from generated volumes from the (a) morphology, (b) lesion,
-and (c) joint model. The morphology model captures ventricular
+} \caption[Slices from generated volumes from the morphology, lesion,
+and joint model]{Slices from generated volumes from the (a) morphology, (b)
+lesion, and (c) joint model. The morphology model captures ventricular
 enlargement ($D_1$) and decrease in brain size ($D_2$) as the main modes of
 variation. For the lesion model, $L_1$ captures an increase in lesion load
 throughout the WM, while $L_2$ captures primarily periventricular lesion load
@@ -578,12 +584,12 @@ viewed sagittally, which reveals changes in lesion load in the pons.
 \begin{table}[tb]
 \centering 
 \small
-\caption{Pearson correlations $r$ of clinical
-scores with distribution parameters of the morphology model ($D_1$, $D_2$),
-lesion model ($L_1$, $L_2$), joint model ($J_1$, $J_2$, $J_3$, $J_4$),
-normalized brain volume (nBV), and lesion load (LL). The level of
-statistical significance is indicated by the number of asterisks (* $p < 0.05$,
-** $p < 0.01$, *** $p < 0.001$).
+
+\caption[Pearson correlations of clinical scores with distribution parameters
+and imaging biomarkers]{Pearson correlations $r$ of clinical scores with
+distribution parameters of the morphology model ($D_1$, $D_2$), lesion model ($L_1$, $L_2$), joint model ($J_1$, $J_2$, $J_3$, $J_4$), normalized brain volume (nBV), and
+lesion load (LL). The level of statistical significance is indicated by the
+number of asterisks (* $p < 0.05$, ** $p < 0.01$, *** $p < 0.001$).
 }
 
 %\NewDocumentCommand{\sym}{m}{#1}
@@ -689,7 +695,8 @@ better than the established imaging biomarkers.
 }
 \end{tikzpicture}
 }
-\caption{Axial (top row) and mid-sagittal (bottom row) slices of volumes
+\caption[Axial and mid-sagittal slices of volumes representing the spectrum of
+MSFC scores]{Axial (top row) and mid-sagittal (bottom row) slices of volumes
 representing the spectrum of MSFC scores from \num{1.5} to \num{-4.5}. A
 decrease in MSFC shows the classic pattern of MS pathology.}
 \label{fig:msspectrum}

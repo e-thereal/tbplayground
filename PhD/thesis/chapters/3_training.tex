@@ -191,9 +191,9 @@ $\Delta\hat{\vect{W}} = 0$\;
 \end{algorithm}
 \end{minipage}
 }
-\caption{Comparison of training algorithms of convRBMs in (a) the
-spatial and (b) the frequency domain. Training in the frequency domain replaces the
-$5N_\text{k}N_\text{C}$ convolutions required in the spatial domain with simple
+\caption[Comparison of training algorithms of convRBMs in the
+spatial and frequency domain]{Comparison of training algorithms of convRBMs in
+(a) the spatial and (b) the frequency domain. Training in the frequency domain replaces the $5N_\text{k}N_\text{C}$ convolutions required in the spatial domain with simple
 element-wise multiplications, while adding only $4N_\text{k}$ Fourier
 transforms. The other operations are equivalent in both domains.}
 \label{fig:algorithms}
@@ -340,18 +340,18 @@ domain in terms of speed (see Section 3), despite not using batches.
 % GPU-accelerated methods.
 
 \begin{table}[tb]
-\caption{Comparison of the memory required for storing key
-variables using different training methods: our method (Freq), Krizhevsky et al.'s spatial
-domain method (Spat), and Mathieu et al.'s method using batched FFTs (B-FFT). A
-comparison with Mathieu et al.'s method could not be made for the first layer,
-because that method does not support strided convolutions. In all layers, our
-method consumes less memory for storing the key variables than the other two
-methods.}
+
+\caption[Comparison of the memory required for storing key variables using
+different training methods]{Comparison of the memory required for storing key
+variables using different training methods: our method (Freq), Krizhevsky et
+al.'s spatial domain method (Spat), and Mathieu et al.'s method using batched
+FFTs (B-FFT). A comparison with Mathieu et al.'s method could not be made for
+the first layer, because that method does not support strided convolutions. In
+all layers, our method consumes less memory for storing the key variables than
+the other two methods.}
 
 \label{tab:memory}
-\vspace{1em}
 \centering
-
 \sisetup{
   round-mode = places,
   round-precision = 1,
@@ -411,8 +411,8 @@ E(\vect{v},\vect{h}) =
 \begin{figure}[tb]
 \centering
 \input{tikzfigures/sconv}
-\caption{Illustration of convolutions with a sliding window step
-size $s = 2$ as used during filtering in a sconvDBN. A convolution of a given stride size (left
+\caption[Mapping of strided convolutions to stride-1 convolutional]{Illustration
+of convolutions with a sliding window step size $s = 2$ as used during filtering in a sconvDBN. A convolution of a given stride size (left
 side) can be efficiently calculated as the sum of multiple individual
 convolutions with $s = 1$ (right side) after rearranging the pixels of the input
 image and the filter kernels. The bottom row shows the actual values produced by
@@ -483,7 +483,7 @@ test environment are summarized in Table~\ref{tab:hardware}.
 
 \begin{table}
 \centering
-\caption{Training parameters.}\vspace{1em}
+\caption{Training parameters.}
 \begin{tabular}{lcccc}
 \toprule
 Parameter & \multicolumn{2}{c}{ImageNet (2D)} & \multicolumn{2}{c}{OASIS (3D)}
@@ -508,7 +508,6 @@ Batch size & 128 & 128 & 25 & 25 \\
 \begin{table} 
 \centering
 \caption{Hardware specification of our test system.}
-\vspace{1em}
 \label{tab:hardware}
 \begin{tabular} {ll}
 \toprule
@@ -574,8 +573,9 @@ with stride sizes of 1, 2, and 4.] {
 }
 
 \label{fig:run_imgnet}
-\caption{Comparison of running times for training a (a) first and
-(b) second layer sconvRBM on 2D images using our frequency domain method (freq) and three
+\caption[Comparison of running times for training a sconvRBMs on 2D
+images]{Comparison of running times for training a (a) first and (b) second
+layer sconvRBM on 2D images using our frequency domain method (freq) and three
 alternative methods using different convolution implementations: single image
 convolutions (spat1), batched convolutions (spat2), and convolution by using
 FFTs (fft). Due to internal limitations of the implementation of batched
@@ -636,10 +636,197 @@ channels (stride size 1).] {
 \includegraphics{figures/NECO-03-14-2099-Figure-5}
 %\input{r_figures/runtime_oasis_c8-32_bw}
 }
-\caption{Comparison of running times for training a (a) first and (b) second
+\caption[Comparison of running times for training a sconvRBMs on 3D
+images]{Comparison of running times for training a (a) first and (b) second
 layer sconvRBM on 3D volumes using a single 3D image convolution implementation
 (spat), an implementation that calculates convolutions by using FFTs (fft), and
 our proposed implementation in the frequency domain (freq).}
 \label{fig:run_oasis}
 \end{figure}
 
+\subsection{Running Time Comparison with cuDNN on 3D Volumes}
+
+\begin{itemize}
+\item Comparison of the runtime of time critical operations
+\item Only time required to calculate the convolutions in the forward pass,
+backward pass, and calculating the gradient of the filter kernels considered,
+since all other operations are the same
+\item For the frequency domain measurement, also the time to calculate the FFTs
+in order to trim the filter kernels was added.
+\item Varied parameters are the image size, the batch size and the filter size.
+\item All experiments were performed with only 2 layers and comparable large
+images, which represent a typical configuration of the first layer of deep
+learning model, and with medium sized images and 32 channels, which represents
+the second computational layer of a deep learning model.
+\item All parameter of the experiments are summarized in Table~??.
+\end{itemize}
+
+\begin{itemize}
+\item Comparison of training on CNN layer using 3 different implementation: a)
+training in the frequency domain, b) training in the frequency domain after
+padding the input size to the next number $2^a\times3^b\times5^c\times7^d$, and
+c) an implementation based on cuDNN.
+\item All methods require more time with increased image size, where the average
+running time over multiple sizes increases more for the cuDNN implementation.
+\item Calculating the FFT and therefore the running time of the frequency domain
+implementation varies significantly depending on a suitable input image size
+\item Padding is required to achieve consistently high performance compared to
+cuDNN
+\item Improvements over cuDNN are larger for higher number of channels where the
+impact of calculating the FFT on the overall running time is also lower
+\item Going from 2 to 32 channels, the observed speed-up increases from
+approximately 10 times for the 2 channel comparison to approximately 18 times
+for the 32 channel comparison.
+\item Although the unpadded frequency domain implementation varies less for 32
+channels than for the 2 channel case, padding is still advantageous.
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\textwidth]{figures/imagesize}
+\caption[Comparison of running times of key operations for training a single
+CNN layer.]{Comparison of running times of key operations for training a single
+CNN layer for varying number of channels and input sizes. Frequency domain
+training and training using cuDNN scales comparable for small numbers of
+channels. For large numbers of channels, frequency domain method scales
+slightly better to larger images.}
+\end{figure}
+
+\begin{itemize}
+\item Table shows a comparison of running times for varying batch sizes and
+for varying number of channels.
+\item Increasing the batch size has only a minor effect on the running time of
+cuDNN, while significantly increasing the required amount of GPU memory
+\item In contrast, an implementation in the frequency domain does not require
+more memory, because each image is processed individually.
+\item Restricting the size of the learned filters, which requires additional
+calculations of the FFT, only need to be performed once per mini-batch
+\item Consequently, increasing the mini-batch size reduces the impact of filter
+truncating and therefore speeds-up the training
+\end{itemize}
+
+\begin{table}[tb]
+\centering
+
+\caption[Comparison of running times for calculating key operations for training
+a CNN layer for different batch sizes]{Comparison of running times for
+calculating key operations for training a CNN layer for different batch sizes.
+Increasing the batch size reduces the impact of cropping the learned filters on
+the overall running time and consequently reduces the average time to process
+one image. The cuDNN implementation only benefits mildly from using larger
+batches.}
+
+\sisetup{
+  round-mode = places,
+  round-precision = 3,
+  exponent-product = \cdot,
+  detect-weight=true,
+  detect-inline-weight=math,
+  tight-spacing = false,
+  table-align-text-post = false
+}%
+\begin{tabular}{
+S[table-format=2.0]
+S[table-format=1.3]
+S[table-format=1.3]
+S[table-format=1.3]
+S[table-format=1.3]
+S[table-format=1.3]
+}
+\toprule
+{Batch size} & \multicolumn{4}{c}{Running time [s]} \\ 
+& \multicolumn{2}{c}{$2$ channels} & \multicolumn{2}{c}{$32$
+channels}
+\\
+           & {Freq} & {cuDNN} & {Freq} & {cuDNN} \\
+\midrule
+1   &  0.108588  & 1.39723 & 0.152864 & 1.31284 \\
+2   &  0.0814377 & 1.01137 & 0.105898 & 1.30724 \\
+4   &  0.0679075 & 1.24905 & 0.082375 & 1.30408 \\
+8   &  0.0603056 & 1.24731 & 0.070710 & 1.29555 \\
+%16  &  0.0568994 & {---}     & 0.064798 & 1.29431 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\item Impact of filter size on running time is shown in \ref{fig:filtersize}.
+\item Surprisingly, training in the frequency domain is faster for all filter
+sizes, where the speed-ups are larger for larger filters.
+\item At a filter size of $9$, the speed-up is 20 times.
+\item For $32$ channels, cuDNN is faster for very small filter sizes and
+training in the frequency domain breaks even at a filter size of $3$. For filter sizes
+larger than $3$, training in the frequency domain is substantially faster with a
+speed-up of up to $18$ times for a filter size of $9$.
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{figures/filtersize}
+\caption[Comparison of running times of key operations for training a single
+CNN layer.]{Comparison of running times of key operations for training a single
+CNN layer for varying number of channels and filter sizes.}
+\label{fig:filtersize}
+\end{figure}
+
+% Comparison of used architectures
+\begin{itemize}
+\item Comparison of running time of critical operations for training the
+$7$-layer CNN used for MS lesion segmentation
+\item Hidden layers benefit the most (10 times speed-up) from training in the
+frequency domain due to the large number of channels.
+\item Due to the small number of input and output channels, the input and output
+layer benefit the least from training in the frequency domain
+\item Total speed-up compared to cuDNN is 6.3
+\end{itemize}
+
+\begin{itemize}
+\item Comparison of running times of time critical operations for training the
+sconvRBM of the first layer of the lesion DBN
+\item Compared a direct calculation of strided convolution to remapping of
+strided convolutions to stride-1 convolutions.
+\item Strided convolutions using the reorganization trick is 4 times faster when
+calculated in the frequency domain.
+\item cuDNN does not benefit from reorganizing voxels
+\item Overall, training an sconvRBM in the frequency domain is 3.7 faster than
+using a direct implementation of strided convolutions from cuDNN.
+\item The architectures were not optimized for speed. Careful pre-padding of the
+images can be used to further reduce training times.
+\end{itemize}
+
+\begin{table}
+\caption[Comparison of running times of time critical operations of two example
+deep learning models.]{Comparison of running times of time critical operations
+of the 7-layer CEN-s used for segmentating lesions, and the first sconvRBM of
+the lesion DBN using to model lesion distribution. The running times of pooling
+layers we excluded.}
+\centering
+\sisetup{
+  round-mode = places,
+  round-precision = 3,
+  exponent-product = \cdot,
+  detect-weight=true,
+  detect-inline-weight=math,
+  tight-spacing = false,
+  table-align-text-post = false
+}%
+
+\begin{tabular}{llS[table-format=1.3]S[table-format=1.3]@{}S[table-format=2.3]}
+\toprule
+\multicolumn{2}{c}{Model} & \multicolumn{2}{c}{Running time [s]\phantom{he}}
+& {Speed-up}
+\\
+& & {Freq} & {cuDNN} &  \\
+\midrule
+\multirow{5}*{\minitab[l]{$7$-layer CNN\\ used for lesion\\ segmentation}}
+& 1st layer & 0.076582 & 0.498335 & 6.5072 \\
+& 3rd layer & 0.0519153 & 0.523849 & 10.0904 \\
+& 4th layer & 0.0519153 & 0.523849 & 10.0904 \\
+& 6th layer & 0.1477196 & 0.51716 & 3.500957 \\
+& Total & 0.3281322 & 2.063193 & 6.28768831587 \\[0.5em]
+\multirow{2}*{\minitab[l]{First sconvRBM of \\ the lesion DBN}}
+& direct & 0.0755562 & 0.0683263 & 0.90431096323 \\
+& rearranged & 0.0186432 & 0.0705788 & 3.78576639204 \\
+\bottomrule
+\end{tabular}
+\end{table}

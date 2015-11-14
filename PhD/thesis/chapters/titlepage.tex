@@ -37,161 +37,21 @@
 \textbf{Abstract}
 \end{center}
 \noindent
-% The two main classes of medical image segmentation and classification methods,
-% featured-based and model-based, both have inherent limitations. Feature-based
-% methods rely on hand-crafted features, which requires good domain knowledge and
-% do not adapt easily to different image domains. Model-based approaches rely on
-% large amounts of carefully labelled data, which is time-consuming and laborious
-% to acquire. On the other hand, large amounts of unlabelled images are widely
-% available but none of the aforementioned methods are able to make good use of
-% them. To overcome these limitations, I propose investigating self-taught
-% learning for medical image segmentation and classification. Self-taught learning
-% is a machine learning concept that describes the idea of using unlabelled and
-% labelled samples to improve classification performance. Applied to medical image
-% analysis, this means letting a machine learn the features that best represent
-% images of a particular domain from unlabelled images and to use the learned
-% domain-specific features for classification and segmentation. The classification
-% task is therefore divided into two stages, the unsupervised feature learning
-% stage and the supervised classification stage based on the learned features.
-% Segmentation is treated as a classification problem at the pixel level. After
-% mapping image features to pixel features, classification and segmentation are
-% solved in the same way.
 
-% The human brain has often served as a model for computer vision algorithms
-% \citep{Lowe1999,Grigorescu2002}. But on the other hand, research suggests that
-% visual processing algorithms encoded by the receptive field of neurons are
-% learned from a continuous stream of images \citep{Wiesel1963} and refined later \citep{Karni1991}.
-% Hence, instead of copying what the visual system has learned, a computer system
-% should resemble the learning capabilities, so it can be tuned to different image
-% domains and different classification and segmentation problems.
-% Thereto, I propose to divide classification into \num{2} stages---the
-% unsupervised feature learning stage and the supervised classification stage based on the
-% learned features. Segmentation is treated as a classification problem at
-% the pixel level. After mapping image features to pixel features, classification and
-% segmentation are solved in the same way.
-% 
-% Motivated by the recent success in using convolutional deep belief networks
-% (CDBNs) for unsupervised learning of image features \citep{Lee2009,Lee2011}, I
-% have used a CDBN to learn hierarchical features of the corpus callosum.
-% Higher level features resemble parts of the corpus callosum. For segmentation,
-% they will potentially be useful to roughly localize the corpus callosum within a
-% slice, while lower-level features can be used accurately segmentation the corpus
-% callosum once if rough estimate is found. In the future, unsupervised and
-% supervised machine learning techniques will be combined to develop trainable
-% classification and segmentation algorithms for medical images that can easily
-% adapt to different anatomical and pathological structures and different image
-% modalities or combinations of different modalities using large sets of
-% unlabelled images and only few labelled samples.
+Deep learning has shown great promise in recent years for various non-medical
+and medical problems. However, the size of images has been a burden and problems
+had to be mapped to either small 2D or 3D patches, or 2D images. This thesis
+analysis the potential of deep learning to solve medical image analysis problems
+using entire 3D volumes. A major part of the thesis was the development of a
+training method for deep learning models that facilitates the training on entire
+3D volumes. We have applied the new training method to solve different medical
+image analysis problems, such as manifold learning for biomarker discovery for
+AD using raw images, and MS using deformation fields, and lesion masks. A second
+part of the thesis was the development of an MS lesion segmentation method using
+multimodal MR images. We evaluated the runtime improvements against other
+state-of-the-art methods. Furthermore, we showed the clinical value of our
+approach on medical problems.
 
-%  For example, SIFT features \citep{Lowe1999}, inspired by neurons of the
-%  inferior temporal cortex, have proved to be very robust for object recognition.
-%  Resembling the receptive field of simple cells of the primary visual cortex,
-%  $2$D Gabor filters have been used to describe textures for
-%  segmentation \citep{Grigorescu2002}.
-
-% \Glspl{dbn} \citep{Hinton2006}, which have shown to be a good model of the
-% learning processes of the brain, can be used to find patterns in or learn
-% features from unlabelled data. In particular, \citet{Lee2007} have shown that a
-% sparse kind of a DBN can learn features that resemble the receptive field of
-% neurons of the visual areas V1 and V2 when trained on natural images.
-% Automatically learned features by a DBN have been used to classify natural
-% images, outperforming state-of-the-art methods for object category
-% classification \citep{Lee2011}, recognition of handwritten digits
-% \citep{Hinton2006a}, and facial expression recognition \citep{Larochelle2010}.
-% However, to the best of my knowledge, DBNs have not yet been used to
-% successfully classify or segment medical images.
-
-% \citet{Raina2007} have denoted the idea of using unlabelled and labeled training
-% data to improve classification performance as self-taught learning. They showed
-% that using unlabelled images, the classification performance can be
-% significantly increased when only few labelled training examples are available.
-% Similar to transfer learning \citep{Pan2010}, self-taught learning does not
-% require that samples from the labelled and unlabelled training set follow the
-% same distribution. This is especially imported for classification and
-% segmentation of medical images since the amount of labelled training data is
-% often not sufficient to represent the large spectrum of anatomical and
-% pathological variability.
-
-% Even though self-taught learning using DBNs can be applied to find features in
-% any kind of data in general, there are a few new challenges that need to be
-% tackled when applied to medical images. First challenges are due to the larger
-% size of medical images compared to images used in previous studies. In contrast
-% to \num{392000} parameters when trained on \num{28x28} images
-% \citep{Hinton2006a}, one layer of a DBN for midsagittal \gls{mri} slices of the
-% brain with a resolution of \num{256x256} pixels would contain approximately
-% \num{6.5e8} tunable parameters. Training of this model would require
-% approximately \SI{9.6}{\giga\byte} of temporary memory just for storing the
-% current set of parameters and its gradient.
-% 
-% \Glspl{cdbn} \citep{Lee2009,Lee2011} have been proposed, which dramatically
-% reduce the number of tunable parameters at the cost of more computational
-% expensive operations. \citet{Krizhevsky2010} reported a training time of
-% \num{45} hours in a recent attempt to speed up the training of a CDBN on
-% \num{32x32} pixel images by exploiting the computational power of GPUs.
-% \citet{Lee2009,Lee2011} have shown that a CDBN can scale to images up to a
-% resolution of \num{150x150} without reporting training times. One major part of
-% my thesis will therefore be to optimize current training algorithms in order to
-% make the training of full-resolution volumes feasible.
-% 
-% A second challenge is to make sure that the learned features are useful for
-% classification and segmentation. Even though the learned features depend mostly
-% on the training images, some general characteristics of the learned features can
-% be influenced by adjusting the hyperparameters of the DBN (e.g. the number of
-% neurons, the number of layers, sparsity target). \citet{Hinton_2010} and
-% \citet{Lee2011} have provided some general guidance for setting these parameters
-% mainly for the purpose of classifying natural images. Since differences between
-% medical images are relatively small compared to the whole spectrum of natural
-% images, features useful for medical image classification must also be able to
-% capture more subtle differences. For segmentation, it has to be made sure that
-% features are specific to certain regions in the brain in order to describe the
-% location-dependent context. A second major part of my thesis will therefore be
-% to design strategies that help to monitor features during learning and to
-% develop appropriate learning strategies or heuristics to set the
-% hyperparameters.
-
-% It
-% is expected that prior knowledge about the image domain learned from
-% unlabelled images will help to increase the robustness and accuracy of the
-% classification and segmentation algorithm. In the machine learning community,
-% using unlabelled data to improve classification performance is referred to as self-taught
-% learning. The goal of the thesis can therefore be rephrased to applying the
-% principle of self-taught learning to medical image classification and
-% segmentation.
-% 
-% A DBN will be used to model the learning processes required to implement
-% self-taught learning. Therefore, more efficient training methods must be
-% developed in order to unlock the potential of DBNs for medical image analysis.
-% In the process of training a DBN on medical images, the thesis is expected to
-% advance the knowledge of how DBNs behave when applied to $3$D images
-% in general and to $3$D medical images in particular. A central
-% research question will be how the filters learned by a $3$D CDBN
-% will look like. It is expected that, analogous to the $2$D case, filters of the
-% first layer will resemble $3$D edge detectors and $3$D Gabor
-% filters.\clarify{It feels like I need one more sentence here.}
-% 
-% In order to guarantee that the learned features from the DBN are useful for
-% classification and segmentation, the relationship between hyperparameters,
-% learned features, and their impact on the classification and segmentation
-% performance will be investigated. It is expected that the gained knowledge from
-% the previous analysis will lead to a set of rules and heuristics that can be
-% used to set the hyperparameters of a DBN.
-% 
-% In addition, the thesis will produce software for fully automatic segmentation
-% and classification for medical images based on trainable models. As part of the
-% evaluation, trained models will be created for the following
-% segmentation and classification problems:
-% \begin{inparaenum}[(a)]
-%   \item segmentation of the corpus callosum using midsagittal MRI slices of the
-%   brain,
-%   \item segmentation of MS lesions using registered full-resolution T$2$ and
-%   proton density weighted MRI scans,
-%   \item segmentation of deep grey matter like the hippocampus using
-%   full-resolution MRI scans,
-%   \item segmentation of T$1$ black hole lesions using registered
-%   T$1$ and T$2$ weighted MRI scans, and
-%   \item classification of \gls{ms}, \gls{ad} and healthy subjects using
-%   full-resolution MRI scans of the brain.
-% \end{inparaenum}
 \end{quotation}
 \vfill
 \noindent

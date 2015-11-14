@@ -165,8 +165,9 @@ of units in each dimension by calculating the average of each block of
 \centering
 \input{tikzfigures/encoder_L2}
 
-\caption{Pre-training and fine-tuning of the 7-layer convolutional encoder
-network with shortcut that we used for our experiments. Pre-training is
+\caption[Pre-training and fine-tuning of the 7-layer convolutional encoder
+network with shortcut]{Pre-training and fine-tuning of the 7-layer convolutional
+encoder network with shortcut that we used for our experiments. Pre-training is
 performed on the input images using a stack of convolutional RBMs. The
 pre-trained weights and bias terms are used to initialize a convolutional
 encoder network, which is fine-tuned on pairs of input images, $x^{(0)}$, and
@@ -539,13 +540,14 @@ processing entire volumes.
 };
 \end{tikzpicture}
 
-\caption{Example segmentations of our method for three different subjects from
-the challenge data set. Our method performed well and consistently despite the
-large contrast differences seen between the first two rows. In the third row,
-our method also segmented lesions that have similar contrast, but these regions
-had not been identified as lesions by the manual rater, which highlights the
-difficulty in distinguishing focal lesions from diffuse damage, even for
-experts.}
+\caption[Example segmentations of our method for three different subjects from
+the challenge data set]{Example segmentations of our method for three different
+subjects from the challenge data set. Our method performed well and consistently
+despite the large contrast differences seen between the first two rows. In the
+third row, our method also segmented lesions that have similar contrast, but
+these regions had not been identified as lesions by the manual rater, which
+highlights the difficulty in distinguishing focal lesions from diffuse damage,
+even for experts.}
 
 \label{fig:segmentation}
 \end{figure}
@@ -579,7 +581,8 @@ relatively small training set.
 \begin{table}[tb]
 \def\tabspace{12pt}
 
-\caption{Comparison of our method with state-of-the-art lesion segmentation
+\caption[Comparison of our method with state-of-the-art lesion segmentation
+methods]{Comparison of our method with state-of-the-art lesion segmentation
 methods in terms of mean TPR, PPV, and DSC. Our method performs comparably to
 the best methods reported on the MS lesion segmentation challenge data set.}
 
@@ -618,7 +621,8 @@ challenge data set, when a representative training set is available.
 \centering
 \includegraphics[width=0.78\textwidth]{figures/MICCAI2015_train_count}
 
-\caption{Comparison of DSC scores calculated on the training and test sets for
+\caption[Comparison of DSC scores calculated on the training and test sets for
+varying numbers of training samples]{Comparison of DSC scores calculated on the training and test sets for
 varying numbers of training samples. At around 100 samples, the model becomes
 stable in terms of test performance and the small difference between training
 and test DSCs, indicating that overfitting of the training data no longer
@@ -816,9 +820,10 @@ which in turn improves the segmentation accuracy especially for very high lesion
 loads, where larger lesions are also more prevalent.
 
 \begin{table}[tb]
-\caption{Lesion load classes as used for the detailed analysis.}
+\caption[Lesion load classes as used for the detailed analysis]{Lesion load
+classes as used for the detailed analysis.}
 \label{tab:groups}
-\centering
+\begin{center}
 \begin{tabular}{@{}lcc@{}}
 \toprule
 Group & Lesion load in \si{\cubic\milli\metre} & Number of samples \\
@@ -831,6 +836,7 @@ High & $(10000,25000]$ & 18 \\
 Very high & $> 25000$ & 8 \\
 \bottomrule
 \end{tabular}
+\end{center}
 \end{table}
 
 % \begin{itemize}
@@ -858,8 +864,9 @@ Very high & $> 25000$ & 8 \\
 \centering
 \includegraphics[width=\columnwidth]{figures/TMI_boxplot_L1vsL2}
 
-\caption{Comparison of the segmentation accuracy (DSC) of a 3-layer CEN and a
-7-layer CEN-s for different lesion load groups. Adding four layers and
+\caption[Comparison of the segmentation accuracy of a 3-layer CEN and a
+7-layer CEN-s for different lesion load groups]{Comparison of the segmentation
+accuracy (DSC) of a 3-layer CEN and a 7-layer CEN-s for different lesion load groups. Adding four layers and
 shortcut connections improves the performance across all lesion loads, where the
 improvements are especially large for scans with large lesion loads, which are
 also correlated with lesion size.}
@@ -889,10 +896,11 @@ white matter.
 
 \begin{figure}[tb] \centering
 \includegraphics[width=\columnwidth]{figures/TMI_boxplot_LTvsL2}
-\caption{Comparison of the segmentation accuracy (DSC) of
-Lesion-TOADS and a 7-layer CEN with shortcut connections for different lesion
-loads. The CEN approach is much more sensitive in detecting small lesions, while
-still being able to detect large lesions.}
+\caption[Comparison of the segmentation accuracy of Lesion-TOADS and a 7-layer
+CEN with shortcut connections for different lesion loads]{Comparison of the
+segmentation accuracy (DSC) of Lesion-TOADS and a 7-layer CEN with shortcut
+connections for different lesion loads. The CEN approach is much more sensitive
+in detecting small lesions, while still being able to detect large lesions.}
 \label{fig:l2vlt}
 \end{figure}
 
@@ -1017,12 +1025,13 @@ method.] {
 \includegraphics[width=0.5\columnwidth]{figures/TMI_p54s32_large_lesions}
 }
 
-\caption{Four cases illustrating the strengths and limitations of our method
-compared to Lesion-TOADS. Our method is inherently robust to noise (a), while
-still being able to detect small isolated lesions (b). Furthermore, our method
-is able to detect multiple different types of lesions correctly (e.g.,
-T1 black holes). However, in some cases our method can underestimate the size
-of very large lesions (d).}
+\caption[Four cases illustrating the strengths and limitations of our method
+compared to Lesion-TOADS]{Four cases illustrating the strengths and limitations
+of our method compared to Lesion-TOADS. Our method is inherently robust to noise
+(a), while still being able to detect small isolated lesions (b). Furthermore,
+our method is able to detect multiple different types of lesions correctly
+(e.g., T1 black holes). However, in some cases our method can underestimate the
+size of very large lesions (d).}
 
 \label{fig:images}
 \end{figure}

@@ -14,6 +14,19 @@ data because more prone to overfitting.
 % RBMs, DBNs, convRBMs, convDBNs for manifold learning and NN and CNN for lesion
 % segmentation.
 
+\section{Terminology}
+
+\subsection{Unit Layers vs. Processing Layers}
+
+The term layer can be confusing because different layers can be meant. One way
+is to count the number of layers of units or just unit layers for short. The
+transition from the input units to the output units involves one calculation.
+Hence, an alternative way of counting layers is to count the number of
+operations or processing layers. One processing layer takes the inputs of the
+previous unit layers and transforms them to calculate the values of the output
+unit layer. In the remainder, the term layer will refer to unit layer, and
+processing layers will be named specifically.
+
 \section{Learning from Labeled Data}
 
 % If I put this first, I can argue with inspiration from biological models
@@ -84,8 +97,8 @@ carry out the final classification.
 \begin{figure}
 \centering
 \input{tikzfigures/cnn}
-\caption{Convolutional neural network with two convolutional layers, one pooling
-layer and one dense layer. The activations of the last layer is the output of
+\caption[Schematic illustration of a CNN]{Convolutional neural network with two
+convolutional layers, one pooling layer and one dense layer. The activations of the last layer is the output of
 the network.}
 \label{fig:cnn}
 \end{figure}
@@ -171,10 +184,13 @@ trainable parameters of the RBM.
 \begin{figure}
 \centering
 \input{tikzfigures/rbm}
-\caption{Graph representation of an RBM with 3 hidden and 5 visible units.
-  An RBM models the joint probability of visible and hidden units. Edges between
-  vertices denote conditional dependence between the corresponding random
-  variables.}
+
+\caption[Graph representation of an RBM with 3 hidden and 5 visible units]{%
+Graph representation of an RBM with 3 hidden and 5 visible units.
+An RBM models the joint probability of visible and hidden units. Edges between
+vertices denote conditional dependence between the corresponding random
+variables.}
+  
 \label{fig:rbm}
 \end{figure}
 
