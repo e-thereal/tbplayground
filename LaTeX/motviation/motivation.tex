@@ -1,0 +1,183 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Long Lined Cover Letter
+% LaTeX Template
+% Version 1.0 (1/6/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Matthew J. Miller
+% http://www.matthewjmiller.net/howtos/customized-cover-letter-scripts/
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+% PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+%dateno
+\documentclass[version=last,
+%fromphone,fromemail,
+subject=titled,
+firsthead=true,
+fromalign=center,
+fromrule=aftername,
+locfield=wide,
+firsthead=false,
+parskip=half*
+]{scrlttr2} % Extra
+
+\usepackage[english]{babel}
+\usepackage{tikz}
+
+% \usepackage{charter} % Use the Charter font for the document text
+
+\begin{document}
+
+\setkomavar{fromname}{Tom Brosch}
+
+\setkomavar{fromphone}{+1(604)446-2704}
+
+\setkomavar{fromemail}{brosch.tom@gmail.com}
+
+\setkomavar{fromaddress}{%
+210-1950 West 8th Avenue\\
+Vancouver, BC, V6J\,1W3, Canada}
+
+% LAYOUT
+
+% \setkomavar{location}{%
+% \usekomavar*{fromphone} \usekomavar{fromphone}\\
+% \usekomavar*{fromemail} \usekomavar{fromemail}
+% }
+
+\firstfoot{%
+\centering%
+\usekomavar*{fromphone}\usekomavar{fromphone}\quad $\bullet$\quad%
+\usekomavar*{fromemail}\usekomavar{fromemail}%
+}
+
+\renewcommand*{\raggedsignature}{\raggedright}
+\setkomafont{fromname}{\small}
+\setkomafont{fromaddress}{\small}
+
+% BEGIN OF NEW LETTER
+
+\setkomavar{subject}{Letter of motivation}
+
+\setkomavar{signature}{\mbox{}\\[1em]
+\tikz \node[above=0.75cm,overlay,xshift=1.75cm,inner sep=0pt] {%
+\includegraphics[width=3.5cm]{sig2}};%
+Tom Brosch\\
+PhD Candidate, Biomedical Engineering}
+
+\begin{letter}{Philips GmbH Innovative Technologies\\
+Research Laboratories\\
+R\"ontgenstra\ss e 24--26\\
+22335 Hamburg
+}
+
+\opening{Dear Sir or Madam,}
+
+%----------------------------------------------------------------------------------------
+% LETTER CONTENT
+%----------------------------------------------------------------------------------------
+
+I'm writing this letter to express my motivation to work as a medical imaging
+research scientist for Philips HealthCare.
+
+% What is my background
+
+I began my research journey with the study of ``Computervisualistik''. Always
+being very good in math and physics but never in arts, I was fascinated by the
+possibility to use my knowledge of the physics of light to generate stunningly
+looking images. The new program ``Computervisualistik'' at the University of
+Magdeburg promised to teach me the programming and computer graphics skills
+needed to pursue my ambition in computer graphics, but soon I realized that I
+was much more engaged by the opposite way---not generating, but analysing
+images. The apparent contradiction that many image analysis problems, like
+recognizing a chair in an image, can be done seemingly effortlessly by a human
+but is very difficult to do by a computer has immediately sparked my curiosity.
+Nature has traditionally served as a means of inspiration for new inventions.
+For image processing, it is a subject as fascinating as the human mind itself
+that serves as a source of new ideas; that allows the discovery of new
+algorithms simply by the joyful task of self-reflection.
+
+The reason why we are so remarkable at understanding images is probably our
+ability to integrate past experiences and current observations. A key question
+of many image processing tasks is therefore ``how can we model experience?'',
+or in other words, ``how can we model prior knowledge?'' Driven by these
+questions, I started my doctoral research with the development of model-based
+image segmentation methods such as active appearance models, but soon found them
+being to limited to be applicable to the wide range of image understanding
+problems that our brains are able to solve.
+
+Driven by my na\"ive ambition to find a segmentation method that can be adapted
+to solve a wide range of segmentation problems, I stumbled upon the paper ``To
+recognize shapes, first learn to generate images'' by Geoffrey E. Hinton, which
+sparked my interest in deep learning. The paper proposed to solve an image
+recognition problem by turning it upside-down and instead to solve the image
+generation problem first. A generative model of images of a particular domain
+can be learned from a training set without the need to know what those images
+mean. This is similar to a newborn who is able to build a model of the world
+simply by observation. Once the model is trained, the image generation processes
+can be inverted to detect patterns based on which new images can be classified.
+What seemed to be a reasonable approximation of the inherent learning objective
+of the human brain turned out to become my Ph.D. project, during which I have
+gained a deep understanding of the promises and limitations of artificial neural
+networks.
+
+Developing new models and algorithms is like imagining a story---implementing
+them is like telling a story and seeing how your story comes to life. Driven by
+the desire to write good stories, I have engaged in many software projects from
+3D stereoscopic vision, GPU-accelerated CT cone-beam reconstruction methods and
+multimodal image registration, to the implementation of learning based models of
+brain images and new multimodal segmentation algorithms of brain pathology based
+on deep learning. However, a computer program is only as good as it meets the
+requirements posed by its users, not what the programmer beliefs is right.
+Therefore, I've enjoyed working in teams with other developers and users from
+different disciplines like sports sciences, interventional physicians, imaging
+physicists, radiologists, and neurologists.
+
+% Other examples, virtual Karate trainer for the sports department,
+% interventional registation
+
+
+% Image processing is often an ambigues problem that can be only solved when
+% past experience and current observations are combined.
+
+% PARAGRAPH ONE: State the reason for the letter, name the position or type of
+% work you are applying for and identify the source from which you learned of
+ % the opening (i.e. career development center, newspaper, employment service,
+ % personal contact).
+ 
+
+
+% PARAGRAPH TWO: Indicate why you are interested in the position, the company,
+% its products, services - above all, stress what you can do for the employer.
+ % If you are a recent graduate, explain how your academic background makes you
+ % a qualified candidate for the position. If you have practical work
+ % experience, point out specific achievements or unique qualifications. Try not
+ % to repeat the same information the reader will find in the resume. Refer the
+ % reader to the enclosed resume or application which summarizes your
+ % qualifications, training, and experiences. The purpose of this section is to
+ % strengthen your resume by providing details which bring your experiences to
+ % life.
+ 
+% PARAGRAPH THREE: Request a personal interview and indicate your flexibility as
+% to the time and place. Repeat your phone number in the letter and offer
+ % assistance to help in a speedy response. For example, state that you will be
+ % in the city where the company is located on a certain date and would like to
+ % set up an interview. Alternatively, state that you will call on a certain
+ % date to set up an interview. End the letter by thanking the employer for
+ % taking time to consider your credentials.
+ 
+\closing{Yours sincerely,}
+ 
+\end{letter}
+
+\end{document}
