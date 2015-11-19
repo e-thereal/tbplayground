@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Tue Nov 17 17:35:41 PST 2015
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=motivation.tex
+outputFile=motivation.pdf
+langSpell=en
+markDer=true
+srcDir=
