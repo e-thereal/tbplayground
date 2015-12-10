@@ -6,14 +6,27 @@
 % automatic learning of features that are tuned for a given combination of image
 % types and a segmentation task with very unbalanced classes. 
 
+% More practical then other methods. Fast, only less than a second, compared to
+% 30 to 40 minutes required by competing methods. Trained model is relatively
+% small compared to library-based methods such as RMNMS, which require to store
+% the training for inference. Can be tuned for any combination of image
+% modalities, scanner characteristics.
+
+% TODO: Discussion with other methods. What is state-of-the-art and what are the
+% challenges and how is this better?
+
+% TODO: remove the statement about the size of the receptive field. It is not
+% backed up.
+
 We have presented a new method for the automatic segmentation of MS lesions
 based on deep convolutional encoder networks with shortcut connections.
 The joint training of the feature extraction and prediction pathways allows for
 the automatic learning of features at different scales that are tuned for a
 given combination of image types and segmentation task. In addition, shortcuts
 between the two pathways allow high- and low-level features to be leveraged at
-the same time. We have evaluated our method on a large data set from an MS
-clinical trial, with the results showing that our method is able to segment MS
+the same time for more consistent performance across scales. We have evaluated
+our method on a large data set from an MS clinical trial, with the results
+showing that our method is able to segment MS
 %lesions with greater accuracy than
 % TODO: find references if possible
 % \todo[inline]{find references, if possible, but this might be difficult, because
@@ -25,16 +38,15 @@ clinical trial, with the results showing that our method is able to segment MS
 more accurately than
 %
 %In a specific comparison to
-Lesion-TOADS, a widely used and freely available
-method for the automatic segmentation of MS lesions.
+the widely used Lesion-TOADS.
 %, our method produced substantial gains in accuracy, which 
 The substantial gains in accuracy
-are mostly due to the
+were mostly due to the
  reduction of false positives, especially for low lesion loads where the lesion
-size is also small. Overall, the CEN with shortcuts architecture performs
+size is also small. Overall, the CEN with shortcuts architecture performed
 consistently well over a wide range of lesion loads. For future work, we are
 planning to extend our comparison to other freely available lesion segmentation
-tools such as the lesion growth algorithm \cite{schmidt2012automated} as
+tools, such as the lesion growth algorithm \cite{schmidt2012automated} as
 implemented in the LST toolbox (\url{www.statistical-modelling.de/lst.htm}).
 
 The most significant limitation of the tested architecture is that very large
@@ -66,10 +78,11 @@ non-lesion voxel into the segmentation procedure.
 % Therefore, each image needs to be segmented into cerebrospinal fluid, gray
 % matter, and white matter as part of the pre-processing pipeline.
 %
-The probabilities of each tissue class would be precomputed by a standard
-segmentation method, after which they can be added as an additional channel to the input units of the CEN, which allows the
-CEN to take advantage of intensity information from different modalities and
-prior knowledge about the tissue class to carry out the segmentation.
+The probabilities of each tissue class could be precomputed by a standard
+segmentation method, after which they can be added as an additional channel to
+the input units of the CEN, which would allow the CEN to take advantage of
+intensity information from different modalities and prior knowledge about each
+tissue class to carry out the segmentation.
 %
 %For example, we have observed the presence of false positives in
 %the region of the ventricles in some rare cases. Knowledge about the extend of
@@ -84,5 +97,5 @@ In addition, our method can be applied to other segmentation tasks. Although we
 have only focused on the segmentation of MS lesions in this paper, our method
 does not make any assumptions specific to MS lesion segmentation. The features
 required to carry out the segmentation are solely learned from training data,
-which allows our method to be used to segment different types of pathology or to
-perform structural segmentation when a suitable training set is available.
+which allows our method to be used to segment different types of pathology or
+anatomy when a suitable training set is available.

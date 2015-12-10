@@ -17,7 +17,7 @@ segmentations, $y^{(0)}$.}
 
 In this paper, the task of segmenting MS lesions is defined as finding a
 function $s$ that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR},
-I_\text{T1})$, to corresponding lesion masks $S$. Given a set of
+I_\text{T1})$, to corresponding binary lesion masks $S$. Given a set of
 training images $I_n$, $n \in \N$, and corresponding segmentations $S_n$, we
 model finding an appropriate function for segmenting MS lesions as an
 optimization problem of the following form
@@ -51,10 +51,17 @@ where $l$ is the index of a convolutional layer, $x^{(l)}_j$, $j \in [1,F]$,
 denotes the feature map corresponding to the trainable convolution filter
 $w^{(l)}_{\text{c},ij}$, $F$ is the number of filters of the current layer,
 $b^{(l)}_j$ are trainable bias terms, $*$ denotes valid convolution, and
-$\tilde{w}$ denotes a flipped version of $w$. A convolutional layer is followed
-by an average pooling layer \cite{scherer2010evaluation} that halves the number
-of units in each dimension by calculating the average of each block of
-\num{2x2x2} units per channel.
+$\tilde{w}$ denotes a flipped version of $w$, i.e., $\tilde{w}(a) = w(-a)$. To
+be consistent with the inference rules of convolutional restricted Boltzmann
+machines (convRBMs) \cite{lee2009convolutional}, which are used for
+pre-training, convolutional layers convolve the input signal with flipped filter
+kernels, while deconvolutional layers calculate convolutions with non-flipped
+filter kernels. We use rectified linear units \cite{nair2010} in all layers
+except for the output layers, which have shown to improve the classification
+performance of CNNs \cite{krizhevsky2012}. A convolutional layer is followed by
+an average pooling layer \cite{scherer2010evaluation} that halves the number of
+units in each dimension by calculating the average of each block of \num{2x2x2}
+units per channel.
 
 The deconvolutional pathway consists of alternating deconvolutional and
 unpooling layers with shortcut connections to the corresponding
@@ -62,12 +69,16 @@ convolutional layers. The first deconvolutional layer uses the extracted
 features of the convolutional pathway to calculate abstract segmentation
 features
 \begin{equation}
-y^{(L-1)}_i = \max\Bigg(0, \sum_{j=1}w^{(L)}_{\text{d},ij}\circledast
+y^{(L-1)}_i = \max\Bigg(0, \sum_{j=1}^Fw^{(L)}_{\text{d},ij}\circledast
 y^{(L)}_j + c^{(L-1)}_{i}\Bigg),
 \end{equation}
 where $y^{(L)} = x^{(L)}$, $L$ denotes the number of layers of the convolutional
 pathway, $w^{(L)}_{\text{d},ij}$ and $c^{(L-1)}_i$ are trainable parameters of
-the deconvolutional layer, and $\circledast$ denotes full convolution. Subsequent
+the deconvolutional layer, and $\circledast$ denotes full convolution. To be
+consistent with the general notation of deconvolutions \cite{zeiler2011}, the
+non-flipped version of $w$ is convolved with the input signal.
+
+Subsequent
 deconvolutional layers use the activations of the previous layer
 and corresponding convolutional layer to calculate more localized segmentation
 features
@@ -79,8 +90,8 @@ features
 % \end{multline}
 \begin{multline}
 y^{(l)}_i = \max\Bigg(0, 
-\sum_{j=1}w^{(l+1)}_{\text{d},ij}\circledast y^{(l+1)}_j\\
-+ \sum_{j=1} w^{(l+1)}_{\text{s},ij}\circledast x^{(l+1)}_j +
+\sum_{j=1}^Fw^{(l+1)}_{\text{d},ij}\circledast y^{(l+1)}_j\\
++ \sum_{j=1}^F w^{(l+1)}_{\text{s},ij}\circledast x^{(l+1)}_j +
 c^{(l)}_i\Bigg),
 \end{multline}
 where $l$ is the index of a deconvolutional layer with shortcut, and
@@ -90,15 +101,17 @@ deconvolutional pathway. The last deconvolutional layer integrates the low-level
 features extracted by the first convolutional layer with the high-level features
 from the previous layer to calculate a probabilistic lesion mask
 \begin{equation}
-y^{(0)}_1 = \sigm\Bigg(\sum_{j=1}\Big(w^{(1)}_{\text{d},1j}\circledast
+y^{(0)}_1 = \sigm\Bigg(\sum_{j=1}^F\Big(w^{(1)}_{\text{d},1j}\circledast
 y^{(1)}_j +
 w^{(1)}_{\text{s},1j}\circledast x^{(1)}_j\Big) + c^{(0)}_1\Bigg),
 \end{equation}
-where $\sigm(z)$ denotes the sigmoid function defined as $\sigm(z) = (1 +
-\exp(-z))^{-1}, z \in \R$. To obtain a binary lesion mask from the probabilistic
-output of our model, we chose a fixed threshold such that the mean Dice
-similarity coefficient \cite{dice1945measures} is maximized on the training set
-and used the same threshold for the evaluation on the test set.
+where we use the sigmoid function defined as $\sigm(z) = (1 + \exp(-z))^{-1}, z
+\in \R$ instead of the rectified linear function in order to obtain a
+probabilistic segmentation with values in the range between 0 and 1.
+To produce a binary lesion mask from the probabilistic output of our model, we
+chose a fixed threshold such that the mean Dice similarity coefficient
+\cite{dice1945measures} is maximized on the training set and used the same
+threshold for the evaluation on the test set.
 
 \begin{comment}
 The set of possible segmentation functions is modeled by the convolutional
@@ -140,14 +153,16 @@ maximized on the training set.
 \subsection{Gradient Calculation}
 
 The parameters of the model can be efficiently learned by minimizing the error
-$E$ on the training set, which requires the calculation of the gradient of $E$
-with respect to the model parameters \cite{LeCun1998}. Typically, neural
-networks are trained by minimizing the sum of squared differences (SSD)
+$E$ for each sample of the training set, which requires the calculation of the
+gradient of $E$ with respect to the model parameters \cite{LeCun1998}.
+Typically, neural networks are trained by minimizing the sum of squared
+differences (SSD), which can be calculated for a single image as follows
 \begin{equation}
 % Error function
 E = \frac{1}{2}\sum_{\vect{p}}\left(S(\vect{p}) -
-y^{(2)}(\vect{p})\right)^2.
+y^{(0)}(\vect{p})\right)^2,
 \end{equation}
+where $\vect{p} \in \N^3$ are the coordinates of a particular voxel.
 The partial derivatives of the error with respect to the model parameters can be
 calculated using the delta rule and are given by 
 % $\Delta w^{(l)}_{\text{d},ij} =
@@ -199,9 +214,9 @@ yields to
 where $l$ is the index of a deconvolutional or convolutional layer,
 $\delta^{(L)}_{\text{c},i} = \delta^{(L)}_{\text{d},j}$, and $\I(z)$ denotes the
 indicator function defined as $1$ if the predicate $z$ is true and $0$
-otherwise. If a layer connected through a shortcut,
+otherwise. If a layer is connected through a shortcut,
 $\delta^{(l)}_{\text{c},j}$ needs to be adjusted by propagating the error back
-through the shortcut connections. In this case, $\delta^{(l)}_{\text{c},j}$ is
+through the shortcut connection. In this case, $\delta^{(l)}_{\text{c},j}$ is
 calculated by
 \begin{equation}
 % Delta update convolutional with shortcut
@@ -228,20 +243,20 @@ lesion voxels (sensitivity) and non-lesion voxels (specificity), reformulated to
 be error terms:
 \begin{multline} 
 E = r\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
-y^{(2)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
+y^{(0)}(\vect{p})\right)^2 S(\vect{p})}{\textstyle\sum_{\vect{p}} S(\vect{p})}
 \\
  + (1-r)\frac{\textstyle\sum_{\vect{p}} \left(S(\vect{p}) -
-y^{(2)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
+y^{(0)}(\vect{p})\right)^2 \big(1 - S(\vect{p})\big)}{%
 \textstyle\sum_{\vect{p}}\big(1 - S(\vect{p})\big)}.
 \end{multline}
 We formulate the sensitivity and specificity errors as squared errors in order
 to yield smooth gradients, which makes the optimization more robust. The
 sensitivity ratio $r$ can be used to assign different weights to the two terms.
 Due to the large number of non-lesion voxels, weighting the specificity error
-higher is important, but based on preliminarily experimental results, the
-algorithm is stable with respect to changes in $r$, which largely affects the
-threshold used to binarize the probabilistic output. In all our experiments, a
-sensitivity ratio between $0.10$ and $0.01$ yielded very similar results.
+higher is important, but based on preliminary experimental results \cite{brosch2015},
+the algorithm is stable with respect to changes in $r$, which largely affects the
+threshold used to binarize the probabilistic output. We used a sensitivity ratio
+of $0.02$ in all our experiments.
 
 To train our model, we must compute the derivatives of the modified objective
 function with respect to the model parameters. Equations
@@ -288,8 +303,7 @@ the learned model \cite{sutskever2013importance}. In our experiments, we found
 that initializing the model using pre-training \cite{Hinton2006} on the input images was required in order
 to be able to fine-tune the model using the ground truth segmentations without
 getting stuck in an early local minimum. Pre-training can be performed layer by
-layer \cite{Hinton2006b} using a stack of convolutional restricted Boltzmann
-machines (convRBMs) \cite{lee2009convolutional} (see Fig.~\ref{fig:network}),
+layer \cite{Hinton2006b} using a stack of convRBMs (see Fig.~\ref{fig:network}),
 thereby avoiding the potential problem of vanishing or exploding gradients
 \cite{hochreiter1991untersuchungen}. The first convRBM is trained on the input
 images, while subsequent convRBMs are trained on the hidden activations of the
@@ -340,3 +354,19 @@ hyperparameters, so we used AdaDelta for all results reported.
 % curvature'' more efficiently, which reduces the number of epochs required to
 % train the model. For more details about the aforementioned methods, the reader
 % is referred to the relevant papers.
+
+\subsection{Implementation}
+
+Pre-training and fine-tuning were performed using highly optimized
+GPU-accelerated implementations of 3D convRBMs and CENs that performs training
+in the frequency domain \cite{brosch2014efficient}. Our frequency domain
+implementation significantly speeds up the training by mapping the calculation
+of convolutions to simple element-wise multiplications, while adding only a
+small number of Fourier transforms. This is especially important for the
+training on 3D volumes, due to increased number of weights of 3D kernels
+compared to 2D. Internal tests have shown that our frequency domain
+implementation calculates the most time-consuming operations of the training
+procedure 6 times faster than an implementation based on cuDNN
+\cite{chetlur2014}, a library for calculating deep learning primitives, which is
+used internally by many publicly available deep learning frameworks
+\cite{jia2014,Bastien2012,collobert2011torch7}.
