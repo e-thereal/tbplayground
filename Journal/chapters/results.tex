@@ -48,17 +48,24 @@ from the seed point by a trained technician.
 We divided the data set into a training (250), validation (50) and test set (77)
 such that images of each set were acquired from different scanning sites. The
 three data sets were used for training our model and parameter tuning of the
-competing methods, monitoring the training progress, and validation,
-respectively. Pre-training and fine-tuning of a 7-layer CEN-s took approximately
-27 hours and 37 hours, respectively, on a single GeForce GTX 780 graphics card.
+competing methods, for monitoring the training progress, and to carry out a
+detailed analysis of variants of our method and competing methods, respectively.
+Pre-training and fine-tuning of a 7-layer CEN-s took approximately 27 hours and
+37 hours, respectively, on a single GeForce GTX 780 graphics card.
 However, once the network is trained, new image pairs can be segmented in less
 than one second.
 
-\paragraph{MSLSC}
-Describe the data. From website.
+\paragraph{Public data sets}
+The data set of the MICCAI 2008 MS lesion segmentation challenge
+\cite{styner20083d} consists of 43 T1w, T2w, and FLAIR MRIs, divided into 20
+training cases for which ground truth segmentation are made publicly available,
+and 23 test cases. After training the model on the 20 training cases, we used
+the trained model to segment the 23 test cases, which were send to the challenge
+organizers for evaluation.
 
-\paragraph{LMSLSC}
-Describe the data. From website.
+In addition, we evaluated our method on the T1w, T2w, PDw, and FLAIR MRIs of the
+21 publicly available labeled cases from the ISBI 2015 Longitudinal MS lesion
+segmentation challenge.
 
 \subsection{Competing methods}
 
