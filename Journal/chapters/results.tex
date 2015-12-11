@@ -7,12 +7,13 @@
 
 We evaluated our method on two publicly available data sets, which allows for
 the direct comparison with state-of-the-art methods. In addition, we have used a
-very challenging data set containing four different MRI sequences of secondary
-progressive MS patients from a multi-center MS clinical trial, which represents
-the large variability in lesion size, shape, location and intensity as well as
-varying contrasts produced by different scanners. The trial data set was used to
-carry out a detailed analysis of different CEN architectures using different
-combinations of modalities, compared against competing segmentation methods.
+very challenging data set containing four different MRI sequences of
+relapsing-remitting MS patients from a multi-center MS clinical trial, which
+represents the large variability in lesion size, shape, location and intensity
+as well as varying contrasts produced by different scanners. The trial data set
+was used to carry out a detailed analysis of different CEN architectures using
+different combinations of modalities, and we compared against competing
+segmentation methods.
 
 \subsection{Data Sets and Pre-processing}
 
@@ -23,24 +24,28 @@ combinations of modalities, compared against competing segmentation methods.
 
 \paragraph{Proprietary data set}
 
-The data set, acquired from 67 different scanning sites, consists of 377
-T1-weighted (T1w), T2-weighted (T2w), proton density-weighted (PDw), and FLAIR
-images from 195 subjects with a resolution of \num{256x256x60} voxels and a
-voxel size of \SI{0.936x0.936x3.000}{\milli\metre}. All images were
-skull-stripped using the brain extraction tool (BET) \cite{jenkinson2005bet2},
-followed by an intensity normalization to the interval $[0,1]$, and a 6
-degree-of-freedom intra-subject registration. To speed-up the training, all
-images were cropped to a \num{164x206x52} voxel region-of-interest with the
-brain roughly centered. The ground truth segmentations were produced using an
-existing semiautomatic 2D region-growing technique, which has been used
-successfully in a number of large MS clinical trials (e.g.,
-\cite{kappos2006long}, \cite{traboulsee2008reduction}). To carry out the
-segmentation, each lesion was manually identified by an experienced radiologist
-and then interactively grown from the seed point by a trained technician.
+The data set was collected from 67 different scanning sites using different
+1.5\,T and 3\,T scanners for a clinical trial in relapsing-remitting MS, and
+consists of 377 T1-weighted (T1w), T2-weighted (T2w), proton density-weighted
+(PDw), and FLAIR MRIs from 195 subjects. The image dimensions are
+\num{256x256x60} voxels with a voxel size of
+\SI{0.936x0.936x3.000}{\milli\metre}. All images were skull-stripped using the
+brain extraction tool (BET) \cite{jenkinson2005bet2}, followed by an intensity
+normalization to the interval $[0,1]$, and a 6 degree-of-freedom intra-subject
+registration. To speed-up the training, all images were cropped to a
+\num{164x206x52} voxel region-of-interest with the brain roughly centered. The
+ground truth segmentations were produced using an existing semiautomatic 2D
+region-growing technique, which has been used successfully in a number of large
+MS clinical trials (e.g., \cite{kappos2006long},
+\cite{traboulsee2008reduction}). To carry out the segmentation, each lesion was
+manually identified by an experienced radiologist and then interactively grown
+from the seed point by a trained technician.
 
 % TODO: out of the 67 scanning sites, the images of 55 were used for training
 % and 12 for testing, which constitutes to 300 images of the training set and 77
 % images of the test set.
+
+We divided the data set into training, validation and test set
 
 We divided the data set into training and test set such that images of the two
 sets were aquired from different clinical sites.
@@ -49,9 +54,7 @@ We used 300 image pairs for pre-training and fine-tuning, and the remaining 77
 image pairs for evaluation. Pre-training and fine-tuning of a 7-layer CEN-s took
 approximately 27 hours and 37 hours, respectively, on a single GeForce GTX 780
 graphics card. However, once the network is trained, new image pairs can be
-segmented in less than one second. We compared our results to the lesion masks
-produced by Lesion-TOADS \cite{shiee2010topology}, a widely used tool for
-segmenting MS lesions.
+segmented in less than one second.
 
 \paragraph{MSLSC}
 Describe the data. From website.
@@ -60,6 +63,18 @@ Describe the data. From website.
 Describe the data. From website.
 
 \subsection{Competing methods}
+
+We compared our results to the lesion masks produced by Lesion-TOADS
+\cite{shiee2010topology}, a widely used tool for segmenting MS lesions.
+
+LST-LGA. Initial segmentation using a conservative threshold kappa, followed by
+region growing to calculate probabilistic segmentation. We followed the authors
+suggestions to set those parameters. We optimized both parameters on the
+training set using an exhaustive grid search over the parameter space using all
+combinations of $\kappa = {0.05, 0.1, \dotsc, 0.95}$ and thresholds $t = 0.05,
+0.1, \dotsc, 0.95$. Finding a combination of $\kappa$ and $t$ that maximized the
+DSC on the training set and used those parameters to carry out the segmentation
+on the test set. We also calculated the optimal parameters on the test set.
 
 Short explanation of competing methods and how the parameters were determined.
 
@@ -118,7 +133,7 @@ further tuning was performed to carry out the results on the publicly available
 data sets.
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{figures/ems_progress}
+\includegraphics[width=\columnwidth]{figures/ems_progress2}
 \caption{Development of mean DSC on the training and test set during training.
 Only small improvements can be observed after 500 epochs.}
 \end{figure}
@@ -147,7 +162,8 @@ In our previous paper \cite{brosch2015}, we showed that approximately 100 images
 are required to train the 3-layer CEN without overfitting and we expect the
 required number of images to be even higher when adding more layers. Due to the
 relatively small size of the training data sets provided by the MICCAI and ISBI
-challenges, we trained a CEN with only 3 layers on these data sets.
+challenges, we trained a CEN with only 3 layers on these data sets, to reduce
+the risk of overfitting.
 
 I will have a comparison on the ISBI challenge training set using
 leave-one-subject-out cross-validation. To reduce the risk of overfitting, only
@@ -240,7 +256,7 @@ Rank & Method & {Score} & {LTPR} & {LFPR} & {VD} \\
 2  & Guizard et al. \cite{guizard2015}   & 86.1071 & 49.85 & 42.75 & 48.80 \\
 4  & Tomas-Fernandez et. al \cite{tomas2015} & 84.464 & 46.9 & 44.6 & 45.60 \\
 %5  & Jerman et al.          & 84.1555 \\
-6  & Our method    & 84.0743 \\
+6  & Our method    & 84.0743 & 51.55 & 51.25 & 57.75 \\
 %8  & Strumia et al.         & 83.9262 \\
 %10 & Zhan et al.            & 82.6455 \\
 11 & Roura et al.   \cite{roura2015} & 82.3442 & 50.15 & 41.85 & 111.60 \\
@@ -368,9 +384,9 @@ Method & DSC [\%] & LTPR [\%] & LFPR [\%] & VD [\%] \\
 \midrule
 \multicolumn{5}{c}{\textit{Input modalities: T1w and FLAIR}} \\
 \midrule
-3-layer CEN \cite{brosch2015} & 49.10 & 49.22 & 42.71 & 41.30 \\
-7-layer CEN & 51.04 & 39.57 & 25.88 & 40.82 \\ 
-7-layer CEN-s & 54.02 & 48.74 & 35.85 & 39.70 \\[0.2em]
+3-layer CEN \cite{brosch2015} & 49.24 & 57.33 & 61.39 & 43.45 \\
+7-layer CEN & 52.07 & 43.88 & 29.06 & 37.01 \\ 
+7-layer CEN-s & 55.76 & 54.55 & 38.64 & 36.30 \\[0.2em]
 Lesion-TOADS \cite{shiee2010topology} & 40.04 & 56.56 & 82.90 & 49.36 \\ 
 %SLS \cite{Roura} \\
 LST-LGA \cite{schmidt2012automated} & 46.64 & 37.50 & 38.06 & 36.77 \\
@@ -481,13 +497,13 @@ Very high & $> 25000$ & 8 \\
 % \label{fig:l1vl2}
 % \end{figure}
 
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{figures/modalities}
-\caption{Comparison of modalities. No single modality is the most important.
-Combining all four modalities gives significantly better results. Outliers are
-denoted by small black circles.}
-\end{figure*}
+% \begin{figure*}
+% \centering
+% \includegraphics[width=\textwidth]{figures/modalities}
+% \caption{Comparison of modalities. No single modality is the most important.
+% Combining all four modalities gives significantly better results. Outliers are
+% denoted by small black circles.}
+% \end{figure*}
 
 % TODO: The small number of scans in the highest load group makes comparing
 % across groups difficult. Maybe weaken the statement or point out the
@@ -513,10 +529,9 @@ white matter.
 
 \begin{figure*}
 \centering
-\includegraphics[width=\textwidth]{figures/methods}
-\caption{Comparison of CEN architestures with state-of-the-art methods. CEN is
-better for all combinations of modalities. The 4 modality CEN significantly
-outperforms the other methods. Outliers are denoted by small black circles.}
+\includegraphics[width=\textwidth]{figures/cen_vs_LGA_size}
+\caption{Comparison of our method trained on two different combinations of
+modalities and the best performing competing method for different lesion sizes.}
 \end{figure*}
 
 % \begin{figure}[tb] 
@@ -599,6 +614,101 @@ which reduces its ability to extract characteristic lesion features.
 Consequently, in some cases our method can underestimate the size of very large
 lesions.
 
+\begin{comment}
+\begin{figure*}
+\begin{tikzpicture}[node distance=1.5cm and 0.1\textwidth,
+  font=\footnotesize, on grid]
+  
+\node[inner sep=0] (image1) {
+  \includegraphics[width=\textwidth]{figures/i10_W9401S01_small_lesion_vessel_outlier}
+};
+\node[above=of image1,xshift=-0.05\textwidth,align=center] (l3) {%
+3-layer CEN\\(T1,FL)};
+\node[right=of l3,align=center] (l7) {7-layer CEN-s\\(T1,FL)};
+\node[right=of l7,align=center] (l7s){7-layer CEN-s\\(T1,FL,T2,PD)};
+\node[right=of l7s,align=center] (ems) {\phantom{g}EMS\phantom{g}\\(T1,T2,PD)};
+\node[right=of ems,align=center] (lt) {L-TOADS\\(T1,FL)};
+\node[right=of lt,align=center] (LST) {\phantom{g}LST-LGA\phantom{g}\\(T1,FL)};
+\node[left=of l3] (pd) {PD-weighted};
+\node[left=of pd] (t2) {T2-weighted};
+\node[left=of t2] (flair) {\phantom{g}FLAIR\phantom{g}};
+\node[left=of flair] (t1) {T1-weighted};
+
+\node[inner sep=0, below=2.4cm of image1] (image2) {
+  \includegraphics[width=\textwidth]{figures/i10_W9702S07_poor_contrast_lesions}
+};
+
+\node[inner sep=0, below=2.4cm of image2] (image3) {
+  \includegraphics[width=\textwidth]{figures/i10_W9902S07_high_LL_improvements}
+};
+
+\end{tikzpicture}
+\caption{Comparison of segmentation results of different segmentation methods
+for 3 subjects. The first and the second row highlight the difficulty}
+\end{figure*}
+\end{comment}
+
+\begin{figure}
+\begin{tikzpicture}[node distance=2.1cm and 0.333\columnwidth,
+  font=\footnotesize, on grid]
+\node[inner sep=0] (image1) {
+  \includegraphics[width=\columnwidth]{figures/p50s35_large_lesions}
+};
+\node[above=of image1] (l7) {7-layer CEN};
+\node[left=of l7] {3-layer CEN};
+\node[right=of l7] {7-layer CEN-s};
+
+\begin{scope}[xshift=0.333\columnwidth]
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{scope}
+\begin{scope}[xshift=-0.333\columnwidth]
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{scope}
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{tikzpicture}
+\caption{Large lesion problematic for 3-layer CEN due to limited size of the
+receptive field. The adding layers increases the size of the receptive field,
+which improves the detection of very large lesions.}
+\label{fig:large}
+\end{figure}
+
+\begin{figure}
+\begin{tikzpicture}[node distance=2.1cm and 0.333\columnwidth,
+  font=\footnotesize, on grid]
+\node[inner sep=0] (image1) {
+  \includegraphics[width=\columnwidth]{figures/p25s35_small_lesions}
+};
+\node[above=of image1] (l7) {7-layer CEN};
+\node[left=of l7] {3-layer CEN};
+\node[right=of l7] {7-layer CEN-s};
+\begin{scope}[xshift=0.3333\columnwidth]
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{scope}
+\begin{scope}[xshift=-0.3333\columnwidth]
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{scope}
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{tikzpicture}
+
+\caption{Comparison of segmentation performance of different CEN architectures
+for small lesions. The white circles indicate lesions that were detected by the
+3-layer CEN and the 7-layer CEN with shortcut. Increasing the size of the
+receptive field decreases the sensitivity to small lesions. The addition of a
+shortcut allows the detection of small lesions, while still being able
+to detect large lesions (see Fig.~\ref{fig:large}).}
+\label{fig:small}
+\end{figure}
+
+\begin{comment}
 \begin{figure*}
 %\centering
 \hspace*{-5pt}
@@ -608,7 +718,8 @@ lesions.
   
 \node[inner sep=0] (image) {
   \includegraphics[width=\columnwidth]{figures/p15s34_robust_to_noise3}
-  }; \node[above=of image] (gt) {\phantom{g}Ground truth\phantom{g}};
+  };
+\node[above=of image] (gt) {\phantom{g}Ground truth\phantom{g}};
 \node[left=of gt] (flair) {\phantom{g}FLAIR\phantom{g}};
 \node[left=of flair] {T1-weighted};
 \node[right=of gt,align=center] (cen) {\phantom{g}Our method\phantom{g}};
@@ -669,6 +780,7 @@ of very large lesions (d).}
 
 \label{fig:images}
 \end{figure*}
+\end{comment}
 
 \begin{comment}
 \subsection{BioMS Data Set}
