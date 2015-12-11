@@ -12,8 +12,8 @@ relapsing-remitting MS patients from a multi-center MS clinical trial, which
 represents the large variability in lesion size, shape, location and intensity
 as well as varying contrasts produced by different scanners. The trial data set
 was used to carry out a detailed analysis of different CEN architectures using
-different combinations of modalities, and we compared against competing
-segmentation methods.
+different combinations of modalities, with a comparison to publicly available
+state-of-the-art methods.
 
 \subsection{Data Sets and Pre-processing}
 
@@ -22,7 +22,7 @@ segmentation methods.
 
 % TODO: Why did I choose Lesion-TOADS?
 
-\paragraph{Proprietary data set}
+\paragraph{Trial data set}
 
 The data set was collected from 67 different scanning sites using different
 1.5\,T and 3\,T scanners for a clinical trial in relapsing-remitting MS, and
@@ -45,16 +45,14 @@ from the seed point by a trained technician.
 % and 12 for testing, which constitutes to 300 images of the training set and 77
 % images of the test set.
 
-We divided the data set into training, validation and test set
-
-We divided the data set into training and test set such that images of the two
-sets were aquired from different clinical sites.
-
-We used 300 image pairs for pre-training and fine-tuning, and the remaining 77
-image pairs for evaluation. Pre-training and fine-tuning of a 7-layer CEN-s took
-approximately 27 hours and 37 hours, respectively, on a single GeForce GTX 780
-graphics card. However, once the network is trained, new image pairs can be
-segmented in less than one second.
+We divided the data set into a training (250), validation (50) and test set (77)
+such that images of each set were acquired from different scanning sites. The
+three data sets were used for training our model and parameter tuning of the
+competing methods, monitoring the training progress, and validation,
+respectively. Pre-training and fine-tuning of a 7-layer CEN-s took approximately
+27 hours and 37 hours, respectively, on a single GeForce GTX 780 graphics card.
+However, once the network is trained, new image pairs can be segmented in less
+than one second.
 
 \paragraph{MSLSC}
 Describe the data. From website.
