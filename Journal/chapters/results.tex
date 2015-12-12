@@ -145,10 +145,10 @@ increasing number of epochs. The mean DSC scores keep improving even after 400
 epochs, albeit as a much slower rate. The optimal number of epochs is a
 trade-off between accuracy and time required for training. Due to the relatively
 small improvements after 400 epochs, we decided to stop the training procedure
-after 500 epochs. Due to the relatively small size of the challenge training
-set, we did not use a dedicated validation set to choose the number of epochs.
+after 500 epochs. Due to the relatively small size of the challenge data
+sets, we did not use a dedicated validation set to choose the number of epochs.
 Instead, we set the number of epochs to 2500, which results in roughly the same
-number of gradient updates as on the trial data set.
+number of gradient updates compared to the trial data set.
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{figures/ems_progress2}
@@ -178,14 +178,15 @@ ratio.}
 \subsection{Comparison on Public Data Sets}
 
 To allow for a direct comparison with other state-of-the-art methods, we have
-evaluated our method on the MICCAI 2008 MS lesion segmentation challenge and the
-ISBI 2015 longitudinal MS lesion segmentation challenge. In our previous paper
-\cite{brosch2015}, we showed that approximately 100 images are required to train
-the 3-layer CEN without overfitting and we expect the required number of images
-to be even higher when adding more layers. Due to the relatively small size of
-the training data sets provided by the two challenges, we trained a CEN with
-only 3 layers on these data sets, to reduce the risk of overfitting. The
-parameters of the models are summarized in Table~\ref{tab:archchallenge}.
+evaluated our method on the MICCAI 2008 MS lesion segmentation challenge
+\cite{styner20083d} and the ISBI 2015 longitudinal MS lesion segmentation
+challenge. In our previous paper \cite{brosch2015}, we showed that approximately
+100 images are required to train the 3-layer CEN without overfitting and we
+expect the required number of images to be even higher when adding more layers.
+Due to the relatively small size of the training data sets provided by the two
+challenges, we trained a CEN with only 3 layers on these data sets, to reduce
+the risk of overfitting. The parameters of the models are summarized in
+Table~\ref{tab:archchallenge}.
 
 \begin{table}[tb]
 \caption{Parameters of the 3-layer CEN for the evaluation on the challenge data
@@ -218,7 +219,7 @@ Tomas-Fernandez et al. \cite{tomas2015}, which used additional images to build
 the intensity model of a healthy population. This is a very impressive result
 given the simplicity of the used model, the relatively small training set size,
 and because we have not tuned our method for this particular data set in
-contrast to other most other methods, for which multiple entries were submitted
+contrast to most other methods, for which multiple entries were submitted
 to the challenge.
 
 \begin{table}
@@ -256,12 +257,13 @@ In addition, we evaluated our method on the 21 publicly available labeled cases
 from the ISBI 2015 longitudinal MS lesion segmentation challenge. The challenge
 organizers have not yet released the challenge results on their website.
 Therefore, we have only compared our method to methods, who have given
-sufficient details about the test produce to allow for a direct comparison.
-Followed the evaluation protocol of the second and third best method of the
+sufficient details about the test produce and a summary of the mean DSC, LTPR
+and LFPR scores for both raters to allow for a direct comparison.
+Following the evaluation protocol of the second and third best method of the
 challenge, we trained our model using leave-one-subject-out cross-validation on
 the training images and compared our results to the segmentations provided by
-both raters. Table~\ref{tab:isbi} summarizes the performance of our method
-and competing methods as well as the performance of the two rates when compared
+both raters. Table~\ref{tab:isbi} summarizes the performance of our method and
+competing methods as well as the performance of the two rates when compared
 against each other. Although our method performs slightly worse the the second
 and third best method on the challenge, it produces DSC scores that are in the
 range of the competing methods. Furthermore, our method is more sensitive to
