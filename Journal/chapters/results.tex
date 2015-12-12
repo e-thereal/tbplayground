@@ -22,7 +22,7 @@ state-of-the-art methods.
 
 % TODO: Why did I choose Lesion-TOADS?
 
-\paragraph{Trial data set}
+\subsubsection{Trial data set}
 
 The data set was collected from 67 different scanning sites using different
 1.5\,T and 3\,T scanners for a clinical trial in relapsing-remitting MS, and
@@ -45,17 +45,17 @@ from the seed point by a trained technician.
 % and 12 for testing, which constitutes to 300 images of the training set and 77
 % images of the test set.
 
-We divided the data set into a training (250), validation (50) and test set (77)
-such that images of each set were acquired from different scanning sites. The
-three data sets were used for training our model and parameter tuning of the
-competing methods, for monitoring the training progress, and to carry out a
-detailed analysis of variants of our method and competing methods, respectively.
-Pre-training and fine-tuning of a 7-layer CEN-s took approximately 27 hours and
-37 hours, respectively, on a single GeForce GTX 780 graphics card.
-However, once the network is trained, new image pairs can be segmented in less
-than one second.
+We divided the data set into a training ($n=250$), validation ($n=50$) and test
+set ($n=77$) such that images of each set were acquired from different scanning
+sites. The three data sets were used for training our model and parameter tuning
+of the competing methods, for monitoring the training progress, and to carry out
+a detailed analysis of variants of our method and competing methods,
+respectively. Pre-training and fine-tuning of a 7-layer CEN-s took approximately
+27 hours and 37 hours, respectively, on a single GeForce GTX 780 graphics card.
+However, once the network is trained, new multi-contrast images can be segmented
+in less than one second.
 
-\paragraph{Public data sets}
+\subsubsection{Public data sets}
 The data set of the MICCAI 2008 MS lesion segmentation challenge
 \cite{styner20083d} consists of 43 T1w, T2w, and FLAIR MRIs, divided into 20
 training cases for which ground truth segmentation are made publicly available,
@@ -65,27 +65,43 @@ organizers for evaluation.
 
 In addition, we evaluated our method on the T1w, T2w, PDw, and FLAIR MRIs of the
 21 publicly available labeled cases from the ISBI 2015 Longitudinal MS lesion
-segmentation challenge.
+segmentation challenge. The challenge was not open for new submissions at the
+time of writing this article. Therefore, we evaluated our method on the
+training. To allow for a direct comparison with the results of the second and
+third placed methods, we followed their evaluation protocol and performed
+leave-one-subject-out cross-validation.
 
 \subsection{Competing methods}
 
-We compared our results to the lesion masks produced by Lesion-TOADS
-\cite{shiee2010topology}, a widely used tool for segmenting MS lesions.
-
-LST-LGA. Initial segmentation using a conservative threshold kappa, followed by
-region growing to calculate probabilistic segmentation. We followed the authors
-suggestions to set those parameters. We optimized both parameters on the
-training set using an exhaustive grid search over the parameter space using all
-combinations of $\kappa = {0.05, 0.1, \dotsc, 0.95}$ and thresholds $t = 0.05,
-0.1, \dotsc, 0.95$. Finding a combination of $\kappa$ and $t$ that maximized the
-DSC on the training set and used those parameters to carry out the segmentation
-on the test set. We also calculated the optimal parameters on the test set.
-
-Short explanation of competing methods and how the parameters were determined.
+We compared our method with four publicly available methods that are widely used
+(e.g., \cite{sudre2015,subbanna2015,guizard2015}) as a reference point for the
+comparison of MS lesion segmentation methods:
+a) the expectation maximization segmentation (EMS) method \cite{vanleemput2001},
+b) the lesion growth algorithm (LST-LGA) \cite{schmidt2012automated} as
+implemented in the LST toolbox version 2.0.11, c) the lesion prediction
+algorithm (LST-LPA) also implemented in the LST toolbox, and d) Lesion-TOADS
+version 1.9 R \cite{shiee2010topology}. The Lesion-TOADS method has no tunable
+parameters, so we used the default parameters to carry out the segmentation
+using T1w and FLAIR MRIs. The performance of EMS depends on the choice of the
+Mahalanobis distance $\kappa$, the threshold $t$ used to binarize the
+probabilistic segmentation, and the modalities used. We carried out the
+segmentation using two combinations of modalities: a) the modalities used in the
+original paper \cite{vanleemput2001} (T1w, T2w, and PDw), and b) all four
+available modalities (T1w, T2w, PD2, FLAIR). We compared the segmentations
+produced for all combinations of $\kappa = 2, 2.2, \dotsc, 4.6$ and $t = 0.05,
+0.1, \dotsc, 1$ with the ground truth segmentations on the training set and
+chose the values that maximized the average DSC ($\kappa = 2.6, t = 0.75$;
+$\kappa = 2.8, t = 0.9$). We used the same procedure to tune the initial
+threshold $\kappa$ of LST-LGA using T1w and FLAIR MRIs for $\kappa = 0.05, 0.1,
+\dotsc, 1$ and the threshold $t$ used to binarize the probabilistic
+segmentations produced by LST-LPA also using T1w and FLAIR MRIs for $t = 0.05,
+0.1, \dotsc, 1$. The optimal parameters were $\kappa = 0.1$ and $t = 0.45$,
+respectively.
 
 \subsection{Measures of Segmentation Accuracy}
 
-\todo[inline]{Update to reflect new measures}
+\todo[inline]{Lisa has kindly agreed to update this section (thanks Lisa!). It
+will include DSC, lesion TPR, lesion FPR, and volume difference.}
 
 We used three different measures to evaluate segmentation accuracy, with the
 primary measure being the Dice similarity coefficient (DSC)
@@ -120,36 +136,33 @@ where a value of \SI{100}{\percent} indicates that all voxels that are
 classified as lesion voxels are indeed lesion voxels as defined by the ground
 truth (no false positives).
 
-\subsection{Setting the Hyperparameters}
+\subsection{Setting the Training Parameters}
 
-Parameter are summarized in Table~??. For the challenge data sets, we choose an
-isotropic filter size of \num{9x9x9}. To roughly compensate for the unisotropic
-voxel size of the in-house data, we also chose unisotropic a filter size of
-\num{9x9x5}. The number of epochs used for training is a trade-off between
-accuracy and time required for training. Figure~?? shows the mean DSC on the
-training set of 250 images and the validation set of 50 images for increasing
-number of epochs during training. The mean DSC on the training and validation
-set keeps improving even after 400 epochs, while the improvements become smaller
-as the training progresses. After 500 epochs, the DSC reaches almost a flat
-point, so we decided to stop training after 500 epochs. For the experiments, we
-chose the number of epochs to be 2500, which keeps the number of gradient
-updates roughly the same compared to training on the in-house data set. No
-further tuning was performed to carry out the results on the publicly available
-data sets.
+The most important parameters of the training method are the number of epochs
+and the sensitivity ratio. Fig.~\ref{fig:epochs} shows the mean DSC evaluated on
+the training and validation set during training of a 7-layer CEN-s for
+increasing number of epochs. The mean DSC scores keep improving even after 400
+epochs, albeit as a much slower rate. The optimal number of epochs is a
+trade-off between accuracy and time required for training. Due to the relatively
+small improvements after 400 epochs, we decided to stop the training procedure
+after 500 epochs. Due to the relatively small size of the challenge training
+set, we did not use a dedicated validation set to choose the number of epochs.
+Instead, we set the number of epochs to 2500, which results in roughly the same
+number of gradient updates as on the trial data set.
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{figures/ems_progress2}
 \caption{Development of mean DSC on the training and test set during training.
 Only small improvements can be observed after 500 epochs.}
+\label{fig:epochs}
 \end{figure}
 
-We found that our method is not sensitive to the sensitivity ratio $r$. To
-confirm, we have calculated ROC curves on the validation set for different
-choices of $r$. Also plotted with the threshold marked in the plot, confirming
-that the parameter $r$ mostly affects the choice of the threshold used to
-binarize the segmentation, but does not affect the performance of the model for
-choices between 0.01 and 0.1. Consequently, we have used the same $r$ for all
-experiments.
+Fig.~\ref{fig:ratio} shows a set of ROC curves for different choices of the
+sensitivity ratio ranging from 0.01 to 0.1. A plus marks the TPR and FPR after
+thresholding using a threshold that maximizes the DSC on the training set. The
+plots confirm our initial findings that our method is not sensitive to the
+choice of the sensitivity ratio, which mostly affects the optimal threshold. We
+chose a fixed sensitivity ration of 0.02 for all our experiments.
 
 \begin{figure}
 \centering
@@ -159,91 +172,54 @@ and FPR of the optimal threshold. The ROC curves for different sensitivity
 ratios are almost identical and only causes a change of the optimal threshold
 $t$, which shows the robustness of our method with respect to the sensitivity
 ratio.}
+\label{fig:ratio}
 \end{figure}
 
 \subsection{Comparison on Public Data Sets}
 
-In our previous paper \cite{brosch2015}, we showed that approximately 100 images
-are required to train the 3-layer CEN without overfitting and we expect the
-required number of images to be even higher when adding more layers. Due to the
-relatively small size of the training data sets provided by the MICCAI and ISBI
-challenges, we trained a CEN with only 3 layers on these data sets, to reduce
-the risk of overfitting.
+To allow for a direct comparison with other state-of-the-art methods, we have
+evaluated our method on the MICCAI 2008 MS lesion segmentation challenge and the
+ISBI 2015 longitudinal MS lesion segmentation challenge. In our previous paper
+\cite{brosch2015}, we showed that approximately 100 images are required to train
+the 3-layer CEN without overfitting and we expect the required number of images
+to be even higher when adding more layers. Due to the relatively small size of
+the training data sets provided by the two challenges, we trained a CEN with
+only 3 layers on these data sets, to reduce the risk of overfitting. The
+parameters of the models are summarized in Table~\ref{tab:archchallenge}.
 
-I will have a comparison on the ISBI challenge training set using
-leave-one-subject-out cross-validation. To reduce the risk of overfitting, only
-trained 3-layer CEN. Describe the data: 5 subjects with 4 time points each.
-Winning method did not describe the evaluation process well enough to allow for
-an accurate production of the experiments. Therefore, only compare against the
-second and third best method. Following they protocol, we performed
-leave-one-subject out cross-validation and trained separate models on the GT
-masks produced by rater 1 and 2 and compared the model against the masks from
-rater 1 and 2, which yields 4 experiments in total: a) trained on rater 1 and
-compared against rater 1, b) trained on rater 1 and compared against rater 2, c)
-trained on rater 2 and compared against rater 1, and d) trained on rater 2 and
-compared against rater 2. Or, for simplicity, only trained on the masks of rater
-1 and compared against rater 1 and rater 2 masks. Only 4 subjects per training
-fold. To reduce the risk of overfitting, only trained the 3-layer CEN. Table~??
-shows a comparison with the other methods.
-
-\begin{table}
-\caption{Comparison of our method with the second and third ranked methods from
-the ISBI MS lesion segmentation challenge.}
+\begin{table}[tb]
+\caption{Parameters of the 3-layer CEN for the evaluation on the challenge data
+sets.}
+\label{tab:archchallenge}
 \begin{center}
-% \begin{tabular}{llll}
-% \toprule
-% Method & LTPR & LFPR & DSC \\
-% \midrule
-% \multicolumn{4}{c}{\textit{Comparison against rater 1}} \\
-% \midrule
-% Rater 2 & 83.2 & 34.8 & 73.4 \\
-% Second &  61.1 & 13.5 & 70.4 \\
-% Third \\
-% 3-layer CEN \\
-% \midrule
-% \multicolumn{4}{c}{\textit{Comparison against rater 2}} \\
-% \midrule
-% Rater 1 & 65.2 & 16.8 & 73.4 \\
-% Outlier & 50.1 & 12.7 & 68.1 \\
-% Random forest \\
-% 3-layer CEN \\
-% \bottomrule
-% \end{tabular}
-% 
-% \vspace{1em}
-\begin{tabular}{@{}lcccccc@{}}
+\begin{tabular}{@{}lccr@{}}
 \toprule
-Method &
-\multicolumn{3}{c}{Rater 1} &
-\multicolumn{3}{c}{Rater 2} \\
-& DSC & LTPR & LFPR & DSC & LTPR & LFPR \\
+Layer type & Kernel Size & \#Filters & \multicolumn{1}{c}{Image Size} \\
 \midrule
-Rater 1 & --- & --- & --- & 73.2 & 64.5 & 17.4 \\
-Rater 2 & 73.2 & 82.6 & 35.5 & --- & --- & --- \\
-Jesson et al. &  70.4 & 61.1 & 13.5 & 68.1 & 50.1 & 12.7 \\
-Maier et al. (GT1) & 70 & 53 & 48 & 65 & 37 & 44 \\
-Maier et al. (GT2) & 70 & 55 & 48 & 65 & 38 & 43 \\
-Our method (GT1) & 68.4 & 74.5 & 54.5 & 64.4 & 63.0 & 52.8 \\
-Our method (GT2) & 68.3 & 78.3 & 64.5 & 65.8 & 69.3 & 61.9 \\
+Input & --- & --- & $164\times 206\times 156\times c$\phantom{0} \\
+Convolutional & $9\times 9\times 9\times c$\phantom{0} & 32 &
+\num{156x198x148x32} \\
+Deconvolutional & \num{9x9x9x32} & 1 & \num{164x206x156x1}\phantom{0} \\
 \bottomrule
 \end{tabular}
 \end{center}
-Note: The evaluation was performed on the training set using
-leave-one-subject-out cross-validation. GT1 and GT2 denote that the model was
-trained with the segmentations provided by the first and second rater as the
-ground truth, respectively.
-% Note: LTPR and LFPR values of the third method are shown in parenthesis to
-% indicate that a different method was used to calculate those values, which only
-% allows for an approximate comparison with the other methods.
+Note: The number of input channels $c$ is 3 for the MICCAI challenge and 4 for
+the ISBI challenge.
 \end{table}
 
-We have also evaluated our method on the MICCAI 2008 lesion segmentation
-challenge. Data set consists of T1w, T2w, and FLAIR MRIs of 20 subjects. Due to
-the relatively small size of the training data set, we have trained a 3-layer
-CEN similar to the ISBI challenge and applied the model to the test data set 1.
-The evaluation was performed remotely by the challenge organizers. We placed 5th
-in the challenge. The results of the top 8 methods are summarized in
-Table~\ref{tab:miccai}. Ranked 6th out of 52 entries.
+A comparison of our method with other state-of-the-art methods evaluated on the
+MICCAI challenge test data set is summarized in Table~\ref{tab:miccai}. Our
+method ranked 6th out of 52 entries submitted to the challenge, outperforming
+popular methods such as SLS by Roura et al. \cite{roura2015}, the random forest
+approach by Geremia et al. \cite{geremia2010}, and Lesion-TOADS by Shiee et al.
+\cite{shiee2010topology}, but performing worse than the patch-based segmentation
+approach by Guizard et al. \cite{guizard2015}, or the MOPS approach by
+Tomas-Fernandez et al. \cite{tomas2015}, which used additional images to build
+the intensity model of a healthy population. This is a very impressive result
+given the simplicity of the used model, the relatively small training set size,
+and because we have not tuned our method for this particular data set in
+contrast to other most other methods, for which multiple entries were submitted
+to the challenge.
 
 \begin{table}
 \sisetup{
@@ -276,71 +252,78 @@ LTPR, LFPR, and VD show the mean scores of the two raters in percent. Last
 updated: Dec 2, 2015.
 \end{table}
 
-\subsection{Comparison of Network Architectures, Modalities Used, and
-Competing Methods}
+In addition, we evaluated our method on the 21 publicly available labeled cases
+from the ISBI 2015 longitudinal MS lesion segmentation challenge. The challenge
+organizers have not yet released the challenge results on their website.
+Therefore, we have only compared our method to methods, who have given
+sufficient details about the test produce to allow for a direct comparison.
+Followed the evaluation protocol of the second and third best method of the
+challenge, we trained our model using leave-one-subject-out cross-validation on
+the training images and compared our results to the segmentations provided by
+both raters. Table~\ref{tab:isbi} summarizes the performance of our method
+and competing methods as well as the performance of the two rates when compared
+against each other. Although our method performs slightly worse the the second
+and third best method on the challenge, it produces DSC scores that are in the
+range of the competing methods. Furthermore, our method is more sensitive to
+lesions then the other methods, but also produces more false positives.
 
-\todo[inline]{Mention also different modalities used and update to reflect new
-measures and competing methods.}
-
-To determine the effect of network architecture, we compared the segmentation
-performance of three different networks.
-Specifically, we trained a 3-layer CEN and two 7-layer CENs, one with shortcut
-connections and one without, on the 300 training pairs. The parameters of the
-networks are given in Table~\ref{tab:arch3} and Table~\ref{tab:arch7}.
-Lesion-TOADS was also included in the comparison as a known standard.
-A comparison of the segmentation accuracy of the trained networks and
-Lesion-TOADS is summarized in Table~\ref{tab:results1}. All CEN architectures
-performed significantly better than Lesion-TOADS in overall segmentation
-accuracy, where the improvements of the mean DSC scores ranged from 9\,pts for
-the 3-layer CEN to 14\,pts for the 7-layer CEN with shortcut. The
-improved segmentation performance was mostly due to a reduction of the false
-positives. Lesion-TOADS achieved a mean PPV of only \SI{39.86}{\percent},
-whereas the CEN with shortcut achieved a mean PPV of \SI{66.58}{\percent}---an
-improvement of 27\,pts. The mean TPRs were roughly the same (slightly less than
-\SI{50}{\percent}) for all methods except for the 7-layer CEN with shortcut,
-which performed slightly better than the other methods with a mean TPR of
-\SI{52.75}{\percent}.
-
-This experiment showed that increasing the depth of the CEN
-and adding the shortcut connections improves the segmentation accuracy.
-Increasing the depth of the CEN from three layers to seven layers improved the
-mean DSC by 2\,pts. The improvement was confirmed to be statistically
-significant using a one-sided paired $t$-test ($p\text{-value}=\num{0.002}$).
-Adding a shortcut to the network further improved the segmentation
-accuracy as measured by the DSC by 3\,pts. A second one-sided paired $t$-test
-was performed to confirm the statistical significance of the improvement with a
-$p\text{-value} < \num{1e-10}$.
-
-% \begin{itemize}
-% \item We used 3 different architectures: 3-layer, 7-layer without shortcuts and
-% 7-layer with shortcuts.
-% \item 7-layer CEN parameters are summarized in Table~\ref{tab:arch7}.
-% \item Comparison of segmentation performance on the test set with 3 different
-% architectures and lesionTOADS is shown in Table~\ref{tab:results1}
-% \item Even the 3-layer model performs much better than lesionTOADS on average.
-% \item Better was confirmed using a one-sided paired t-test. Give the p-value.
-% \item Better than lesionTOADS ($p$-value = \num{4.732e-9})
-% \item Better than 3-layer ($p$-value = \num{0.002})
-% \item Better with shortcut connections ($p$-value = \num{1.566e-11})
-% \item Adding more layers also improves performance. T-test.
-% \item Adding shortcut connections improves performance. t-test.
-% \end{itemize}
-
-\begin{table}[tb]
-\caption{Parameters of the 3-layer CEN for the evaluation on the challenge data
-sets.}
-\label{tab:arch3}
-\centering
-\begin{tabular}{@{}lccr@{}}
+\begin{table}
+\caption{Comparison of our method with the second and third ranked methods from
+the ISBI MS lesion segmentation challenge.}
+\label{tab:isbi}
+\begin{center}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-Layer type & Kernel Size & \#Filters & \multicolumn{1}{c}{Image Size} \\
+Method &
+\multicolumn{3}{c}{Rater 1} &
+\multicolumn{3}{c}{Rater 2} \\
+& DSC & LTPR & LFPR & DSC & LTPR & LFPR \\
 \midrule
-Input & --- & --- & \num{164x206x156x2}\phantom{0} \\
-Convolutional & \num{9x9x9x2} & 32 & \num{156x198x148x32} \\
-Deconvolutional & \num{9x9x9x32} & 1 & \num{164x206x156x1}\phantom{0} \\
+Rater 1 & --- & --- & --- & 73.2 & 64.5 & 17.4 \\
+Rater 2 & 73.2 & 82.6 & 35.5 & --- & --- & --- \\
+Jesson et al. &  70.4 & 61.1 & 13.5 & 68.1 & 50.1 & 12.7 \\
+Maier et al. (GT1) & 70 & 53 & 48 & 65 & 37 & 44 \\
+Maier et al. (GT2) & 70 & 55 & 48 & 65 & 38 & 43 \\
+Our method (GT1) & 68.4 & 74.5 & 54.5 & 64.4 & 63.0 & 52.8 \\
+Our method (GT2) & 68.3 & 78.3 & 64.5 & 65.8 & 69.3 & 61.9 \\
 \bottomrule
 \end{tabular}
+\end{center}
+Note: The evaluation was performed on the training set using
+leave-one-subject-out cross-validation. GT1 and GT2 denote that the model was
+trained with the segmentations provided by the first and second rater as the
+ground truth, respectively.
+% Note: LTPR and LFPR values of the third method are shown in parenthesis to
+% indicate that a different method was used to calculate those values, which only
+% allows for an approximate comparison with the other methods.
 \end{table}
+
+\subsection{Comparison of Network Architectures, Input Modalities, and
+Competing Methods}
+
+To determine the effect of network architecture and input modalities, we
+compared the segmentation performance of five different networks.
+Specifically, we trained a 3-layer CEN and two 7-layer CENs, one with shortcut
+connections and one without, on T1w and FLAIR MRIs, and two additional 7-layer
+CEN-s on the modalities used by EMS (T1w, T2w, PDw) and all four modalities
+(T1w, T2w, PDw, FLAIR). The parameters of the networks are given in
+Table~\ref{tab:arch3} and Table~\ref{tab:arch7}. To roughly compensate for the
+anisotropic voxel size of the input images, we chose an anisotropic filter size
+of \num{9x9x5}. We also included the four competing methods discussed in
+Section~III-B. A comparison of the segmentation accuracy of the trained networks
+and competing methods is summarized in Table~\ref{tab:results1}. All CEN
+architectures performed significantly better than the best performing competing
+method LST-LGA in overall segmentation accuracy, where the improvements of the
+mean DSC scores ranged from 3\,pts for the 3-layer CEN to 17\,pts for the
+7-layer CEN with shortcut trained on all four modalities. The improved
+segmentation performance was mostly due to an increase in lesion sensitivity.
+LST-LGA achieved a mean lesion TPR of only \SI{37.50}{\percent}, whereas the CEN
+with shortcut achieved a mean lesion TPR of \SI{54.55}{\percent} when trained on
+the same modalities, and a mean lesion TPR of \SI{62.49} when trained on all
+four modalities, while achieving a comparable number of lesion false positives.
+The mean lesion FPRs and mean volume differences of LST-LGA and the 7-layer
+CEN-s were roughly the same, when trained on the same modalities, and could be
+further reduced when trained on different modalities.
 
 \begin{table}[tb]
 \caption{Parameters of the 3-layer CEN used to evaluate different training
@@ -420,123 +403,184 @@ single outlier can heavily affect the calculation of the mean. We therefore
 excluded outliers before calculating the mean of the VD for all methods.
 \end{table}
 
+This experiment also showed that increasing the depth of the CEN
+and adding the shortcut connections improves the segmentation accuracy.
+Increasing the depth of the CEN from three layers to seven layers improved the
+mean DSC by 3\,pts. The improvement was confirmed to be statistically
+significant using a one-sided paired $t$-test ($p\text{-value}=\num{1.3e-5}$).
+Adding a shortcut to the network further improved the segmentation
+accuracy as measured by the DSC by 3\,pts. A second one-sided paired $t$-test
+was performed to confirm the statistical significance of the improvement with a
+$p$-value of less than \num{1e-10}.
+
+The impact of increasing the depth of the network on the segmentation
+performance of very large lesions is illustrated in Fig.~\ref{fig:large}, where
+the true positive, false negative, and false positive voxels are highlighted in
+green, yellow, and red, respectively. The receptive field of the 3-layer CEN has
+a size of only \num{17x17x9} voxels, which reduces its ability to identify very
+large lesions marked by two white circles. In contrast, the 7-layer CEN has a
+receptive field size of \num{49x53x26} voxels, which allows it to learn features
+that can capture much larger lesions than the 3-layer CEN. Consequently, the
+7-layer CEN, with and without shortcut, is able to learn a feature set that
+captures large lesions much better than the 3-layer CEN, which results in an
+improved segmentation. However, increasing the depth of the network without
+adding shortcut connections reduces the networks sensitivity to very small
+lesions as illustrated in Fig.~\ref{fig:small}. In this example, the 3-layer CEN
+was able to detect three small lesions, indicated by the white circles, which
+were missed by the 7-layer CEN. Adding shortcut connections enables our model to
+learn a feature set that spans a wider range of lesion sizes, which increases
+the sensitivity to small lesions and, hence, allows the 7-layer CEN-s to detect
+all three small lesions (highlighted by the white circles), while still being
+able to segment large lesions (see Fig.~\ref{fig:large}).
+
+\begin{figure}
+\begin{tikzpicture}[node distance=2.1cm and 0.334\columnwidth,
+  font=\footnotesize, on grid]
+\node[inner sep=0] (image1) {
+  \includegraphics[width=\columnwidth]{figures/p50s35_large_lesions}
+};
+\node[above=of image1] (l7) {7-layer CEN};
+\node[left=of l7] {3-layer CEN};
+\node[right=of l7] {7-layer CEN-s};
+
+\begin{scope}[xshift=0.333\columnwidth]
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{scope}
+\begin{scope}[xshift=-0.333\columnwidth]
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{scope}
+\draw[white,thick] (-12pt,-15pt) circle (9pt);
+\draw[white,thick] (15pt,-15pt) circle (10pt);
+\end{tikzpicture}
+\caption{Large lesion problematic for 3-layer CEN due to limited size of the
+receptive field. The adding layers increases the size of the receptive field,
+which improves the detection of very large lesions.}
+\label{fig:large}
+\end{figure}
+
+\begin{figure}
+\begin{tikzpicture}[node distance=2.1cm and 0.334\columnwidth,
+  font=\footnotesize, on grid]
+\node[inner sep=0] (image1) {
+  \includegraphics[width=\columnwidth]{figures/p25s35_small_lesions}
+};
+\node[above=of image1] (l7) {7-layer CEN};
+\node[left=of l7] {3-layer CEN};
+\node[right=of l7] {7-layer CEN-s};
+\begin{scope}[xshift=0.3333\columnwidth]
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{scope}
+\begin{scope}[xshift=-0.3333\columnwidth]
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{scope}
+\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
+\draw[white,thick] (0pt,4pt) circle (6pt);
+\draw[white,thick] (-10pt,20pt) circle (3pt);
+\end{tikzpicture}
+
+\caption{Comparison of segmentation performance of different CEN architectures
+for small lesions. The white circles indicate lesions that were detected by the
+3-layer CEN and the 7-layer CEN with shortcut. Increasing the size of the
+receptive field decreases the sensitivity to small lesions. The addition of a
+shortcut allows the detection of small lesions, while still being able
+to detect large lesions (see Fig.~\ref{fig:large}).}
+\label{fig:small}
+\end{figure}
+
 \subsection{Comparison for Different Lesion Sizes}
 
 % TODO: say it's box plots and outliers are denoted by small black circles.
 
-\todo[inline]{Update groups table to show lesion sizes. Also redo the plots for
-lesion sizes. Give a better justification for dividing by lesion size. Small
-lesions can be more difficult to miss, while large lesions also come with some
-problems.}
+% \todo[inline]{Update groups table to show lesion sizes. Also redo the plots for
+% lesion sizes. Give a better justification for dividing by lesion size. Small
+% lesions can be more difficult to miss, while large lesions also come with some
+% problems.}
 
-To examine the effect of lesion load on segmentation performance, we stratified
-the test set into five groups based on their reference lesion loads as
-summarized in Table~\ref{tab:groups}. Most segmentation performance measures
-deteriorate with lower lesion loads, because when there are only a few true
-lesion voxels, even small segmentation errors can translate into large relative
-errors. A comparison of segmentation accuracy of a 3-layer CEN and a 7-layer CEN
-with shortcut for different lesion loads is illustrated in Fig.~\ref{fig:l1vl2}.
-Adding four layers and shortcut connections improved the segmentation accuracy
-for all lesion load groups, where the improvements were largest for the highest
-lesion loads. In MS, lesion load is strongly correlated with lesion size, which
-means that the group with the highest lesion load also contains scans with the
-largest lesions. The receptive field of the 3-layer CEN has a size of only
-\num{17x17x9} voxels, which reduces its ability to identify very large lesions.
-In contrast, the 7-layer CEN has a receptive field size of \num{49x53x26}
-voxels, which allows it to learn features that can capture much larger lesions
-than the 3-layer CEN. Consequently, the 7-layer CEN is able to learn a feature
-set that captures a wider range of lesion sizes, which in turn improves the
-segmentation accuracy especially for very high lesion loads, where larger
-lesions are also more prevalent.
+To examine the effect of lesion size on segmentation performance, we stratified
+the test set into five groups based on their mean reference lesion size as
+summarized in Table~\ref{tab:groups}. A comparison of segmentation accuracy and
+lesion detection measures of a 7-layer CEN-s trained on different input
+modalities and the best performing competing method LST-LGA for different lesion
+sizes is illustrated in Fig.~\ref{fig:sizecomp}. The 7-layer CEN-s outperforms
+LST-LGA for all lesions sizes except for very large lesions when trained on T1w
+and FLAIR MRIs, and for all lesion sizes when trained on all four modalities.
+The differences are larger for smaller lesions, which are generally more
+challenging to segment for all methods. The differences between the two
+approaches are caused by a higher sensitivity to lesions as measured by the
+lesion TPR, especially for smaller lesions, while producing approximately the
+same number of false positives for all lesion sizes.
+
+% Observations: 
+% - CEN better for all lesions loads except for very high loads when
+% trained on the same modalities, and outperforms LGA for all lesion sizes when
+% trained on all four modalities. Differences are largest for very small
+% lesions, which is the most challenging category for all methods.
+% - Difference due to higher sensitivity than LGA especially for very small
+% lesions, while producing approximately the same number of false positives as
+% LGA for all lesion sizes.
+
+% Most segmentation performance measures
+% deteriorate with lower lesion loads, because when there are only a few true
+% lesion voxels, even small segmentation errors can translate into large relative
+% errors.
 
 \begin{table}[tb]
-\caption{Lesion load classes as used for the detailed analysis.}
+\caption{Lesion size groups as used for the detailed analysis.}
 \label{tab:groups}
 \centering
 \begin{tabular}{@{}lccc@{}}
 \toprule
-Group & Lesion load [\si{\cubic\milli\metre}] & \#Samples & Lesion size
-[\si{\cubic\milli\metre}]\\
+Group & Mean lesion size [\si{\cubic\milli\metre}] & \#Samples & Lesion
+load [\si{\cubic\milli\metre}] \\
 \midrule
 % 0, 1250, 2500, 3800, 10000
-Very low & $[0,3250]$ & 17 \\
-Low      & $(3250,6500]$ & 16 \\
-Medium & $(6500,10000]$ & 18 \\
-High & $(10000,25000]$ & 18 \\
-Very high & $> 25000$ & 8 \\
+Very small & $[0,70]$ & 6 & \num{1457+-1492} \\
+Small      & $(70,140]$ & 24 & \num{4298+-2683} \\
+Medium & $(140,280]$ & 24 & \num{12620+-9991} \\
+Large & $(280,500]$ & 14 & \num{13872+-5814} \\
+Very large & $> 500$ & 9 & \num{35238+-27531} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% \begin{itemize}
-% \item Analyse where the performance gains come from
-% \item 7-layer CEN improves across the board but improvements are particularly
-% high for large lesion loads
-% \item Large lesion load is also associated with larger lesions
-% \item Small filters fail to detect large lesions correctly
-% \item 7-layer CEN uses a hierachy of features where each layer represents
-% features of a different scale
-% \item This allows the detection of a wider spectrum of lesion sizes.
-% \item Analyse the relationship of segmentation performance and lesion load
-% \item Divided the test set into 5 classes with roughly the same number of
-% samples. Classes are (0,1250) ($n=17$), (1250,2500) ($n=16$), (2500, 3800)
-% ($n=18$), (3800,10000) ($n=18$), above 10000 ($n=8$). Mention the number of
-% samples per class.
-% \item CEN outperforms Lesion-TOADS for all lesion load categories, except for
-% very high lesion load.
-% \item For very high lesion load, no difference to Lesion-TOADS found using
-% t-test.
-% \item TPR, PPV, DSC for different lesion loads in a table.
-% \end{itemize}
-
-% \begin{figure}[tb]
-% %\centering
-% \includegraphics[width=0.92\columnwidth]{figures/boxplot_L1vsL2}
-% 
-% \caption{Comparison of the segmentation accuracy (DSC) of a 3-layer CEN and a
-% 7-layer CEN-s for different lesion load groups. Adding four layers and
-% shortcut connections improves the performance across all lesion loads, where the
-% improvements are especially large for scans with large lesion loads, which are
-% also correlated with lesion size.}
-% 
-% \label{fig:l1vl2}
-% \end{figure}
-
-% \begin{figure*}
-% \centering
-% \includegraphics[width=\textwidth]{figures/modalities}
-% \caption{Comparison of modalities. No single modality is the most important.
-% Combining all four modalities gives significantly better results. Outliers are
-% denoted by small black circles.}
-% \end{figure*}
-
-% TODO: The small number of scans in the highest load group makes comparing
-% across groups difficult. Maybe weaken the statement or point out the
-% limitation with sample size.
-
-Fig.~\ref{fig:l2vlt} shows a comparison of the 7-layer CEN with shortcut and
-Lesion-TOADS. The CEN approach outperformed Lesion-TOADS for all lesion load
-groups, except the group with very high lesion loads, where Lesion-TOADS
-achieved a slightly higher mean DSC than the CEN approach, but the difference is
-much smaller than the gains in accuracy achieved by the CEN for the other lesion
-loads. The 7-layer CEN with shortcut also performed more consistently across
-lesion load groups, whereas Lesion-TOADS decreased more strongly in performance
-for the smaller lesion loads. As a result, the greatest differences between the
-two methods are seen in the lowest lesion load groups.
-% However, a two-sided paired $t$-test yielded that
-% the difference is not statistically significant ($p\text{-value}=0.2566$).
-Table~\ref{tab:result2} shows a more detailed
-comparison. While the PPV increased consistently with higher lesion loads for
-both methods, the TPR was highest for low to medium lesion loads and decreased
-again for high to very high lesion loads. This shows the difficulty for both
-methods to correctly identify very large lesions that can extend far into the
-white matter.
+% Fig.~\ref{fig:l2vlt} shows a comparison of the 7-layer CEN with shortcut and
+% Lesion-TOADS. The CEN approach outperformed Lesion-TOADS for all lesion load
+% groups, except the group with very high lesion loads, where Lesion-TOADS
+% achieved a slightly higher mean DSC than the CEN approach, but the difference is
+% much smaller than the gains in accuracy achieved by the CEN for the other lesion
+% loads. The 7-layer CEN with shortcut also performed more consistently across
+% lesion load groups, whereas Lesion-TOADS decreased more strongly in performance
+% for the smaller lesion loads. As a result, the greatest differences between the
+% two methods are seen in the lowest lesion load groups.
+% % However, a two-sided paired $t$-test yielded that
+% % the difference is not statistically significant ($p\text{-value}=0.2566$).
+% Table~\ref{tab:result2} shows a more detailed
+% comparison. While the PPV increased consistently with higher lesion loads for
+% both methods, the TPR was highest for low to medium lesion loads and decreased
+% again for high to very high lesion loads. This shows the difficulty for both
+% methods to correctly identify very large lesions that can extend far into the
+% white matter.
 
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{figures/cen_vs_LGA_size}
-\caption{Comparison of our method trained on two different combinations of
-modalities and the best performing competing method for different lesion sizes.}
+
+\caption{Comparison of segmentation accuracy and lesion detection measures of a
+7-layer CEN-s trained on different input modalities and the best performing
+competing method LST-LGA for different lesion sizes. The 7-layer CEN-s
+outperforms LST-LGA for all lesions sizes except for very large lesions when
+trained on T1w and FLAIR MRIs, and for all lesion sizes when trained on all four
+modalities, due to a higher sensitivity to lesions, while producing
+approximately the same number of false positives. Outliers are denoted by black
+dots.}
+
+\label{fig:sizecomp}
 \end{figure*}
 
 % \begin{figure}[tb] 
@@ -592,32 +636,32 @@ Very high & \num{32.82} & \num{91.95} & \num{48.19} & \num{38.88} & \num{74.6} &
 % \item Have some sample images and discuss what we can see here.
 % \end{itemize}
 
-\subsection{Qualitative Results}
+%\subsection{Qualitative Results}
 
 %TODO: show and discuss filters
 
-\todo[inline]{Update images to show good, mean and bad segmentation. It's more
-about showing the range of difficulty in the data set from easy images to
-difficult images. If time permits, show some filters and say something about
-them.}
+% \todo[inline]{Update images to show good, mean and bad segmentation. It's more
+% about showing the range of difficulty in the data set from easy images to
+% difficult images. If time permits, show some filters and say something about
+% them.}
 
-A qualitative comparison of segmentation performance for four characteristic
-cases is shown in Fig.~\ref{fig:images}. Our method uses a combination of
-automatically learned intensity and appearance features, which makes it
-inherently robust to noise (see Fig.~\ref{fig:images}a), while still being able
-to detect small isolated lesions (see Fig.~\ref{fig:images}b). Furthermore, our
-method is able to learn a wide spectrum of lesion shapes and appearances from
-training data, which allows our method to correctly identify multiple different
-types of MS lesions. For example, our method was able to correctly identify a
-large T1 black hole that was partially missed by Lesion-TOADS (see
-Fig.~\ref{fig:images}c), which has a known limitation of sometimes
-misclassifying T1 black holes due to different intensity profiles of partially
-overlapping T1 hypointense and T2 hyperintense regions \cite{shiee2010topology}.
-Figure~\ref{fig:images}d shows one of the most challenging cases for our method.
-Very large lesions can extend beyond the size of the receptive field of the CEN,
-which reduces its ability to extract characteristic lesion features.
-Consequently, in some cases our method can underestimate the size of very large
-lesions.
+% A qualitative comparison of segmentation performance for four characteristic
+% cases is shown in Fig.~\ref{fig:images}. Our method uses a combination of
+% automatically learned intensity and appearance features, which makes it
+% inherently robust to noise (see Fig.~\ref{fig:images}a), while still being able
+% to detect small isolated lesions (see Fig.~\ref{fig:images}b). Furthermore, our
+% method is able to learn a wide spectrum of lesion shapes and appearances from
+% training data, which allows our method to correctly identify multiple different
+% types of MS lesions. For example, our method was able to correctly identify a
+% large T1 black hole that was partially missed by Lesion-TOADS (see
+% Fig.~\ref{fig:images}c), which has a known limitation of sometimes
+% misclassifying T1 black holes due to different intensity profiles of partially
+% overlapping T1 hypointense and T2 hyperintense regions \cite{shiee2010topology}.
+% Figure~\ref{fig:images}d shows one of the most challenging cases for our method.
+% Very large lesions can extend beyond the size of the receptive field of the CEN,
+% which reduces its ability to extract characteristic lesion features.
+% Consequently, in some cases our method can underestimate the size of very large
+% lesions.
 
 \begin{comment}
 \begin{figure*}
@@ -652,66 +696,6 @@ lesions.
 for 3 subjects. The first and the second row highlight the difficulty}
 \end{figure*}
 \end{comment}
-
-\begin{figure}
-\begin{tikzpicture}[node distance=2.1cm and 0.333\columnwidth,
-  font=\footnotesize, on grid]
-\node[inner sep=0] (image1) {
-  \includegraphics[width=\columnwidth]{figures/p50s35_large_lesions}
-};
-\node[above=of image1] (l7) {7-layer CEN};
-\node[left=of l7] {3-layer CEN};
-\node[right=of l7] {7-layer CEN-s};
-
-\begin{scope}[xshift=0.333\columnwidth]
-\draw[white,thick] (-12pt,-15pt) circle (9pt);
-\draw[white,thick] (15pt,-15pt) circle (10pt);
-\end{scope}
-\begin{scope}[xshift=-0.333\columnwidth]
-\draw[white,thick] (-12pt,-15pt) circle (9pt);
-\draw[white,thick] (15pt,-15pt) circle (10pt);
-\end{scope}
-\draw[white,thick] (-12pt,-15pt) circle (9pt);
-\draw[white,thick] (15pt,-15pt) circle (10pt);
-\end{tikzpicture}
-\caption{Large lesion problematic for 3-layer CEN due to limited size of the
-receptive field. The adding layers increases the size of the receptive field,
-which improves the detection of very large lesions.}
-\label{fig:large}
-\end{figure}
-
-\begin{figure}
-\begin{tikzpicture}[node distance=2.1cm and 0.333\columnwidth,
-  font=\footnotesize, on grid]
-\node[inner sep=0] (image1) {
-  \includegraphics[width=\columnwidth]{figures/p25s35_small_lesions}
-};
-\node[above=of image1] (l7) {7-layer CEN};
-\node[left=of l7] {3-layer CEN};
-\node[right=of l7] {7-layer CEN-s};
-\begin{scope}[xshift=0.3333\columnwidth]
-\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
-\draw[white,thick] (0pt,4pt) circle (6pt);
-\draw[white,thick] (-10pt,20pt) circle (3pt);
-\end{scope}
-\begin{scope}[xshift=-0.3333\columnwidth]
-\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
-\draw[white,thick] (0pt,4pt) circle (6pt);
-\draw[white,thick] (-10pt,20pt) circle (3pt);
-\end{scope}
-\draw[white,thick] (-12.5pt,-11pt) circle (4pt);
-\draw[white,thick] (0pt,4pt) circle (6pt);
-\draw[white,thick] (-10pt,20pt) circle (3pt);
-\end{tikzpicture}
-
-\caption{Comparison of segmentation performance of different CEN architectures
-for small lesions. The white circles indicate lesions that were detected by the
-3-layer CEN and the 7-layer CEN with shortcut. Increasing the size of the
-receptive field decreases the sensitivity to small lesions. The addition of a
-shortcut allows the detection of small lesions, while still being able
-to detect large lesions (see Fig.~\ref{fig:large}).}
-\label{fig:small}
-\end{figure}
 
 \begin{comment}
 \begin{figure*}

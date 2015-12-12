@@ -255,8 +255,9 @@ sensitivity ratio $r$ can be used to assign different weights to the two terms.
 Due to the large number of non-lesion voxels, weighting the specificity error
 higher is important, but based on preliminary experimental results \cite{brosch2015},
 the algorithm is stable with respect to changes in $r$, which largely affects the
-threshold used to binarize the probabilistic output. We used a sensitivity ratio
-of $0.02$ in all our experiments.
+threshold used to binarize the probabilistic output. A detailed evaluation of
+the impact of the sensitivity ratio on the learned model is presented in
+Section~III-D.
 
 To train our model, we must compute the derivatives of the modified objective
 function with respect to the model parameters. Equations
