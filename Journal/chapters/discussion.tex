@@ -18,37 +18,90 @@
 % TODO: remove the statement about the size of the receptive field. It is not
 % backed up.
 
-We have presented a new method for the automatic segmentation of MS lesions
-based on deep convolutional encoder networks with shortcut connections.
-The joint training of the feature extraction and prediction pathways allows for
-the automatic learning of features at different scales that are tuned for a
-given combination of image types and segmentation task. In addition, shortcuts
-between the two pathways allow high- and low-level features to be leveraged at
-the same time for more consistent performance across scales. We have evaluated
-our method on a large data set from an MS clinical trial, with the results
-showing that our method is able to segment MS
-%lesions with greater accuracy than
-% TODO: find references if possible
-% \todo[inline]{find references, if possible, but this might be difficult, because
-% the range of DSC scores is very high.} with greater accuracy than most
-% previously proposed automatic methods (cite some), most of which have reported
-% Dice accuracies in the range of..., although the use of different data sets only
-% allows an indirect comparison.
-%
-more accurately than
-%
-%In a specific comparison to
-the widely used Lesion-TOADS.
-%, our method produced substantial gains in accuracy, which 
-The substantial gains in accuracy
-were mostly due to the
- reduction of false positives, especially for low lesion loads where the lesion
-size is also small. Overall, the CEN with shortcuts architecture performed
-consistently well over a wide range of lesion loads. For future work, we are
-planning to extend our comparison to other freely available lesion segmentation
-tools, such as the lesion growth algorithm \cite{schmidt2012automated} as
-implemented in the LST toolbox (\url{www.statistical-modelling.de/lst.htm}).
+% TODO: Reduce false positives using post-processing
 
+The automatic segmentation of MS lesions is a very challenging task due to the
+large variability in lesion size, shape, intensity, and location, as well as the
+large variability of imaging contrasts produced by different scanners used at
+different scanning sites. Most unsupervised methods model lesions as an outlier
+or a separate cluster in a subject-specific model, which makes them inherently
+robust to inter-subject and inter-scanner variability. However, outliers may not be
+specific to lesions and can also be caused by intensity inhomogeneities, partial
+volumes, imaging artifacts, and small anatomical structures such as blood
+vessels, which leads to the generation of false positives. On the other hand,
+supervised methods can learn to discriminate between lesion and non-lesion
+tissue, but are more sensitive to the variability in lesion appearance and
+different contrasts produced by different scanners. To overcome those
+challenges, supervised methods require large data sets that span the variability
+in lesions and careful pre-processing to match the imaging contrast of new
+images with those of the training set. Library-based approaches have shown great
+promise for the segmentation of MS lesions, but do not scale well to very large
+data sets due to the large amount of memory required to store comprehensive
+sample libraries and the time required to scan such libraries for matching
+patches. On the other hand, parametric deep learning models such as
+convolutional neural networks scale much better to large training sets, because
+the size required to store the model is independent of the training set size,
+and the operations required for training and inference are inherently
+parallelizable, which allows them to take advantage of very fast GPU-accelerated
+computing hardware. Furthermore, the combination of many nonlinear processing
+units allows them to learn features that are robust under large variability,
+which is crucial for the segmentation of MS lesions.
+
+Convolutional neural networks were originally designed to classify entire images
+and designing networks that can segment images remains an important research
+topic. Early approaches have formulated the segmentation problem as a patch-wise
+classification problem, which allows them to directly use established
+classification network architectures for image segmentation.
+However, a major limitation of patch-based deep learning approaches is the time
+required for training and inference. Fully convolutional networks can perform
+the segmentation much more efficiently, but lack the precision to perform
+voxel-accurate segmentation and can not handle unbalanced classes.
+
+To overcome these challenges, we have presented a new method for the automatic
+segmentation of MS lesions based on deep convolutional encoder networks with
+shortcut connections. The joint training of the feature extraction and
+prediction pathways allows for the automatic learning of features at different
+scales that are tuned for a given combination of image types and segmentation
+task. Shortcuts between the two pathways allow high- and low-level features to
+be leveraged at the same time for more consistent performance across scales. In
+addition, we have proposed a new objective function based on the combination of
+sensitivity and specificity, which makes the objective function inherently
+robust to unbalanced classes such as MS lesions, which typically comprise less
+than \SI{1}{\percent} of all image voxels.
+%
+We have evaluated our method on two publicly available data sets and a large
+data set from an MS clinical trial, with the results showing that our method
+performs on-par with state-of-the-art methods, even for relatively small
+training set sizes, and is able to segment MS more accurately than widely-used
+competing methods such as EMS, LST-LGA, and Lesion-TOADS, when a suitable
+training set is available. The substantial gains in accuracy were mostly due to
+an increase in lesion sensitivity, especially for small lesions. Overall, the
+CEN with shortcuts architecture performed consistently well over a wide range of
+lesion sizes.
+
+Our segmentation framework is very flexible and can be easily extended. One such
+extension could be to incorporate prior knowledge about the tissue type of each
+non-lesion voxel into the segmentation procedure. The probabilities of each
+tissue class could be precomputed by a standard segmentation method, after which
+they can be added as an additional channel to the input units of the CEN, which
+would allow the CEN to take advantage of intensity information from different
+modalities and prior knowledge about each tissue class to carry out the
+segmentation. In addition, our method can be applied to other segmentation
+tasks. Although we have only focused on the segmentation of MS lesions in this
+paper, our method does not make any assumptions specific to MS lesion
+segmentation. The features required to carry out the segmentation are solely
+learned from training data, which allows our method to be used to segment
+different types of pathology or anatomy when a suitable training set is
+available.
+
+% Supervised challenges: large variability -> need good training data.
+% Patch-based promising but doesn't scale well.
+% Generally require good pre-processing
+% Deep learning can overcome both challenges: highly non-linear -> robust
+% feature learning, algorithms easily parallelizable, good for GPU
+% implementation
+
+\begin{comment}
 The most significant limitation of the tested architecture is that very large
 lesions can still extend beyond the receptive field of a particular voxel. This
 reduces the network's ability to extract appearance features that would help the
@@ -64,40 +117,4 @@ networks that are able to learn features that cover large parts of the image, or
 even global features that cover the entire image. Such features would be able to
 estimate the global distribution of lesions and act as an automatically learned
 lesion prior, further improving the robustness of our method.
-
-% Extensions: global features, prior knowledge, different segmentation tasks
-
-% TODO: Reduce false positives using post-processing
-
-% We have presented a very flexible segmentation framework that can be easily
-% extended. Depth for global features, include
-% prior knowledge as channels, apply to different segmentation tasks.
-
-Our segmentation framework is very flexible and can be easily extended. One such
-extension could be to incorporate prior knowledge about the tissue type of each
-non-lesion voxel into the segmentation procedure.
-%
-% Therefore, each image needs to be segmented into cerebrospinal fluid, gray
-% matter, and white matter as part of the pre-processing pipeline.
-%
-The probabilities of each tissue class could be precomputed by a standard
-segmentation method, after which they can be added as an additional channel to
-the input units of the CEN, which would allow the CEN to take advantage of
-intensity information from different modalities and prior knowledge about each
-tissue class to carry out the segmentation.
-%
-%For example, we have observed the presence of false positives in
-%the region of the ventricles in some rare cases. Knowledge about the extend of
-%the vectricles can help to reduce this type of misclassification.
-%
-% However, the benefit from using a prior tissue classification depends on the
-% accuracy of the segmentation algorithm. In the presence of lesions, a
-% segmentation method that was designed for healthy tissue might misclassify
-% regions affected by lesions, which in turn could confound the segmentation
-% process.
-In addition, our method can be applied to other segmentation tasks. Although we
-have only focused on the segmentation of MS lesions in this paper, our method
-does not make any assumptions specific to MS lesion segmentation. The features
-required to carry out the segmentation are solely learned from training data,
-which allows our method to be used to segment different types of pathology or
-anatomy when a suitable training set is available.
+\end{comment}

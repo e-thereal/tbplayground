@@ -17,10 +17,11 @@ segmentations, $y^{(0)}$.}
 
 In this paper, the task of segmenting MS lesions is defined as finding a
 function $s$ that maps multi-modal images $I$, e.g., $I = (I_\text{FLAIR},
-I_\text{T1})$, to corresponding binary lesion masks $S$. Given a set of
-training images $I_n$, $n \in \N$, and corresponding segmentations $S_n$, we
-model finding an appropriate function for segmenting MS lesions as an
-optimization problem of the following form
+I_\text{T1})$, to corresponding binary lesion masks $S$, where $1$ denotes a
+lesion voxel and $0$ denotes a non-lesion voxel. Given a set of training images
+$I_n$, $n \in \N$, and corresponding segmentations $S_n$, we model finding an
+appropriate function for segmenting MS lesions as an optimization problem of the
+following form
 \begin{equation}
 \hat{s} = \arg \min_{s \in \mathcal{S}} \sum_n E(S_n, s(I_n)),
 \label{eq:segprob}

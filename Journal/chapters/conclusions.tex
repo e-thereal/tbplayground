@@ -1,16 +1,47 @@
 \section{Conclusions}
 
-We have introduced a new method for the automatic segmentation of MS lesions
-based on convolutional encoder networks. The joint training of the feature
-extraction and prediction layers with a novel objective function allows for the
-automatic learning of features that are tuned for a given combination of image
-types and a segmentation task with very unbalanced classes.
-We have evaluated our method on two data sets showing that approximately 100
-images are required to train the model without overfitting but even when only a
-relatively small training set is available, the method still performs comparably
-to the state-of-the-art algorithms. For future work, we plan to increase the
-depth of the network, which would allow the learning of a set of hierarchical
-features. This could further improve segmentation accuracy, but may require
-larger training sets. We would also like to investigate the use of different
-objective functions for training based on other measures of segmentation
-performance.
+% We have introduced a new method for the automatic segmentation of MS lesions
+% based on convolutional encoder networks. The joint training of the feature
+% extraction and prediction layers with a novel objective function allows for the
+% automatic learning of features that are tuned for a given combination of image
+% types and a segmentation task with very unbalanced classes.
+% We have evaluated our method on two data sets showing that approximately 100
+% images are required to train the model without overfitting but even when only a
+% relatively small training set is available, the method still performs comparably
+% to the state-of-the-art algorithms. For future work, we plan to increase the
+% depth of the network, which would allow the learning of a set of hierarchical
+% features. This could further improve segmentation accuracy, but may require
+% larger training sets. We would also like to investigate the use of different
+% objective functions for training based on other measures of segmentation
+% performance.
+
+We have presented a new method for the automatic segmentation of MS lesions
+based on deep convolutional encoder networks with shortcut connections.
+The joint training of the feature extraction and prediction pathways allows for
+the automatic learning of features at different scales that are tuned for a
+given combination of image types and segmentation task. In addition, shortcuts
+between the two pathways allow high- and low-level features to be leveraged at
+the same time for more consistent performance across scales. We have evaluated
+our method on two publicly available data sets and a large data set from an MS
+clinical trial, with the results showing that our method performs on-par with
+state-of-the-art methods, even for relatively small training set sizes, and is
+able to segment MS more accurately than widely-used competing methods such as
+EMS, LST-LGA, and Lesion-TOADS, when a suitable training set is available.
+The substantial gains in accuracy were mostly due to an increase in lesion
+sensitivity, especially for small lesions. Overall, the CEN with shortcuts
+architecture performed consistently well over a wide range of lesion loads.
+
+Our segmentation framework is very flexible and can be easily extended. One such
+extension could be to incorporate prior knowledge about the tissue type of each
+non-lesion voxel into the segmentation procedure. The probabilities of each
+tissue class could be precomputed by a standard segmentation method, after which
+they can be added as an additional channel to the input units of the CEN, which
+would allow the CEN to take advantage of intensity information from different
+modalities and prior knowledge about each tissue class to carry out the
+segmentation. In addition, our method can be applied to other segmentation
+tasks. Although we have only focused on the segmentation of MS lesions in this
+paper, our method does not make any assumptions specific to MS lesion
+segmentation. The features required to carry out the segmentation are solely
+learned from training data, which allows our method to be used to segment
+different types of pathology or anatomy when a suitable training set is
+available.
