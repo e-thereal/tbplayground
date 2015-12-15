@@ -14,17 +14,17 @@ optimized for accuracy for any given combination of image types and segmentation
 task. In addition, shortcut connections between the two pathways allow high- and
 low-level features to be integrated, which enable segmentation of lesions across
 a wide range of sizes. We have evaluated our method on two publicly available
-data sets with the results showing that our method performs on-par with
-state-of-the-art methods, even when only relatively small data sets are
-available for training. In addition, we have evaluation our method on a large
-data set from an MS clinical trial, with a comparison of network architectures
-of different depths and with and without shortcut connections. The results show
-that increasing depth from three to seven layers improves performance, and
-adding shortcut connections further increases accuracy. Overall, our method
-demonstrates consistently strong segmentation performance across a wide range of
-lesion loads, and in a direct comparison outperforms EMS, LST-LGA, and
-Lesion-TOADS, three widely used and freely available automatic MS lesion
-segmentation methods.
+data sets (MICCAI 2008 and ISBI 2015 challenges) with the results showing that
+our method performs comparably to the top-ranked state-of-the-art methods, even
+when only relatively small data sets are available for training. In addition, we
+have evaluated our method on a large data set from an MS clinical trial, with a
+comparison of network architectures of different depths and with and without
+shortcut connections. The results show that increasing depth from three to seven
+layers improves performance, and adding shortcut connections further increases
+accuracy. We also ran the same data set through four freely available and widely
+used MS lesion segmentation methods, namely EMS, LST-LPA, LST-LGA, and
+Lesion-TOADS, for a direct comparison, and found that our method consistently
+outperforms these other methods across a wide range of lesion loads.
 
 % The convolutional encoder network approach learns features on entire images
 % and predicts segmentations of the same resolution and size as the input

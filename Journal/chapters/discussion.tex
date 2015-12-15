@@ -12,28 +12,22 @@
 % the training for inference. Can be tuned for any combination of image
 % modalities, scanner characteristics.
 
-% TODO: Discussion with other methods. What is state-of-the-art and what are the
-% challenges and how is this better?
-
-% TODO: remove the statement about the size of the receptive field. It is not
-% backed up.
-
 % TODO: Reduce false positives using post-processing
 
 The automatic segmentation of MS lesions is a very challenging task due to the
 large variability in lesion size, shape, intensity, and location, as well as the
-large variability of imaging contrasts produced by different scanners used at
-different scanning sites. Most unsupervised methods model lesions as an outlier
-or a separate cluster in a subject-specific model, which makes them inherently
-robust to inter-subject and inter-scanner variability. However, outliers may not be
-specific to lesions and can also be caused by intensity inhomogeneities, partial
-volumes, imaging artifacts, and small anatomical structures such as blood
+large variability of imaging contrasts produced by different scanners used in
+multi-center studies. Most unsupervised methods model lesions as an outlier
+class or a separate cluster in a subject-specific model, which makes them inherently
+robust to inter-subject and inter-scanner variability. However, outliers are
+often not specific to lesions and can also be caused by intensity
+inhomogeneities, partial volume, imaging artifacts, and small anatomical structures such as blood
 vessels, which leads to the generation of false positives. On the other hand,
 supervised methods can learn to discriminate between lesion and non-lesion
 tissue, but are more sensitive to the variability in lesion appearance and
 different contrasts produced by different scanners. To overcome those
 challenges, supervised methods require large data sets that span the variability
-in lesions and careful pre-processing to match the imaging contrast of new
+in lesion appearance and careful pre-processing to match the imaging contrast of new
 images with those of the training set. Library-based approaches have shown great
 promise for the segmentation of MS lesions, but do not scale well to very large
 data sets due to the large amount of memory required to store comprehensive
@@ -54,8 +48,8 @@ classification problem, which allows them to directly use established
 classification network architectures for image segmentation.
 However, a major limitation of patch-based deep learning approaches is the time
 required for training and inference. Fully convolutional networks can perform
-the segmentation much more efficiently, but lack the precision to perform
-voxel-accurate segmentation and can not handle unbalanced classes.
+the segmentation much more efficiently, but generally lack the precision to
+perform voxel-accurate segmentation and cannot handle unbalanced classes.
 
 To overcome these challenges, we have presented a new method for the automatic
 segmentation of MS lesions based on deep convolutional encoder networks with
@@ -68,16 +62,15 @@ addition, we have proposed a new objective function based on the combination of
 sensitivity and specificity, which makes the objective function inherently
 robust to unbalanced classes such as MS lesions, which typically comprise less
 than \SI{1}{\percent} of all image voxels.
-%
 We have evaluated our method on two publicly available data sets and a large
 data set from an MS clinical trial, with the results showing that our method
-performs on-par with state-of-the-art methods, even for relatively small
-training set sizes, and is able to segment MS more accurately than widely-used
-competing methods such as EMS, LST-LGA, and Lesion-TOADS, when a suitable
-training set is available. The substantial gains in accuracy were mostly due to
-an increase in lesion sensitivity, especially for small lesions. Overall, the
-CEN with shortcuts architecture performed consistently well over a wide range of
-lesion sizes.
+performs comparable to the best state-of-the-art methods, even for relatively
+small training set sizes. We have also shown that when a suitably large training
+set is available, our method is able to segment MS more accurately than
+widely-used competing methods such as EMS, LST-LGA, and Lesion-TOADS. The
+substantial gains in accuracy were mostly due to an increase in lesion
+sensitivity, especially for small lesions. Overall, the CEN with shortcuts
+architecture performed consistently well over a wide range of lesion sizes.
 
 Our segmentation framework is very flexible and can be easily extended. One such
 extension could be to incorporate prior knowledge about the tissue type of each

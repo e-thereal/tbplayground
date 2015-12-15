@@ -13,12 +13,6 @@ makes their automatic and accurate segmentation challenging.
 % Generative model was dictionary learning and sparse coding. Might extend
 % clustering a little bit if need be.
 
-% TODO: state briefly what the problems with unsupervised methods are that would
-% motivate use of supervised. Features are not specific to the problem. Features
-% describe the majority of the image information and might not be representitive
-% of small pathology like MS lesion that only compromise less than 1 percent of
-% the image voxels. But this is unsupervised feature learning.
-
 Many automatic methods have been proposed for the segmentation of MS
 \mbox{lesions} over the last two decades \cite{garcia2013review}, which can be
 classified into unsupervised and supervised methods. Unsupervised methods do not
@@ -31,11 +25,14 @@ tissue, where lesions are modelled as a separate tissue class
 \cite{shiee2010topology,sudre2015}.
 In many methods, spatial priors of healthy tissues are used to reduce false
 positives. For example, in addition to modelling MS lesions as a separate
-cluster, Lesion-TOADS \cite{shiee2010topology} employs a topological and a
-statistical atlas to produce a topology-preserving segmentation of all brain
-tissues, while the expectation-maximization segmentation (EMS)
-\cite{vanleemput2001} method uses a Markov random field (MRF) to produce a
-spatially consistent segmentation.
+intensity cluster, Lesion-TOADS \cite{shiee2010topology} employs topological and
+statistical atlases to produce a topology-preserving segmentation of all brain
+tissues.
+%, while the expectation-maximization segmentation (EMS)
+%\cite{vanleemput2001} method uses a Markov random field (MRF) to produce a
+%spatially consistent segmentation.
+% TODO: maybe remove or reword the EMS MRF.
+
 % To account for the variability of intensity distributions for different
 % subjects and scanning sequences, Sudre et al used Bayesian model selection to
 % select the most appropriate statistical model for each healty tissue and
@@ -44,14 +41,15 @@ To account for local changes of the tissue intensity distributions,
 Tomas-Fernandez et al. \cite{tomas2015} combined the subject-specific model of
 the global intensity distributions with a voxel-specific model calculated from a
 healthy population, where lesions are detected as outliers of the combined
-model. A major challenge of unsupervised methods is that outliers may not be
+model. A major challenge of unsupervised methods is that outliers are often not
 specific to lesions and can also be caused by intensity inhomogeneities, partial
-volumes, imaging artifacts, and small anatomical structures such as blood
-vessels, which leads to the generation of false positives. To overcome, Roura et
-al. \cite{roura2015} employed an additional set of rules to remove false
-positives, while Schmidt et al. \cite{schmidt2012automated} used a conservative
-threshold for the initial detection of lesions, which are later grown to yield
-an accurate delineation.
+volume, imaging artifacts, and small anatomical structures such as blood
+vessels, which leads to the generation of false positives. To overcome these
+limitations, Roura et al. \cite{roura2015} employed an additional set of rules
+%TODO: Can we add an adjective or two to make this more specific? (rules)
+to remove false positives, while Schmidt et al. \cite{schmidt2012automated} used
+a conservative threshold for the initial detection of lesions, which are later
+grown in a separate step to yield an accurate delineation.
 
 
 % Outlier of a subject-specific generative model of healthy tissue intensities
@@ -73,20 +71,23 @@ an accurate delineation.
 % and a statistical atlas to produce a topology-preserving segmentation of all
 % brain tissues.
 
-Current supervised approaches typically start with a simple or large set of
-features, either predefined by the user
-\cite{geremia2010,guizard2015,subbanna2015} or gathered in a feature extraction
-step such as by deep learning \cite{yoo2014}. Voxel-based segmentation
-algorithms \cite{geremia2010,yoo2014} feed the features and labels of each
-voxel into a general classification algorithm, such as a random forest
-\cite{breiman2001}, to classify each voxel and to determine which set of features are the most
-important for segmentation in the particular domain. MRF-based approaches
-\cite{subbanna2009,subbanna2015} incorporate voxel features and the labels of
-neighboring voxels to produce a spatially consistent segmentation. To further
-reduce false positives, Subbanna et al.
-\cite{subbanna2015} combined the voxel-level MRF with a regional MRF, which
+Current supervised approaches typically start with a set of features, which can
+range from small and simple to large and highly variable, and either predefined
+by the user \cite{geremia2010,guizard2015,subbanna2015} or gathered in a feature
+extraction step such as by deep learning \cite{yoo2014}. Voxel-based
+segmentation algorithms \cite{geremia2010,yoo2014} feed the features and labels
+of each voxel into a general classification algorithm, such as a random forest
+\cite{breiman2001}, to classify each voxel and to determine which set of
+features are the most important for segmentation in the particular domain.
+% TODO: introduce MRF better
+Voxel features and the labels of neighboring voxels can be incorporated into
+Markov random field-based (MRF-based) approaches
+\cite{subbanna2009,subbanna2015} to produce a spatially consistent segmentation.
+As a strategy to reduce false positives, Subbanna et al.
+\cite{subbanna2015} combined a voxel-level MRF with a regional MRF, which
 integrates a large set of intensity and textural features extracted from the
-regions produced by the voxel-level MRF with the labels of neighboring regions.
+regions produced by the voxel-level MRF with the labels of neighboring nodes of
+the regional MRF.
 Library-based approaches leverage a library of pre-segmented images to carry out
 the segmentation. For example, Guizard et al.
 \cite{guizard2015} proposed a segmentation method based on an extension of the
@@ -123,7 +124,7 @@ measure based on rotation-invariant features.
 % learning of domain-specific features from image patches from unlabelled data
 % using deep learning.
 A recent breakthrough for automatic segmentation using deep learning comes from
-the domain of cell membrane segmentation, in which Ciresan et al.
+the domain of cell membrane segmentation, in which Cire\c{s}an et al.
 \cite{Ciresan2012} proposed classifying the centers of image patches directly
 using a convolutional neural network (CNN) \cite{LeCun1998} without a dedicated
 feature extraction step. Instead, features are learned indirectly within the
@@ -141,9 +142,9 @@ Recently, different CNN architectures
 \cite{long2015,ronneberger2015,brosch2015,kang2014fully} have been proposed that
 are able to feed through entire images, which removes the need to select
 representative patches, eliminates redundant calculations where patches overlap,
-and therefore scales up more efficiently with image resolution. Kang et al.
-introduced the fully convolutional neural network (fCNN) for the segmentation of
-crowds in surveillance videos \cite{kang2014fully}. However, fCNNs produce
+and therefore these models scale up more efficiently with image resolution. Kang
+et al. introduced the fully convolutional neural network (fCNN) for the
+segmentation of crowds in surveillance videos \cite{kang2014fully}. However, fCNNs produce
 segmentations of lower resolution than the input images due to the successive
 use of convolutional and pooling layers, both of which reduce the
 dimensionality.
@@ -155,12 +156,15 @@ segmentations that are of the same resolution as the input images.
 
 Another limitation of the traditional CNN is the trade-off between localization
 accuracy, represented by lower-level features, and contextual information,
-provided by higher-level features. To overcome, Long et al. \cite{long2015}
-proposed fusing the segmentations produced by the lower layers of the network
+provided by higher-level features. To overcome this limitation, Long et al.
+\cite{long2015} proposed fusing the segmentations produced by the lower layers of the network
 with the upsampled segmentations produced by higher layers. However, using only
 low-level features was not sufficient to produce a good segmentation at the
 lowest layers, which is why segmentation fusing was only performed for the three
-highest layers. Instead of combining the segmentations produced at
+highest layers.
+% TODO: This is unclear. What was wrong with the low-level segmentations? I can
+% imagine too many false positives?
+Instead of combining the segmentations produced at
 different layers, Ronneberger et al. \cite{ronneberger2015} proposed combining
 the features of different layers to calculate the final segmentation
 directly at the lowest layer using an 11-layer u-shaped network architecture
@@ -202,7 +206,7 @@ handling of the border regions is still required.
 % 3D? Runtime and memory.
 
 We propose a new convolutional network architecture that combines the advantages
-of a 3-layer CEN \cite{brosch2015} and a u-net \cite{ronneberger2015}. Our
+of a CEN \cite{brosch2015} and a u-net \cite{ronneberger2015}. Our
 network is divided into two pathways, a traditional convolutional pathway, which
 consists of alternating convolutional and pooling layers, and a deconvolutional
 pathway, which consists of alternating deconvolutional and unpooling layers and
@@ -212,7 +216,7 @@ network uses deconvolution instead of upsampling in the expanding pathway and
 predicts segmentations that have the same resolution as the input images and
 therefore does not require special handling of the border regions. We have
 evaluated our method on two widely used publicly available data sets for the
-evaluation of MS lesion segmentation methods and a large proprietary data set
+evaluation of MS lesion segmentation methods and a large in-house data set
 from an MS clinical trial, with a comparison of network architectures of
 different depths and with and without shortcuts\footnote{Where the risk of
 confusion is minimal, we will refer to the shortcut connections between two

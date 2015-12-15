@@ -364,11 +364,11 @@ GPU-accelerated implementations of 3D convRBMs and CENs that performs training
 in the frequency domain \cite{brosch2014efficient}. Our frequency domain
 implementation significantly speeds up the training by mapping the calculation
 of convolutions to simple element-wise multiplications, while adding only a
-small number of Fourier transforms. This is especially important for the
-training on 3D volumes, due to increased number of weights of 3D kernels
-compared to 2D. Internal tests have shown that our frequency domain
-implementation calculates the most time-consuming operations of the training
-procedure 6 times faster than an implementation based on cuDNN
-\cite{chetlur2014}, a library for calculating deep learning primitives, which is
-used internally by many publicly available deep learning frameworks
-\cite{jia2014,Bastien2012,collobert2011torch7}.
+small number of Fourier transforms. This is especially beneficial for the
+training on 3D volumes, due to the increased number of weights of 3D kernels
+compared to 2D. Although GPU-accelerated deep learning libraries based on cuDNN
+\cite{chetlur2014} are publicly available (e.g.,
+\cite{jia2014,Bastien2012,collobert2011torch7}), we trained our models using our
+own implementation because we have found that it performs the most
+computationally intensive training operations 6 times faster than cuDNN in a
+direct comparison.
